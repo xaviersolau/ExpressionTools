@@ -1,2 +1,3 @@
 # ExpressionTools
-Tools allowing to handle C# Expression like parsing textual lambda.
+
+Tools allowing to handle or to parse C# textual lambda Expressions.
