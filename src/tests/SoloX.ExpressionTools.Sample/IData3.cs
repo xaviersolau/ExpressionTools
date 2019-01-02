@@ -6,5 +6,7 @@ namespace SoloX.ExpressionTools.Sample
 {
     public interface IData3
     {
+        int Data { get; set; }
+
     }
 }

@@ -6,5 +6,6 @@ namespace SoloX.ExpressionTools.Sample.Impl
 {
     public class Data3 : IData3
     {
+        public int Data { get; set; }
     }
 }

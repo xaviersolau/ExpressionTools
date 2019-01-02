@@ -26,7 +26,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
             AssertEval(expression, x, y);
         }
 
-        private void AssertEval(string expression, double x, double y)
+        private static void AssertEval(string expression, double x, double y)
         {
             var typeResolverMock = new Mock<IParameterTypeResolver>();
 
