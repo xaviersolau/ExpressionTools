@@ -13,6 +13,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools", "src\tools\SoloX.ExpressionTools\SoloX.ExpressionTools.csproj", "{4BDA8338-210C-47A8-9278-2F4185A8A9C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.UTest", "src\tests\SoloX.ExpressionTools.UTest\SoloX.ExpressionTools.UTest.csproj", "{2979EF4E-FBA7-4D06-BF17-DC00A12E946A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.ExpressionTools.Sample", "src\tests\SoloX.ExpressionTools.Sample\SoloX.ExpressionTools.Sample.csproj", "{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +33,18 @@ Global
 		{E57753AA-21CF-4A6A-A382-57E0BDFDCF03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E57753AA-21CF-4A6A-A382-57E0BDFDCF03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E57753AA-21CF-4A6A-A382-57E0BDFDCF03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BDA8338-210C-47A8-9278-2F4185A8A9C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BDA8338-210C-47A8-9278-2F4185A8A9C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BDA8338-210C-47A8-9278-2F4185A8A9C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BDA8338-210C-47A8-9278-2F4185A8A9C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2979EF4E-FBA7-4D06-BF17-DC00A12E946A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2979EF4E-FBA7-4D06-BF17-DC00A12E946A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2979EF4E-FBA7-4D06-BF17-DC00A12E946A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2979EF4E-FBA7-4D06-BF17-DC00A12E946A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SoloX.ExpressionTools.Parser.UTest.Sample
+namespace SoloX.ExpressionTools.Sample
 {
     public interface IData2
     {

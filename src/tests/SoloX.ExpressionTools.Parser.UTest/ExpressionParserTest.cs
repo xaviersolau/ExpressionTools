@@ -2,8 +2,8 @@ using System;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
 using Xunit;
-using SoloX.ExpressionTools.Parser.UTest.Sample;
-using SoloX.ExpressionTools.Parser.UTest.Sample.Impl;
+using SoloX.ExpressionTools.Sample;
+using SoloX.ExpressionTools.Sample.Impl;
 using System.Collections.Generic;
 using System.Linq;
 
