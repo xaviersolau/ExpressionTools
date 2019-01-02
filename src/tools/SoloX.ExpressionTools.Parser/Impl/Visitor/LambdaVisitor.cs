@@ -8,12 +8,12 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-namespace SoloX.ExpressionTools.Parser.Visitor
+namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 {
     /// <summary>
     /// Visitor to convert Lambda CSharp syntax tree to Linq Expression
     /// </summary>
-    public class LambdaVisitor : CSharpSyntaxVisitor<Expression>
+    internal class LambdaVisitor : CSharpSyntaxVisitor<Expression>
     {
         public IParameterTypeResolver ParameterTypeResolver { get; }
 
@@ -217,7 +217,7 @@ namespace SoloX.ExpressionTools.Parser.Visitor
         }
     }
 
-    public class ExpressionVisitor : CSharpSyntaxVisitor<Expression>
+    internal class ExpressionVisitor : CSharpSyntaxVisitor<Expression>
     {
         private LambdaVisitor _lambdaVisitor;
 
@@ -237,7 +237,7 @@ namespace SoloX.ExpressionTools.Parser.Visitor
         }
     }
 
-    public class FromInvocationExpressionVisitor : CSharpSyntaxVisitor<MethodInfo>
+    internal class FromInvocationExpressionVisitor : CSharpSyntaxVisitor<MethodInfo>
     {
         private LambdaVisitor _lambdaVisitor;
         private Type[] _argsType;

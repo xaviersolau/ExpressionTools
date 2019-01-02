@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SoloX.ExpressionTools.Parser.Visitor
+namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 {
-    public class TypeVisitor : CSharpSyntaxVisitor<Type>
+    internal class TypeVisitor : CSharpSyntaxVisitor<Type>
     {
         private static readonly IReadOnlyDictionary<string, Type> PredefinedTypeMap = new Dictionary<string, Type>()
         {

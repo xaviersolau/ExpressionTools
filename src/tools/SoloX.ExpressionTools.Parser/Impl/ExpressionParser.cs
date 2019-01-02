@@ -6,27 +6,35 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using SoloX.ExpressionTools.Parser.Visitor;
+using SoloX.ExpressionTools.Parser.Impl.Visitor;
 
-namespace SoloX.ExpressionTools.Parser
+namespace SoloX.ExpressionTools.Parser.Impl
 {
-    /// <summary>
-    /// Class to parse textual lambda expression
-    /// </summary>
-    public class ExpressionParser
+    /// <inheritdoc />
+    public class ExpressionParser : IExpressionParser
     {
         private LambdaVisitor _visitor;
 
+        /// <summary>
+        /// Setup the ExpressionParser with a parameter type resolver and a method resolver
+        /// </summary>
+        /// <param name="parameterTypeResolver">Resolver that will be used to associate a Type to a given parameter name</param>
+        /// <param name="methodResolver">Resolver that will be used to identify a method given a name and an argument type list</param>
         public ExpressionParser(IParameterTypeResolver parameterTypeResolver, IMethodResolver methodResolver)
         {
             _visitor = new LambdaVisitor(parameterTypeResolver, methodResolver);
         }
 
-        /// <summary>
-        /// Parse the given lambda expression and build the corresponding System Linq Lambda expression
-        /// </summary>
-        /// <param name="lambdaExpressionText">The expression to parse</param>
-        /// <returns>The expression tree built from the textual lambda expression</returns>
+        /// <inheritdoc />
+        public Expression<TDelegate> Parse<TDelegate>(string lambdaExpressionText)
+        {
+            var stree = GetLambdaSyntaxNode(lambdaExpressionText);
+
+            var expRes = _visitor.Visit(stree);
+            return (Expression<TDelegate>)expRes;
+        }
+
+        /// <inheritdoc />
         public LambdaExpression Parse(string lambdaExpressionText)
         {
             var stree = GetLambdaSyntaxNode(lambdaExpressionText);

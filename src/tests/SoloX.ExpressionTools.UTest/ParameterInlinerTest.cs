@@ -1,4 +1,5 @@
 using Moq;
+using SoloX.ExpressionTools.Impl;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Sample.Impl;
 using System;
@@ -15,11 +16,11 @@ namespace SoloX.ExpressionTools.UTest
         {
             var pi = CreateParameterInliner<Func<double>>(() => 1);
 
-            var resultingExp = pi.Inline<Func<double, double>>(s => s + 1);
+            var resultingExp = pi.Inline<Func<double, double>, Func<double>>(s => s + 1);
 
             Assert.NotNull(resultingExp);
 
-            var func = (Func<double>)resultingExp.Compile();
+            var func = resultingExp.Compile();
             Assert.Equal(2, func());
         }
 
@@ -28,11 +29,11 @@ namespace SoloX.ExpressionTools.UTest
         {
             var pi = CreateParameterInliner<Func<double, double>>((a) => a * 3);
 
-            var resultingExp = pi.Inline<Func<double, double>>(s => s + 1);
+            var resultingExp = pi.Inline<Func<double, double>, Func<double, double>>(s => s + 1);
 
             Assert.NotNull(resultingExp);
 
-            var func = (Func<double, double>)resultingExp.Compile();
+            var func = resultingExp.Compile();
             Assert.Equal(7, func(2));
         }
 
@@ -53,11 +54,11 @@ namespace SoloX.ExpressionTools.UTest
 
             var pi = new ParameterInliner(parameterResolverMock.Object);
 
-            var resultingExp = pi.Inline<Func<double, double, double>>((x, y) => x + y + 1);
+            var resultingExp = pi.Inline<Func<double, double, double>, Func<double, double, double>>((x, y) => x + y + 1);
 
             Assert.NotNull(resultingExp);
 
-            var func = (Func<double, double, double>)resultingExp.Compile();
+            var func = resultingExp.Compile();
             Assert.Equal(20, func(3, 2));
         }
 
@@ -74,7 +75,7 @@ namespace SoloX.ExpressionTools.UTest
 
             var pi = new ParameterInliner(parameterResolverMock.Object);
 
-            var resultingExp = pi.Inline<Func<IData2, IData3>>(s => s.Data3);
+            var resultingExp = pi.Inline<Func<IData2, IData3>, Func<IData1, IData3>>(s => s.Data3);
 
             var input = new Data1()
             {
@@ -86,7 +87,7 @@ namespace SoloX.ExpressionTools.UTest
 
             Assert.NotNull(resultingExp);
 
-            var func = (Func<IData1, IData3>)resultingExp.Compile();
+            var func = resultingExp.Compile();
             Assert.Same(input.Data2.Data3, func(input));
         }
 

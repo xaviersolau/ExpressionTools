@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace SoloX.ExpressionTools.Visitor
+namespace SoloX.ExpressionTools.Impl.Visitor
 {
-    public class InlinerVisitor : ExpressionVisitor
+    internal class InlinerVisitor : ExpressionVisitor
     {
         private IParameterResolver _parameterResolver;
         private IDictionary<ParameterExpression, LambdaExpression> _parameterMap;
