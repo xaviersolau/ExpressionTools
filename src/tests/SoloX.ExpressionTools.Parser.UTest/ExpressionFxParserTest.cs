@@ -1,12 +1,14 @@
+// ----------------------------------------------------------------------
+// <copyright file="ExpressionFxParserTest.cs" company="SoloX Software">
+// Copyright (c) SoloX Software. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
 using System;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
-using Xunit;
-using SoloX.ExpressionTools.Sample;
-using SoloX.ExpressionTools.Sample.Impl;
-using System.Collections.Generic;
-using System.Linq;
 using SoloX.ExpressionTools.Parser.Impl;
+using Xunit;
 
 namespace SoloX.ExpressionTools.Parser.UTest
 {

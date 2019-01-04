@@ -1,17 +1,26 @@
+// ----------------------------------------------------------------------
+// <copyright file="ExpressionParserTest.cs" company="SoloX Software">
+// Copyright (c) SoloX Software. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
 using System;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
-using Xunit;
+using SoloX.ExpressionTools.Parser.Impl;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Sample.Impl;
-using System.Collections.Generic;
-using System.Linq;
-using SoloX.ExpressionTools.Parser.Impl;
+using Xunit;
 
 namespace SoloX.ExpressionTools.Parser.UTest
 {
     public class ExpressionParserTest
     {
+        public static IData2 M(IData1 d)
+        {
+            return d.Data2;
+        }
+
         [Fact(DisplayName = "It must parse a simple identity expression")]
         public void BasicIdentityParseTest()
         {
@@ -58,16 +67,11 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var input = new Data1()
             {
-                Data2 = new Data2()
+                Data2 = new Data2(),
             };
 
             var output = func(input);
             Assert.Same(input.Data2, output);
-        }
-
-        public static IData2 M(IData1 d)
-        {
-            return d.Data2;
         }
 
         [Fact(DisplayName = "It must parse a method call expression")]
@@ -98,7 +102,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var input = new Data1()
             {
-                Data2 = new Data2()
+                Data2 = new Data2(),
             };
 
             var output = func(input);

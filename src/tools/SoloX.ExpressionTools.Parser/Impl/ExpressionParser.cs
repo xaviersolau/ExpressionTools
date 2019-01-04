@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// <copyright file="ExpressionParser.cs" company="SoloX Software">
+// Copyright (c) SoloX Software. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+using System;
 using System.Linq.Expressions;
-using System.Reflection;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -13,16 +15,17 @@ namespace SoloX.ExpressionTools.Parser.Impl
     /// <inheritdoc />
     public class ExpressionParser : IExpressionParser
     {
-        private LambdaVisitor _visitor;
+        private LambdaVisitor visitor;
 
         /// <summary>
-        /// Setup the ExpressionParser with a parameter type resolver and a method resolver
+        /// Initializes a new instance of the <see cref="ExpressionParser"/> class with a parameter
+        /// type resolver and a method resolver.
         /// </summary>
-        /// <param name="parameterTypeResolver">Resolver that will be used to associate a Type to a given parameter name</param>
-        /// <param name="methodResolver">Resolver that will be used to identify a method given a name and an argument type list</param>
+        /// <param name="parameterTypeResolver">Resolver that will be used to associate a Type to a given parameter name.</param>
+        /// <param name="methodResolver">Resolver that will be used to identify a method given a name and an argument type list.</param>
         public ExpressionParser(IParameterTypeResolver parameterTypeResolver, IMethodResolver methodResolver)
         {
-            _visitor = new LambdaVisitor(parameterTypeResolver, methodResolver);
+            this.visitor = new LambdaVisitor(parameterTypeResolver, methodResolver);
         }
 
         /// <inheritdoc />
@@ -30,7 +33,7 @@ namespace SoloX.ExpressionTools.Parser.Impl
         {
             var stree = GetLambdaSyntaxNode(lambdaExpressionText);
 
-            var expRes = _visitor.Visit(stree);
+            var expRes = this.visitor.Visit(stree);
             return (Expression<TDelegate>)expRes;
         }
 
@@ -39,7 +42,7 @@ namespace SoloX.ExpressionTools.Parser.Impl
         {
             var stree = GetLambdaSyntaxNode(lambdaExpressionText);
 
-            var expRes = _visitor.Visit(stree);
+            var expRes = this.visitor.Visit(stree);
             return (LambdaExpression)expRes;
         }
 

@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.UTest", "src\tests\SoloX.ExpressionTools.UTest\SoloX.ExpressionTools.UTest.csproj", "{2979EF4E-FBA7-4D06-BF17-DC00A12E946A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.ExpressionTools.Sample", "src\tests\SoloX.ExpressionTools.Sample\SoloX.ExpressionTools.Sample.csproj", "{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Sample", "src\tests\SoloX.ExpressionTools.Sample\SoloX.ExpressionTools.Sample.csproj", "{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

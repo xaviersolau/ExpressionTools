@@ -1,10 +1,17 @@
+// ----------------------------------------------------------------------
+// <copyright file="ParameterInlinerTest.cs" company="SoloX Software">
+// Copyright (c) SoloX Software. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using Moq;
 using SoloX.ExpressionTools.Impl;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Sample.Impl;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using Xunit;
 
 namespace SoloX.ExpressionTools.UTest
@@ -43,7 +50,7 @@ namespace SoloX.ExpressionTools.UTest
             var expMap = new Dictionary<string, Expression<Func<double, double>>>()
             {
                 { "x", (a) => a * 3 },
-                { "y", (a) => a * 5 }
+                { "y", (a) => a * 5 },
             };
 
             var parameterResolverMock = new Mock<IParameterResolver>();
@@ -81,8 +88,8 @@ namespace SoloX.ExpressionTools.UTest
             {
                 Data2 = new Data2()
                 {
-                    Data3 = new Data3()
-                }
+                    Data3 = new Data3(),
+                },
             };
 
             Assert.NotNull(resultingExp);
@@ -91,14 +98,14 @@ namespace SoloX.ExpressionTools.UTest
             Assert.Same(input.Data2.Data3, func(input));
         }
 
-        private ParameterInliner CreateParameterInliner<TDelegate>(Expression<TDelegate> exp)
+        private static ParameterInliner CreateParameterInliner<TDelegate>(Expression<TDelegate> exp)
         {
             var parameterResolver = CreateParameterResolver<TDelegate>(exp);
 
             return new ParameterInliner(parameterResolver);
         }
 
-        private IParameterResolver CreateParameterResolver<TDelegate>(Expression<TDelegate> exp)
+        private static IParameterResolver CreateParameterResolver<TDelegate>(Expression<TDelegate> exp)
         {
             var parameterResolverMock = new Mock<IParameterResolver>();
 

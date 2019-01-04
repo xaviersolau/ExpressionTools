@@ -1,7 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// ----------------------------------------------------------------------
+// <copyright file="IParameterResolver.cs" company="SoloX Software">
+// Copyright (c) SoloX Software. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
 using System.Linq.Expressions;
-using System.Text;
 
 namespace SoloX.ExpressionTools
 {
@@ -13,8 +17,8 @@ namespace SoloX.ExpressionTools
         /// <summary>
         /// Resolve the expression to in-line for the given parameter.
         /// </summary>
-        /// <param name="parameter">The parameter to resolve</param>
-        /// <returns>The expression to in-line or null if the parameter must not be replaced</returns>
+        /// <param name="parameter">The parameter to resolve.</param>
+        /// <returns>The expression to in-line or null if the parameter must not be replaced.</returns>
         LambdaExpression Resolve(ParameterExpression parameter);
     }
 }

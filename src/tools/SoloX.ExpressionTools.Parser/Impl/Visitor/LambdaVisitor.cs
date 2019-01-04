@@ -1,33 +1,59 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿// ----------------------------------------------------------------------
+// <copyright file="LambdaVisitor.cs" company="SoloX Software">
+// Copyright (c) SoloX Software. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// ----------------------------------------------------------------------
+
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 {
     /// <summary>
-    /// Visitor to convert Lambda CSharp syntax tree to Linq Expression
+    /// Visitor to convert Lambda CSharp syntax tree to Linq Expression.
     /// </summary>
     internal class LambdaVisitor : CSharpSyntaxVisitor<Expression>
     {
+        private readonly List<ParameterExpression> parameters = new List<ParameterExpression>();
+        private readonly Dictionary<string, ParameterExpression> parameterMap = new Dictionary<string, ParameterExpression>();
+        private readonly TypeVisitor typeVisitor = new TypeVisitor();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LambdaVisitor"/> class.
+        /// </summary>
+        /// <param name="parameterTypeResolver">Resolver that will identify the parameters type.</param>
+        /// <param name="methodResolver">Resolver that will identify methods.</param>
+        public LambdaVisitor(IParameterTypeResolver parameterTypeResolver, IMethodResolver methodResolver)
+        {
+            this.ParameterTypeResolver = parameterTypeResolver;
+            this.MethodResolver = methodResolver;
+        }
+
+        /// <summary>
+        /// Gets the parameter type resolver.
+        /// </summary>
         public IParameterTypeResolver ParameterTypeResolver { get; }
 
+        /// <summary>
+        /// Gets the method resolver.
+        /// </summary>
         public IMethodResolver MethodResolver { get; }
 
-        private Dictionary<string, ParameterExpression> _parameterMap = new Dictionary<string, ParameterExpression>();
-
-        private List<ParameterExpression> _parameters = new List<ParameterExpression>();
-
-        private TypeVisitor _typeVisitor = new TypeVisitor();
-
+        /// <summary>
+        /// Resolve the given identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier to resolve.</param>
+        /// <returns>The resulting Expression.</returns>
         public Expression ResolveIdentifier(string identifier)
         {
-            if (_parameterMap.TryGetValue(identifier, out var value))
+            if (this.parameterMap.TryGetValue(identifier, out var value))
             {
                 return value;
             }
@@ -37,17 +63,13 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
         }
 
-        public LambdaVisitor(IParameterTypeResolver parameterTypeResolver, IMethodResolver methodResolver)
-        {
-            ParameterTypeResolver = parameterTypeResolver;
-            MethodResolver = methodResolver;
-        }
-
+        /// <inheritdoc />
         public override Expression Visit(SyntaxNode node)
         {
             return base.Visit(node);
         }
 
+        /// <inheritdoc />
         public override Expression VisitParameter(ParameterSyntax node)
         {
             var name = node.Identifier.Text;
@@ -57,9 +79,9 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 
             if (typeNode == null)
             {
-                if (ParameterTypeResolver != null)
+                if (this.ParameterTypeResolver != null)
                 {
-                    pType = ParameterTypeResolver.ResolveType(name);
+                    pType = this.ParameterTypeResolver.ResolveType(name);
                 }
                 else
                 {
@@ -68,7 +90,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
             else
             {
-                pType = _typeVisitor.Visit(typeNode);
+                pType = this.typeVisitor.Visit(typeNode);
                 if (pType == null)
                 {
                     throw new FormatException($"Unknown type {typeNode.ToString()}");
@@ -77,53 +99,57 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 
             var parameterExp = Expression.Parameter(pType, name);
 
-            _parameterMap.Add(name, parameterExp);
-            _parameters.Add(parameterExp);
+            this.parameterMap.Add(name, parameterExp);
+            this.parameters.Add(parameterExp);
 
             return parameterExp;
         }
 
+        /// <inheritdoc />
         public override Expression VisitParameterList(ParameterListSyntax node)
         {
             foreach (var parameter in node.Parameters)
             {
-                VisitParameter(parameter);
+                this.VisitParameter(parameter);
             }
+
             return null;
         }
 
+        /// <inheritdoc />
         public override Expression VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
         {
-            _parameterMap.Clear();
-            _parameters.Clear();
+            this.parameterMap.Clear();
+            this.parameters.Clear();
 
-            Visit(node.Parameter);
-            var body = Visit(node.Body);
+            this.Visit(node.Parameter);
+            var body = this.Visit(node.Body);
             return Expression.Lambda(
                 body,
-                _parameters
-            );
+                this.parameters);
         }
 
+        /// <inheritdoc />
         public override Expression VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
         {
-            _parameterMap.Clear();
-            _parameters.Clear();
+            this.parameterMap.Clear();
+            this.parameters.Clear();
 
-            Visit(node.ParameterList);
-            var body = Visit(node.Body);
+            this.Visit(node.ParameterList);
+            var body = this.Visit(node.Body);
             return Expression.Lambda(
                 body,
-                _parameters
-            );
+                this.parameters);
         }
 
+        /// <inheritdoc />
         public override Expression VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
-            var exp = Visit(node.Expression);
+            var exp = this.Visit(node.Expression);
             return Expression.MakeMemberAccess(exp, exp.Type.GetProperty(node.Name.Identifier.Text));
         }
 
+        /// <inheritdoc />
         public override Expression VisitIdentifierName(IdentifierNameSyntax node)
         {
             var text = node.Identifier.Text;
@@ -131,7 +157,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             {
                 return null;
             }
-            else if (_parameterMap.TryGetValue(text, out var parameterExpression))
+            else if (this.parameterMap.TryGetValue(text, out var parameterExpression))
             {
                 return parameterExpression;
             }
@@ -141,6 +167,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
         }
 
+        /// <inheritdoc />
         public override Expression VisitLiteralExpression(LiteralExpressionSyntax node)
         {
             var kind = node.Kind();
@@ -153,15 +180,17 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
         }
 
+        /// <inheritdoc />
         public override Expression VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
         {
-            return Visit(node.Expression);
+            return this.Visit(node.Expression);
         }
 
+        /// <inheritdoc />
         public override Expression VisitBinaryExpression(BinaryExpressionSyntax node)
         {
-            var le = Visit(node.Left);
-            var re = Visit(node.Right);
+            var le = this.Visit(node.Left);
+            var re = this.Visit(node.Right);
 
             var kind = node.OperatorToken.Kind();
             switch (kind)
@@ -183,23 +212,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
         }
 
-        private static Expression ConvertIfNeeded(Expression expression, Type targetType)
-        {
-            if (expression.Type == targetType)
-            {
-                return expression;
-            }
-            if (expression.Type == typeof(double))
-            {
-                return expression;
-            }
-            if (expression.Type == typeof(float) && targetType != typeof(double))
-            {
-                return expression;
-            }
-            return Expression.Convert(expression, targetType);
-        }
-
+        /// <inheritdoc />
         public override Expression VisitInvocationExpression(InvocationExpressionSyntax node)
         {
             var args = new List<Expression>();
@@ -209,50 +222,31 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             {
                 args.Add(argVisitor.Visit(argument));
             }
-            
+
             var visitor = new FromInvocationExpressionVisitor(this, args.Select(a => a.Type).ToArray());
             var mi = visitor.Visit(node.Expression);
 
-            return Expression.Call(visitor.Expression, mi, args);
-        }
-    }
-
-    internal class ExpressionVisitor : CSharpSyntaxVisitor<Expression>
-    {
-        private LambdaVisitor _lambdaVisitor;
-
-        public ExpressionVisitor(LambdaVisitor lambdaVisitor)
-        {
-            this._lambdaVisitor = lambdaVisitor;
+            return Expression.Call(visitor.InstanceExpression, mi, args);
         }
 
-        public override Expression VisitArgument(ArgumentSyntax node)
+        private static Expression ConvertIfNeeded(Expression expression, Type targetType)
         {
-            return Visit(node.Expression);
-        }
+            if (expression.Type == targetType)
+            {
+                return expression;
+            }
 
-        public override Expression VisitIdentifierName(IdentifierNameSyntax node)
-        {
-            return _lambdaVisitor.ResolveIdentifier(node.Identifier.Text);
-        }
-    }
+            if (expression.Type == typeof(double))
+            {
+                return expression;
+            }
 
-    internal class FromInvocationExpressionVisitor : CSharpSyntaxVisitor<MethodInfo>
-    {
-        private LambdaVisitor _lambdaVisitor;
-        private Type[] _argsType;
+            if (expression.Type == typeof(float) && targetType != typeof(double))
+            {
+                return expression;
+            }
 
-        public Expression Expression { get; private set; }
-
-        public FromInvocationExpressionVisitor(LambdaVisitor lambdaVisitor, Type[] argsType)
-        {
-            this._lambdaVisitor = lambdaVisitor;
-            _argsType = argsType;
-        }
-
-        public override MethodInfo VisitIdentifierName(IdentifierNameSyntax node)
-        {
-            return _lambdaVisitor.MethodResolver.ResolveMethod(node.Identifier.Text, _argsType);
+            return Expression.Convert(expression, targetType);
         }
     }
 }
