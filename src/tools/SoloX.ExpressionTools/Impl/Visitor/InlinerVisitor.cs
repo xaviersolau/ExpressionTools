@@ -42,6 +42,10 @@ namespace SoloX.ExpressionTools.Impl.Visitor
                     this.parameterMap.Add(parameter, pexp);
                     parameters.AddRange(pexp.Parameters);
                 }
+                else
+                {
+                    parameters.Add(parameter);
+                }
             }
 
             return Expression.Lambda(this.Visit(node.Body), parameters);
