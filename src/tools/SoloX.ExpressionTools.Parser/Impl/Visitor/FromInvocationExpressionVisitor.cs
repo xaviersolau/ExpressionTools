@@ -37,5 +37,28 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         {
             return this.lambdaVisitor.MethodResolver.ResolveMethod(node.Identifier.Text, this.argsType);
         }
+
+        public override MethodInfo VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+        {
+            var expVisitor = new ExpressionVisitor(this.lambdaVisitor);
+
+            var exp = expVisitor.Visit(node.Expression);
+
+            var methodName = node.Name.ToString();
+
+            this.InstanceExpression = exp;
+
+            if (exp != null)
+            {
+                return exp.Type.GetMethod(methodName, this.argsType);
+            }
+
+            if (expVisitor.ResolvedAsAType != null)
+            {
+                return expVisitor.ResolvedAsAType.GetMethod(methodName, this.argsType);
+            }
+
+            throw new FormatException($"Unable to resolve the method {node.ToString()}");
+        }
     }
 }

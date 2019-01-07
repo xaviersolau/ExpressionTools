@@ -23,9 +23,10 @@ namespace SoloX.ExpressionTools.Parser.Impl
         /// </summary>
         /// <param name="parameterTypeResolver">Resolver that will be used to associate a Type to a given parameter name.</param>
         /// <param name="methodResolver">Resolver that will be used to identify a method given a name and an argument type list.</param>
-        public ExpressionParser(IParameterTypeResolver parameterTypeResolver, IMethodResolver methodResolver)
+        /// <param name="typeNameResolver">Resolver that will be used to identify a type given a name.</param>
+        public ExpressionParser(IParameterTypeResolver parameterTypeResolver, IMethodResolver methodResolver, ITypeNameResolver typeNameResolver)
         {
-            this.visitor = new LambdaVisitor(parameterTypeResolver, methodResolver);
+            this.visitor = new LambdaVisitor(parameterTypeResolver, methodResolver, typeNameResolver);
         }
 
         /// <inheritdoc />

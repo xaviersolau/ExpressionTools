@@ -6,8 +6,8 @@
 // ----------------------------------------------------------------------
 
 using System;
-using Moq;
-using SoloX.ExpressionTools.Parser.Impl;
+using System.Linq.Expressions;
+using SoloX.ExpressionTools.Parser.UTest.Utils;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Sample.Impl;
 using Xunit;
@@ -16,7 +16,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 {
     public class ExpressionParserTest
     {
-        public static IData2 M(IData1 d)
+        public static IData2 GetData2FromData1(IData1 d)
         {
             return d.Data2;
         }
@@ -24,21 +24,13 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [Fact(DisplayName = "It must parse a simple identity expression")]
         public void BasicIdentityParseTest()
         {
-            var typeResolverMock = new Mock<IParameterTypeResolver>();
+            var expParser = ExpressionParserHelper.CreateExpressionParser<object>();
 
-            var methodResolverMock = new Mock<IMethodResolver>();
-
-            typeResolverMock
-                .Setup(r => r.ResolveType(It.IsAny<string>()))
-                .Returns(typeof(object));
-
-            var expParser = new ExpressionParser(typeResolverMock.Object, methodResolverMock.Object);
-
-            var lambda = expParser.Parse("s => s");
+            var lambda = expParser.Parse<Func<object, object>>("s => s");
 
             Assert.NotNull(lambda);
 
-            var func = (Func<object, object>)lambda.Compile();
+            var func = lambda.Compile();
 
             var input = new object();
             var output = func(input);
@@ -49,56 +41,72 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [Fact(DisplayName = "It must parse a member access expression")]
         public void MemberAccessParseTest()
         {
-            var typeResolverMock = new Mock<IParameterTypeResolver>();
+            var expParser = ExpressionParserHelper.CreateExpressionParser<IData1>();
 
-            var methodResolverMock = new Mock<IMethodResolver>();
-
-            typeResolverMock
-                .Setup(r => r.ResolveType(It.IsAny<string>()))
-                .Returns(typeof(IData1));
-
-            var expParser = new ExpressionParser(typeResolverMock.Object, methodResolverMock.Object);
-
-            var lambda = expParser.Parse("s => s.Data2");
+            var lambda = expParser.Parse<Func<IData1, IData2>>("s => s.Data2");
 
             Assert.NotNull(lambda);
 
-            var func = (Func<IData1, IData2>)lambda.Compile();
+            AssertItReturnData2PropertyValue(lambda);
+        }
 
-            var input = new Data1()
-            {
-                Data2 = new Data2(),
-            };
+        [Fact(DisplayName = "It must parse a static method call expression without class name prefix")]
+        public void StaticMethodWithoutPrefixParseTest()
+        {
+            var expParser = ExpressionParserHelper.CreateExpressionParser<IData1>(
+                (string name, Type[] argsType) =>
+                {
+                    return this.GetType().GetMethod(name, argsType);
+                });
 
-            var output = func(input);
-            Assert.Same(input.Data2, output);
+            var lambda = expParser.Parse<Func<IData1, IData2>>("s => GetData2FromData1(s)");
+
+            Assert.NotNull(lambda);
+
+            AssertItReturnData2PropertyValue(lambda);
+        }
+
+        [Theory(DisplayName = "It must parse a static method call expression with class name prefix")]
+        [InlineData("s => ExpressionParserTest.GetData2FromData1(s)")]
+        [InlineData("s => SoloX.ExpressionTools.Parser.UTest.ExpressionParserTest.GetData2FromData1(s)")]
+        public void StaticMethodWithPrefixParseTest(string expression)
+        {
+            var expParser = ExpressionParserHelper.CreateExpressionParser<IData1>(
+                typeNameFunc: (string typeName) =>
+                {
+                    if (typeName == nameof(ExpressionParserTest) || typeName == typeof(ExpressionParserTest).FullName)
+                    {
+                        return typeof(ExpressionParserTest);
+                    }
+
+                    return null;
+                });
+
+            var lambda = expParser.Parse<Func<IData1, IData2>>(expression);
+
+            Assert.NotNull(lambda);
+
+            AssertItReturnData2PropertyValue(lambda);
         }
 
         [Fact(DisplayName = "It must parse a method call expression")]
         public void MethodParseTest()
         {
-            var typeResolverMock = new Mock<IParameterTypeResolver>();
+            var expParser = ExpressionParserHelper.CreateExpressionParser<IObjectWithMethod>();
 
-            typeResolverMock
-                .Setup(r => r.ResolveType(It.IsAny<string>()))
-                .Returns(typeof(IData1));
-
-            var methodResolverMock = new Mock<IMethodResolver>();
-
-            methodResolverMock
-                .Setup(r => r.ResolveMethod(It.IsAny<string>(), It.IsAny<Type[]>()))
-                .Returns((string name, Type[] argsType) =>
-                {
-                    return this.GetType().GetMethod(name, argsType);
-                });
-
-            var expParser = new ExpressionParser(typeResolverMock.Object, methodResolverMock.Object);
-
-            var lambda = expParser.Parse("s => M(s)");
-
+            var lambda = expParser.Parse<Func<IObjectWithMethod, int>>("o => o.BasicMethod(10)");
             Assert.NotNull(lambda);
 
-            var func = (Func<IData1, IData2>)lambda.Compile();
+            var func = lambda.Compile();
+
+            var input = new ObjectWithMethod();
+            var output = func(input);
+            Assert.Equal(10, output);
+        }
+
+        private static void AssertItReturnData2PropertyValue(Expression<Func<IData1, IData2>> lambda)
+        {
+            var func = lambda.Compile();
 
             var input = new Data1()
             {

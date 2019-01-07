@@ -6,8 +6,7 @@
 // ----------------------------------------------------------------------
 
 using System;
-using Moq;
-using SoloX.ExpressionTools.Parser.Impl;
+using SoloX.ExpressionTools.Parser.UTest.Utils;
 using Xunit;
 
 namespace SoloX.ExpressionTools.Parser.UTest
@@ -30,15 +29,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
         private static void AssertEval(string expression, double x, double y)
         {
-            var typeResolverMock = new Mock<IParameterTypeResolver>();
-
-            typeResolverMock
-                .Setup(r => r.ResolveType(It.IsAny<string>()))
-                .Returns(typeof(double));
-
-            var methodResolverMock = new Mock<IMethodResolver>();
-
-            var expParser = new ExpressionParser(typeResolverMock.Object, methodResolverMock.Object);
+            var expParser = ExpressionParserHelper.CreateExpressionParser<double>();
 
             var lambda = expParser.Parse(expression);
 

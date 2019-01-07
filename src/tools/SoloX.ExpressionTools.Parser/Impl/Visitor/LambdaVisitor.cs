@@ -30,10 +30,12 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         /// </summary>
         /// <param name="parameterTypeResolver">Resolver that will identify the parameters type.</param>
         /// <param name="methodResolver">Resolver that will identify methods.</param>
-        public LambdaVisitor(IParameterTypeResolver parameterTypeResolver, IMethodResolver methodResolver)
+        /// <param name="typeNameResolver">Resolver that will identify types.</param>
+        public LambdaVisitor(IParameterTypeResolver parameterTypeResolver, IMethodResolver methodResolver, ITypeNameResolver typeNameResolver)
         {
             this.ParameterTypeResolver = parameterTypeResolver;
             this.MethodResolver = methodResolver;
+            this.TypeNameResolver = typeNameResolver;
         }
 
         /// <summary>
@@ -47,10 +49,15 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         public IMethodResolver MethodResolver { get; }
 
         /// <summary>
-        /// Resolve the given identifier.
+        /// Gets the type name resolver.
+        /// </summary>
+        public ITypeNameResolver TypeNameResolver { get; }
+
+        /// <summary>
+        /// Resolve the given identifier as an Expression.
         /// </summary>
         /// <param name="identifier">The identifier to resolve.</param>
-        /// <returns>The resulting Expression.</returns>
+        /// <returns>The resulting Expression or null if it can not be resolved as an Expression.</returns>
         public Expression ResolveIdentifier(string identifier)
         {
             if (this.parameterMap.TryGetValue(identifier, out var value))
@@ -59,7 +66,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
             else
             {
-                throw new KeyNotFoundException($"unknown identifier {identifier}");
+                return null;
             }
         }
 
@@ -220,7 +227,8 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 
             foreach (var argument in node.ArgumentList.Arguments)
             {
-                args.Add(argVisitor.Visit(argument));
+                var argExp = argVisitor.Visit(argument);
+                args.Add(argExp);
             }
 
             var visitor = new FromInvocationExpressionVisitor(this, args.Select(a => a.Type).ToArray());

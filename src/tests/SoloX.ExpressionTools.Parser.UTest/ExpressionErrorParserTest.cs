@@ -6,8 +6,7 @@
 // ----------------------------------------------------------------------
 
 using System;
-using Moq;
-using SoloX.ExpressionTools.Parser.Impl;
+using SoloX.ExpressionTools.Parser.UTest.Utils;
 using Xunit;
 
 namespace SoloX.ExpressionTools.Parser.UTest
@@ -17,15 +16,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [Fact(DisplayName = "It must parse a single member expression")]
         public void ProtectionMultiMembersParseTest()
         {
-            var typeResolverMock = new Mock<IParameterTypeResolver>();
-
-            var methodResolverMock = new Mock<IMethodResolver>();
-
-            typeResolverMock
-                .Setup(r => r.ResolveType(It.IsAny<string>()))
-                .Returns(typeof(object));
-
-            var expParser = new ExpressionParser(typeResolverMock.Object, methodResolverMock.Object);
+            var expParser = ExpressionParserHelper.CreateExpressionParser<object>();
 
             Assert.Throws<FormatException>(() => expParser.Parse("s => s; var tmp = y => y"));
         }
