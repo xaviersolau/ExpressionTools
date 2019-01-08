@@ -13,7 +13,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 {
     public class ExpressionFxParserTest
     {
-        [Theory(DisplayName = "It must parse a mathematical f(x) expression")]
+        [Theory(DisplayName = "It must parse a basic mathematical f(x) expression")]
         [InlineData("x => x + 1", 1d, 2d)]
         [InlineData("x => x - 1", 2d, 1d)]
         [InlineData("x => x * x", 2d, 4d)]
@@ -22,6 +22,15 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [InlineData("x => x ^ 2", 3d, 9d)]
         [InlineData("x => 1 / x", 2d, 0.5d)]
         [InlineData("x => x % 2", 11d, 1d)]
+        public void BasicFunctionXYParseTest(string expression, double x, double y)
+        {
+            AssertEval(expression, x, y);
+        }
+
+        [Theory(DisplayName = "It must parse a mathematical f(x) expression")]
+        [InlineData("x => Math.Abs(x)", -2d, 2d)]
+        [InlineData("x => Abs(x)", -2d, 2d)]
+        [InlineData("x => Math.PI * x", 1d, Math.PI)]
         public void FunctionXYParseTest(string expression, double x, double y)
         {
             AssertEval(expression, x, y);
@@ -29,7 +38,20 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
         private static void AssertEval(string expression, double x, double y)
         {
-            var expParser = ExpressionParserHelper.CreateExpressionParser<double>();
+            var expParser = ExpressionParserHelper.CreateExpressionParser<double>(
+                methodFunc: (name, args) =>
+                {
+                    return typeof(Math).GetMethod(name, args);
+                },
+                typeNameFunc: (typeName) =>
+                {
+                    if (typeName == nameof(Math))
+                    {
+                        return typeof(Math);
+                    }
+
+                    return null;
+                });
 
             var lambda = expParser.Parse(expression);
 
