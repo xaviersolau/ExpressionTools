@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Microsoft.CodeAnalysis;
+using System.Text;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -19,11 +19,9 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
     /// <summary>
     /// Visitor to convert Lambda CSharp syntax tree to Linq Expression.
     /// </summary>
-    internal class LambdaVisitor : CSharpSyntaxVisitor<Expression>
+    internal class LambdaVisitor : CSharpSyntaxVisitor<LambdaVisitorAttribute>
     {
-        private readonly List<ParameterExpression> parameters = new List<ParameterExpression>();
-        private readonly Dictionary<string, ParameterExpression> parameterMap = new Dictionary<string, ParameterExpression>();
-        private readonly TypeVisitor typeVisitor = new TypeVisitor();
+        private readonly Stack<LambdaVisitorAttribute> attributes = new Stack<LambdaVisitorAttribute>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LambdaVisitor"/> class.
@@ -53,32 +51,43 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         /// </summary>
         public ITypeNameResolver TypeNameResolver { get; }
 
-        /// <summary>
-        /// Resolve the given identifier as an Expression.
-        /// </summary>
-        /// <param name="identifier">The identifier to resolve.</param>
-        /// <returns>The resulting Expression or null if it can not be resolved as an Expression.</returns>
-        public Expression ResolveIdentifier(string identifier)
+        /// <inheritdoc />
+        public override LambdaVisitorAttribute VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
         {
-            if (this.parameterMap.TryGetValue(identifier, out var value))
-            {
-                return value;
-            }
-            else
-            {
-                return null;
-            }
+            return this.VisitWithNewAttribute(
+                attribute =>
+                {
+                    this.Visit(node.ParameterList);
+
+                    var bodyAttribute = this.Visit(node.Body);
+
+                    attribute.ResultingExpression = Expression.Lambda(
+                        bodyAttribute.ResultingExpression,
+                        bodyAttribute.Parameters);
+                });
         }
 
         /// <inheritdoc />
-        public override Expression Visit(SyntaxNode node)
+        public override LambdaVisitorAttribute VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
         {
-            return base.Visit(node);
+            return this.VisitWithNewAttribute(
+                attribute =>
+                {
+                    this.Visit(node.Parameter);
+
+                    var bodyAttribute = this.Visit(node.Body);
+
+                    attribute.ResultingExpression = Expression.Lambda(
+                        bodyAttribute.ResultingExpression,
+                        bodyAttribute.Parameters);
+                });
         }
 
         /// <inheritdoc />
-        public override Expression VisitParameter(ParameterSyntax node)
+        public override LambdaVisitorAttribute VisitParameter(ParameterSyntax node)
         {
+            var attribute = this.attributes.Peek();
+
             var name = node.Identifier.Text;
             var typeNode = node.Type;
 
@@ -97,7 +106,9 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
             else
             {
-                pType = this.typeVisitor.Visit(typeNode);
+                var typeAttribute = this.VisitWithNewAttribute(_ => this.Visit(typeNode));
+
+                pType = typeAttribute.ResultingType;
                 if (pType == null)
                 {
                     throw new FormatException($"Unknown type {typeNode.ToString()}");
@@ -106,14 +117,13 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 
             var parameterExp = Expression.Parameter(pType, name);
 
-            this.parameterMap.Add(name, parameterExp);
-            this.parameters.Add(parameterExp);
+            attribute.ParameterMap.Add(name, parameterExp);
+            attribute.Parameters.Add(parameterExp);
 
-            return parameterExp;
+            return attribute;
         }
 
-        /// <inheritdoc />
-        public override Expression VisitParameterList(ParameterListSyntax node)
+        public override LambdaVisitorAttribute VisitParameterList(ParameterListSyntax node)
         {
             foreach (var parameter in node.Parameters)
             {
@@ -124,82 +134,176 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override Expression VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
+        public override LambdaVisitorAttribute VisitInvocationExpression(InvocationExpressionSyntax node)
         {
-            this.parameterMap.Clear();
-            this.parameters.Clear();
+            return this.VisitWithNewAttribute(
+                attribute =>
+                {
+                    var args = new List<Expression>();
 
-            this.Visit(node.Parameter);
-            var body = this.Visit(node.Body);
-            return Expression.Lambda(
-                body,
-                this.parameters);
+                    foreach (var argument in node.ArgumentList.Arguments)
+                    {
+                        var argumentAttribute = this.Visit(argument);
+                        if (argumentAttribute.ResultingExpression == null)
+                        {
+                            throw new FormatException($"Unable to evaluate argument: {argument}");
+                        }
+
+                        args.Add(argumentAttribute.ResultingExpression);
+                    }
+
+                    attribute.ArgumentTypes = args.Select(a => a.Type).ToArray();
+
+                    var expressionAttribute = this.Visit(node.Expression);
+
+                    attribute.ResultingExpression = Expression.Call(
+                        expressionAttribute.ResultingExpression,
+                        expressionAttribute.ResultingMethodInfo,
+                        args);
+                });
         }
 
         /// <inheritdoc />
-        public override Expression VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
+        public override LambdaVisitorAttribute VisitArgument(ArgumentSyntax node)
         {
-            this.parameterMap.Clear();
-            this.parameters.Clear();
-
-            this.Visit(node.ParameterList);
-            var body = this.Visit(node.Body);
-            return Expression.Lambda(
-                body,
-                this.parameters);
+            return this.VisitWithNewAttribute(
+                attribute =>
+                {
+                    var expAttribute = this.Visit(node.Expression);
+                    attribute.ResultingExpression = expAttribute.ResultingExpression;
+                });
         }
 
         /// <inheritdoc />
-        public override Expression VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+        public override LambdaVisitorAttribute VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
-            var exp = this.Visit(node.Expression);
-            return Expression.MakeMemberAccess(exp, exp.Type.GetProperty(node.Name.Identifier.Text));
+            var attribute = this.attributes.Peek();
+
+            var memberName = node.Name.Identifier.Text;
+
+            var expressionAttribute = this.Visit(node.Expression);
+            var exp = expressionAttribute.ResultingExpression;
+
+            var type = exp != null ? exp.Type : expressionAttribute.ResultingType;
+
+            if (type == null)
+            {
+                var identifier = attribute.ResultingIdentifier + $".{memberName}";
+                if (this.TryToResolveAsAType(identifier, out type))
+                {
+                    attribute.ResultingType = type;
+                }
+                else
+                {
+                    attribute.ResultingIdentifier = identifier;
+                }
+
+                return attribute;
+            }
+
+            if (attribute.ArgumentTypes != null)
+            {
+                attribute.ResultingMethodInfo = type.GetMethod(memberName, attribute.ArgumentTypes);
+            }
+
+            if (attribute.ResultingMethodInfo == null)
+            {
+                MemberInfo member = type.GetProperty(memberName);
+                if (member == null)
+                {
+                    member = type.GetField(memberName);
+                }
+
+                attribute.ResultingExpression = Expression.MakeMemberAccess(exp, member);
+            }
+
+            return attribute;
         }
 
         /// <inheritdoc />
-        public override Expression VisitIdentifierName(IdentifierNameSyntax node)
+        public override LambdaVisitorAttribute VisitIdentifierName(IdentifierNameSyntax node)
         {
+            var attribute = this.attributes.Peek();
+
             var text = node.Identifier.Text;
             if (string.IsNullOrEmpty(text))
             {
-                return null;
+                throw new FormatException($"Identifier must be specified");
             }
-            else if (this.parameterMap.TryGetValue(text, out var parameterExpression))
+            else if (attribute.ParameterMap.TryGetValue(text, out var parameterExpression))
             {
-                return parameterExpression;
+                attribute.ResultingExpression = parameterExpression;
+            }
+            else if (this.TryToResolveAsAMethod(text, attribute.ArgumentTypes, out var methodInfo))
+            {
+                attribute.ResultingMethodInfo = methodInfo;
+            }
+            else if (this.TryToResolveAsAType(text, out var type))
+            {
+                attribute.ResultingType = type;
             }
             else
             {
-                throw new FormatException($"Unknown identifier {node.Identifier.Text}");
+                attribute.ResultingIdentifier = text;
             }
+
+            return attribute;
         }
 
         /// <inheritdoc />
-        public override Expression VisitLiteralExpression(LiteralExpressionSyntax node)
-        {
-            var kind = node.Kind();
-            switch (kind)
-            {
-                case SyntaxKind.NumericLiteralExpression:
-                    return Expression.Constant(node.Token.Value);
-                default:
-                    throw new FormatException($"unsupported operator {node.Token.ValueText}");
-            }
-        }
-
-        /// <inheritdoc />
-        public override Expression VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
+        public override LambdaVisitorAttribute VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
         {
             return this.Visit(node.Expression);
         }
 
         /// <inheritdoc />
-        public override Expression VisitBinaryExpression(BinaryExpressionSyntax node)
+        public override LambdaVisitorAttribute VisitBinaryExpression(BinaryExpressionSyntax node)
         {
-            var le = this.Visit(node.Left);
-            var re = this.Visit(node.Right);
+            var attribute = this.attributes.Peek();
 
-            var kind = node.OperatorToken.Kind();
+            var leftAttribute = this.Visit(node.Left);
+            var lexp = leftAttribute.ResultingExpression;
+
+            var rightAttribute = this.Visit(node.Right);
+            var rexp = rightAttribute.ResultingExpression;
+
+            attribute.ResultingExpression = CreateBinaryExpression(node.OperatorToken.Kind(), lexp, rexp, node);
+
+            return attribute;
+        }
+
+        /// <inheritdoc />
+        public override LambdaVisitorAttribute VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
+        {
+            var attribute = this.attributes.Peek();
+
+            var expAttribute = this.Visit(node.Operand);
+            var exp = expAttribute.ResultingExpression;
+
+            attribute.ResultingExpression = CreatePrefixUnaryExpression(node.OperatorToken.Kind(), exp, node);
+
+            return attribute;
+        }
+
+        /// <inheritdoc />
+        public override LambdaVisitorAttribute VisitLiteralExpression(LiteralExpressionSyntax node)
+        {
+            var attribute = this.attributes.Peek();
+            var kind = node.Kind();
+            switch (kind)
+            {
+                case SyntaxKind.NumericLiteralExpression:
+                    attribute.ResultingExpression = Expression.Constant(node.Token.Value);
+                    break;
+                default:
+                    throw new FormatException($"unsupported operator {node.Token.ValueText}");
+            }
+
+            return attribute;
+        }
+
+        private static Expression CreateBinaryExpression(SyntaxKind kind, Expression le, Expression re, BinaryExpressionSyntax node)
+        {
             switch (kind)
             {
                 case SyntaxKind.PlusToken:
@@ -219,22 +323,17 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
         }
 
-        /// <inheritdoc />
-        public override Expression VisitInvocationExpression(InvocationExpressionSyntax node)
+        private static Expression CreatePrefixUnaryExpression(SyntaxKind kind, Expression exp, PrefixUnaryExpressionSyntax node)
         {
-            var args = new List<Expression>();
-            var argVisitor = new ExpressionVisitor(this);
-
-            foreach (var argument in node.ArgumentList.Arguments)
+            switch (kind)
             {
-                var argExp = argVisitor.Visit(argument);
-                args.Add(argExp);
+                case SyntaxKind.PlusToken:
+                    return Expression.UnaryPlus(exp);
+                case SyntaxKind.MinusToken:
+                    return Expression.Negate(exp);
+                default:
+                    throw new FormatException($"unsupported operator {node.OperatorToken.ValueText}");
             }
-
-            var visitor = new FromInvocationExpressionVisitor(this, args.Select(a => a.Type).ToArray());
-            var mi = visitor.Visit(node.Expression);
-
-            return Expression.Call(visitor.InstanceExpression, mi, args);
         }
 
         private static Expression ConvertIfNeeded(Expression expression, Type targetType)
@@ -255,6 +354,26 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
 
             return Expression.Convert(expression, targetType);
+        }
+
+        private LambdaVisitorAttribute VisitWithNewAttribute(Action<LambdaVisitorAttribute> action)
+        {
+            var attribute = new LambdaVisitorAttribute(this.attributes.Any() ? this.attributes.Peek() : null);
+            this.attributes.Push(attribute);
+            action(attribute);
+            return this.attributes.Pop();
+        }
+
+        private bool TryToResolveAsAType(string text, out Type type)
+        {
+            type = this.TypeNameResolver.ResolveTypeName(text);
+            return type != null;
+        }
+
+        private bool TryToResolveAsAMethod(string text, Type[] argumentTypes, out MethodInfo methodInfo)
+        {
+            methodInfo = (argumentTypes != null) ? this.MethodResolver.ResolveMethod(text, argumentTypes) : null;
+            return methodInfo != null;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace SoloX.ExpressionTools.Parser.Impl
         {
             var stree = GetLambdaSyntaxNode(lambdaExpressionText);
 
-            var expRes = this.visitor.Visit(stree);
+            var expRes = this.visitor.Visit(stree).ResultingExpression;
             return (Expression<TDelegate>)expRes;
         }
 
@@ -43,7 +43,7 @@ namespace SoloX.ExpressionTools.Parser.Impl
         {
             var stree = GetLambdaSyntaxNode(lambdaExpressionText);
 
-            var expRes = this.visitor.Visit(stree);
+            var expRes = this.visitor.Visit(stree).ResultingExpression;
             return (LambdaExpression)expRes;
         }
 
