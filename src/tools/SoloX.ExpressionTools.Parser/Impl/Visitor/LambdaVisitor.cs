@@ -159,7 +159,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                     attribute.ResultingExpression = Expression.Call(
                         expressionAttribute.ResultingExpression,
                         expressionAttribute.ResultingMethodInfo,
-                        args);
+                        ConvertTypeForMethodCall(args, expressionAttribute.ResultingMethodInfo));
                 });
         }
 
@@ -215,6 +215,10 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                 }
 
                 attribute.ResultingExpression = Expression.MakeMemberAccess(exp, member);
+            }
+            else
+            {
+                attribute.ResultingExpression = exp;
             }
 
             return attribute;
@@ -354,6 +358,30 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
 
             return Expression.Convert(expression, targetType);
+        }
+
+        private static IEnumerable<Expression> ConvertTypeForMethodCall(IReadOnlyList<Expression> args, MethodInfo methodInfo)
+        {
+            var argCount = args.Count;
+            var convertedArgs = new Expression[argCount];
+            var parameters = methodInfo.GetParameters();
+            for (int i = 0; i < argCount; i++)
+            {
+                var exp = args[i];
+                var parameterInfo = parameters[i];
+                var expectedType = parameterInfo.ParameterType;
+
+                if (exp.Type != expectedType)
+                {
+                    convertedArgs[i] = Expression.Convert(exp, expectedType);
+                }
+                else
+                {
+                    convertedArgs[i] = exp;
+                }
+            }
+
+            return convertedArgs;
         }
 
         private LambdaVisitorAttribute VisitWithNewAttribute(Action<LambdaVisitorAttribute> action)

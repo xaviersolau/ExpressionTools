@@ -40,6 +40,8 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [InlineData("x => Abs(x)", -2d, 2d)]
         [InlineData("x => Math.PI * x", 1d, Math.PI)]
         [InlineData("x => Math.Abs(Math.Min(x, -10d))", -20d, 20d)]
+        [InlineData("x => Math.Min(x, 10)", 15d, 10d)]
+        [InlineData("x => Math.Abs(x) + Math.Min(x, -10d)", -20d, 0d)]
         public void FunctionXYParseTest(string expression, double x, double y)
         {
             AssertEval(expression, x, y);

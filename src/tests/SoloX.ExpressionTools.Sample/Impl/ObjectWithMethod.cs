@@ -9,9 +9,24 @@ namespace SoloX.ExpressionTools.Sample.Impl
 {
     public class ObjectWithMethod : IObjectWithMethod
     {
+        public IObjectWithMethod Self
+        {
+            get { return this; }
+        }
+
         public int BasicMethod(int input)
         {
             return input;
+        }
+
+        public IObjectWithMethod SerialMethod1(int input)
+        {
+            return input > 0 ? this : null;
+        }
+
+        public IObjectWithMethod SerialMethod2(double input1, double input2)
+        {
+            return input1 + input2 > 0 ? this : null;
         }
     }
 }

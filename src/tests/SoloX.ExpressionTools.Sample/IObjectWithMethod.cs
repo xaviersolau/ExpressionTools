@@ -9,6 +9,12 @@ namespace SoloX.ExpressionTools.Sample
 {
     public interface IObjectWithMethod
     {
+        IObjectWithMethod Self { get; }
+
         int BasicMethod(int input);
+
+        IObjectWithMethod SerialMethod1(int input);
+
+        IObjectWithMethod SerialMethod2(double input1, double input2);
     }
 }

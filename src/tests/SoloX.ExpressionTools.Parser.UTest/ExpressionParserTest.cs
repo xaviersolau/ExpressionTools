@@ -89,19 +89,24 @@ namespace SoloX.ExpressionTools.Parser.UTest
             AssertItReturnData2PropertyValue(lambda);
         }
 
-        [Fact(DisplayName = "It must parse a method call expression")]
-        public void MethodParseTest()
+        [Theory(DisplayName = "It must parse a method call expression")]
+        [InlineData("o => o.BasicMethod(10)", 10)]
+        [InlineData("o => o.SerialMethod1(1).SerialMethod1(2).BasicMethod(10)", 10)]
+        [InlineData("o => o.SerialMethod2(1, 2).SerialMethod1(2).SerialMethod2(2, 1).BasicMethod(10)", 10)]
+        [InlineData("o => o.SerialMethod2(1, 2).SerialMethod1(o.BasicMethod(10)).SerialMethod2(2, 1).BasicMethod(10)", 10)]
+        [InlineData("o => o.SerialMethod2(1, 2).SerialMethod1(o.Self.BasicMethod(10)).Self.SerialMethod2(2, 1).BasicMethod(10)", 10)]
+        public void MethodParseTest(string expression, int expectedRes)
         {
             var expParser = ExpressionParserHelper.CreateExpressionParser<IObjectWithMethod>();
 
-            var lambda = expParser.Parse<Func<IObjectWithMethod, int>>("o => o.BasicMethod(10)");
+            var lambda = expParser.Parse<Func<IObjectWithMethod, int>>(expression);
             Assert.NotNull(lambda);
 
             var func = lambda.Compile();
 
             var input = new ObjectWithMethod();
             var output = func(input);
-            Assert.Equal(10, output);
+            Assert.Equal(expectedRes, output);
         }
 
         private static void AssertItReturnData2PropertyValue(Expression<Func<IData1, IData2>> lambda)
