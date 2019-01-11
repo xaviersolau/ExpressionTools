@@ -91,10 +91,10 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
         [Theory(DisplayName = "It must parse a method call expression")]
         [InlineData("o => o.BasicMethod(10)", 10)]
-        [InlineData("o => o.SerialMethod1(1).SerialMethod1(2).BasicMethod(10)", 10)]
-        [InlineData("o => o.SerialMethod2(1, 2).SerialMethod1(2).SerialMethod2(2, 1).BasicMethod(10)", 10)]
-        [InlineData("o => o.SerialMethod2(1, 2).SerialMethod1(o.BasicMethod(10)).SerialMethod2(2, 1).BasicMethod(10)", 10)]
-        [InlineData("o => o.SerialMethod2(1, 2).SerialMethod1(o.Self.BasicMethod(10)).Self.SerialMethod2(2, 1).BasicMethod(10)", 10)]
+        [InlineData("o => o.TestMethod1(1).TestMethod1(2).BasicMethod(10)", 10)]
+        [InlineData("o => o.TestMethod2(1, 2).TestMethod1(2).TestMethod2(2, 1).BasicMethod(10)", 10)]
+        [InlineData("o => o.TestMethod2(1, 2).TestMethod1(o.BasicMethod(10)).TestMethod2(2, 1).BasicMethod(10)", 10)]
+        [InlineData("o => o.TestMethod2(1, 2).TestMethod1(o.Self.BasicMethod(10)).Self.TestMethod2(2, 1).BasicMethod(10)", 10)]
         public void MethodParseTest(string expression, int expectedRes)
         {
             var expParser = ExpressionParserHelper.CreateExpressionParser<IObjectWithMethod>();

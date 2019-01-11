@@ -19,12 +19,12 @@ namespace SoloX.ExpressionTools.Sample.Impl
             return input;
         }
 
-        public IObjectWithMethod SerialMethod1(int input)
+        public IObjectWithMethod TestMethod1(int input)
         {
             return input > 0 ? this : null;
         }
 
-        public IObjectWithMethod SerialMethod2(double input1, double input2)
+        public IObjectWithMethod TestMethod2(double input1, double input2)
         {
             return input1 + input2 > 0 ? this : null;
         }

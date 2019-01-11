@@ -13,8 +13,8 @@ namespace SoloX.ExpressionTools.Sample
 
         int BasicMethod(int input);
 
-        IObjectWithMethod SerialMethod1(int input);
+        IObjectWithMethod TestMethod1(int input);
 
-        IObjectWithMethod SerialMethod2(double input1, double input2);
+        IObjectWithMethod TestMethod2(double input1, double input2);
     }
 }

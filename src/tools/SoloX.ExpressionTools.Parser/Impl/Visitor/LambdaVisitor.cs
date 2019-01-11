@@ -29,7 +29,10 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         /// <param name="parameterTypeResolver">Resolver that will identify the parameters type.</param>
         /// <param name="methodResolver">Resolver that will identify methods.</param>
         /// <param name="typeNameResolver">Resolver that will identify types.</param>
-        public LambdaVisitor(IParameterTypeResolver parameterTypeResolver, IMethodResolver methodResolver, ITypeNameResolver typeNameResolver)
+        public LambdaVisitor(
+            IParameterTypeResolver parameterTypeResolver,
+            IMethodResolver methodResolver,
+            ITypeNameResolver typeNameResolver)
         {
             this.ParameterTypeResolver = parameterTypeResolver;
             this.MethodResolver = methodResolver;
@@ -57,13 +60,13 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             return this.VisitWithNewAttribute(
                 attribute =>
                 {
-                    this.Visit(node.ParameterList);
+                    var parameterAttribute = this.Visit(node.ParameterList);
 
                     var bodyAttribute = this.Visit(node.Body);
 
                     attribute.ResultingExpression = Expression.Lambda(
                         bodyAttribute.ResultingExpression,
-                        bodyAttribute.Parameters);
+                        parameterAttribute.Parameters);
                 });
         }
 
@@ -123,6 +126,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             return attribute;
         }
 
+        /// <inheritdoc />
         public override LambdaVisitorAttribute VisitParameterList(ParameterListSyntax node)
         {
             foreach (var parameter in node.Parameters)
@@ -130,7 +134,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                 this.VisitParameter(parameter);
             }
 
-            return null;
+            return this.attributes.Peek();
         }
 
         /// <inheritdoc />
