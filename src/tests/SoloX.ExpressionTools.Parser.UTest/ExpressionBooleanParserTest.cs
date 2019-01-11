@@ -13,7 +13,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 {
     public class ExpressionBooleanParserTest
     {
-        [Theory(DisplayName = "It must parse a basic binary operator boolean expression")]
+        [Theory(DisplayName = "It must parse a basic boolean binary operator expression")]
         [InlineData("(a, b) => a || b", true, true, true)]
         [InlineData("(a, b) => a || b", true, false, true)]
         [InlineData("(a, b) => a || b", false, true, true)]
@@ -31,7 +31,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
             AssertEval(expression, operandA, operandB, expectedResult);
         }
 
-        [Theory(DisplayName = "It must parse a basic unary operator boolean expression")]
+        [Theory(DisplayName = "It must parse a basic boolean unary operator expression")]
         [InlineData("(a) => !a", true, false)]
         [InlineData("(a) => !a", false, true)]
         [InlineData("(a) => !!a", false, false)]
