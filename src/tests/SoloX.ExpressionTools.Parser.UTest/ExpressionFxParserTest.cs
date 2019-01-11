@@ -27,7 +27,6 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [InlineData("x => x * x", 2d, 4d)]
         [InlineData("x => x / x", 2d, 1d)]
         [InlineData("x => (x + 1) * 2", 1d, 4d)]
-        [InlineData("x => x ^ 2", 3d, 9d)]
         [InlineData("x => 1 / x", 2d, 0.5d)]
         [InlineData("x => x % 2", 11d, 1d)]
         public void BasicBinaryFunctionXYParseTest(string expression, double x, double y)

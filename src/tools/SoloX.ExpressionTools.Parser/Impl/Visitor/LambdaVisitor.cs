@@ -322,10 +322,14 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                     return Expression.Multiply(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 case SyntaxKind.SlashToken:
                     return Expression.Divide(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
-                case SyntaxKind.CaretToken:
-                    return Expression.Power(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 case SyntaxKind.PercentToken:
                     return Expression.Modulo(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.AmpersandAmpersandToken:
+                    return Expression.And(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.BarBarToken:
+                    return Expression.Or(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.CaretToken:
+                    return Expression.ExclusiveOr(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 default:
                     throw new FormatException($"unsupported operator {node.OperatorToken.ValueText}");
             }
@@ -339,6 +343,8 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                     return Expression.UnaryPlus(exp);
                 case SyntaxKind.MinusToken:
                     return Expression.Negate(exp);
+                case SyntaxKind.ExclamationToken:
+                    return Expression.Not(exp);
                 default:
                     throw new FormatException($"unsupported operator {node.OperatorToken.ValueText}");
             }
