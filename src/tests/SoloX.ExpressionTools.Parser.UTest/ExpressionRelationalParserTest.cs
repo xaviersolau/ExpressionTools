@@ -17,7 +17,15 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [InlineData("(a, b) => a < b", 1, 2, true)]
         [InlineData("(a, b) => a > b", 1, 2, false)]
         [InlineData("(a, b) => a <= b", 1, 2, true)]
+        [InlineData("(a, b) => a <= b", 2, 2, true)]
+        [InlineData("(a, b) => a <= b", 3, 2, false)]
         [InlineData("(a, b) => a >= b", 1, 2, false)]
+        [InlineData("(a, b) => a >= b", 2, 2, true)]
+        [InlineData("(a, b) => a >= b", 3, 2, true)]
+        [InlineData("(a, b) => a == b", 1, 2, false)]
+        [InlineData("(a, b) => a == b", 2, 2, true)]
+        [InlineData("(a, b) => a != b", 1, 2, true)]
+        [InlineData("(a, b) => a != b", 2, 2, false)]
         public void BasicRelationalOperationParseTest(string expression, int operandA, int operandB, bool expectedResult)
         {
             AssertEval(expression, operandA, operandB, expectedResult);

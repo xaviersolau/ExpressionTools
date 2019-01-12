@@ -332,6 +332,10 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                     return Expression.LessThan(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 case SyntaxKind.LessThanEqualsToken:
                     return Expression.LessThanOrEqual(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.EqualsEqualsToken:
+                    return Expression.Equal(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.ExclamationEqualsToken:
+                    return Expression.NotEqual(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 case SyntaxKind.AmpersandAmpersandToken:
                     return Expression.And(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 case SyntaxKind.BarBarToken:
