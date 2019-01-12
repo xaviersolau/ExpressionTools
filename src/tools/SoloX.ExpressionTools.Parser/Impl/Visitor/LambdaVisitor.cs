@@ -324,6 +324,14 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                     return Expression.Divide(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 case SyntaxKind.PercentToken:
                     return Expression.Modulo(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.GreaterThanToken:
+                    return Expression.GreaterThan(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.GreaterThanEqualsToken:
+                    return Expression.GreaterThanOrEqual(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.LessThanToken:
+                    return Expression.LessThan(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.LessThanEqualsToken:
+                    return Expression.LessThanOrEqual(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 case SyntaxKind.AmpersandAmpersandToken:
                     return Expression.And(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 case SyntaxKind.BarBarToken:
