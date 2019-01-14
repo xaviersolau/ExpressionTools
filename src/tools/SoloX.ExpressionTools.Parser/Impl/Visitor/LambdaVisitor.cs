@@ -310,6 +310,23 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             return attribute;
         }
 
+        /// <inheritdoc />
+        public override LambdaVisitorAttribute VisitConditionalExpression(ConditionalExpressionSyntax node)
+        {
+            var attribute = this.attributes.Peek();
+
+            var testAttribute = this.Visit(node.Condition);
+            var testExp = testAttribute.ResultingExpression;
+            var ifTrueAttribute = this.Visit(node.WhenTrue);
+            var ifTrueExp = ifTrueAttribute.ResultingExpression;
+            var ifFalseAttribute = this.Visit(node.WhenFalse);
+            var ifFalseExp = ifFalseAttribute.ResultingExpression;
+
+            attribute.ResultingExpression = Expression.Condition(testExp, ifTrueExp, ifFalseExp);
+
+            return attribute;
+        }
+
         private static Expression CreateBinaryExpression(SyntaxKind kind, Expression le, Expression re, BinaryExpressionSyntax node)
         {
             switch (kind)

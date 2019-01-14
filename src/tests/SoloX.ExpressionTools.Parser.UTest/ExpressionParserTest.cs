@@ -109,6 +109,22 @@ namespace SoloX.ExpressionTools.Parser.UTest
             Assert.Equal(expectedRes, output);
         }
 
+        [Theory(DisplayName = "It must parse a conditional expression")]
+        [InlineData("x => x >= 10 ? 1: 0", 10, 1)]
+        [InlineData("x => x >= 10 ? 1: 0", 15, 1)]
+        [InlineData("x => x >= 10 ? 1: 0", 5, 0)]
+        public void ConditionalExpressionParseTest(string conditionalExpression, int input, int expected)
+        {
+            var expParser = ExpressionParserHelper.CreateExpressionParser<int>();
+
+            var lambda = expParser.Parse<Func<int, int>>(conditionalExpression);
+
+            Assert.NotNull(lambda);
+            var func = lambda.Compile();
+
+            Assert.Equal(expected, func(input));
+        }
+
         private static void AssertItReturnData2PropertyValue(Expression<Func<IData1, IData2>> lambda)
         {
             var func = lambda.Compile();
