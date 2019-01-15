@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.UTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Sample", "src\tests\SoloX.ExpressionTools.Sample\SoloX.ExpressionTools.Sample.csproj", "{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.ExpressionTools.Examples", "src\examples\SoloX.ExpressionTools.Examples\SoloX.ExpressionTools.Examples.csproj", "{B34D66F0-84C4-458A-BE08-09057AC765D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B34D66F0-84C4-458A-BE08-09057AC765D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B34D66F0-84C4-458A-BE08-09057AC765D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B34D66F0-84C4-458A-BE08-09057AC765D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B34D66F0-84C4-458A-BE08-09057AC765D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
