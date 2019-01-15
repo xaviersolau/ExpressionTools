@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.1.0-alpha-1</Version>
+    <Authors>Xavier Solau</Authors>
+    <Copyright>Copyright © 2019 Xavier Solau</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/xaviersolau/ExpressionTools/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/xaviersolau/ExpressionTools</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/xaviersolau/ExpressionTools.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>lambda, expression, parser</PackageTags>
+    <PackageReleaseNotes>- Implement ExpressionParser to parse C# lambda expression.</PackageReleaseNotes>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <Description>SoloX.ExpressionTools.Parser provides a c# lambda expression parser.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
