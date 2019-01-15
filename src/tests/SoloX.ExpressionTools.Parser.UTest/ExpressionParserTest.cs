@@ -7,6 +7,7 @@
 
 using System;
 using System.Linq.Expressions;
+using SoloX.ExpressionTools.Parser.Impl;
 using SoloX.ExpressionTools.Parser.UTest.Utils;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Sample.Impl;
@@ -123,6 +124,20 @@ namespace SoloX.ExpressionTools.Parser.UTest
             var func = lambda.Compile();
 
             Assert.Equal(expected, func(input));
+        }
+
+        [Fact(DisplayName = "It must parse a self described lambda expression")]
+        public void SelfDescribedLambdaParseTest()
+        {
+            var expParser = new ExpressionParser();
+
+            var lambda = expParser.Parse<Func<int, int>>("(int s) => s + 1");
+
+            Assert.NotNull(lambda);
+
+            var func = lambda.Compile();
+
+            Assert.Equal(2, func(1));
         }
 
         private static void AssertItReturnData2PropertyValue(Expression<Func<IData1, IData2>> lambda)
