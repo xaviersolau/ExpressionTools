@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SoloX.ExpressionTools.Examples</name>
+    </assembly>
+    <members>
+        <member name="T:SoloX.ExpressionTools.Examples.BasicParserExample">
+            <summary>
+            This class shows how to use the ExpressionParser.
+            </summary>
+        </member>
+        <member name="M:SoloX.ExpressionTools.Examples.BasicParserExample.ParseASimpleLambda">
+            <summary>
+            Let's parse a self described lambda expression like "(int x) => x + 1".
+            </summary>
+        </member>
+        <member name="M:SoloX.ExpressionTools.Examples.BasicParserExample.ParseASimpleLambdaWithAParameterTypeResolver">
+            <summary>
+            Let's parse a lambda expression like "x => x + 1" using a IParameterTypeResolver.
+            </summary>
+        </member>
+        <member name="T:SoloX.ExpressionTools.Examples.Program">
+            <summary>
+            Example program.
+            </summary>
+        </member>
+        <member name="M:SoloX.ExpressionTools.Examples.Program.Main">
+            <summary>
+            Main program entry point.
+            </summary>
+        </member>
+    </members>
+</doc>
