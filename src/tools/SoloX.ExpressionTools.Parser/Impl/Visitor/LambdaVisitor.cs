@@ -22,6 +22,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
     internal class LambdaVisitor : CSharpSyntaxVisitor<LambdaVisitorAttribute>
     {
         private readonly Stack<LambdaVisitorAttribute> attributes = new Stack<LambdaVisitorAttribute>();
+        private readonly TypeVisitor typeVisitor = new TypeVisitor();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LambdaVisitor"/> class.
@@ -109,9 +110,8 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
             else
             {
-                var typeAttribute = this.VisitWithNewAttribute(_ => this.Visit(typeNode));
+                pType = this.typeVisitor.Visit(typeNode);
 
-                pType = typeAttribute.ResultingType;
                 if (pType == null)
                 {
                     throw new FormatException($"Unknown type {typeNode.ToString()}");
