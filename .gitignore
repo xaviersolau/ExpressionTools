@@ -3,6 +3,7 @@
 bin
 obj
 
+src/examples/SoloX.ExpressionTools.Examples/SoloX.ExpressionTools.Examples.xml
 src/tests/SoloX.ExpressionTools.Parser.UTest/SoloX.ExpressionTools.Parser.UTest.xml
 src/tests/SoloX.ExpressionTools.Sample/SoloX.ExpressionTools.Sample.xml
 src/tests/SoloX.ExpressionTools.UTest/SoloX.ExpressionTools.UTest.xml
