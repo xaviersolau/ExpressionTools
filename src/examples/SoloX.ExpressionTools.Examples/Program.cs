@@ -19,6 +19,7 @@ namespace SoloX.ExpressionTools.Examples
         {
             BasicParserExample.ParseASimpleLambda();
             BasicParserExample.ParseASimpleLambdaWithAParameterTypeResolver();
+            BasicParserExample.ParseASimpleLambdaWithAMethodResolver();
         }
     }
 }
