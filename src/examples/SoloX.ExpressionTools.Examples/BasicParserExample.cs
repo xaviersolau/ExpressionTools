@@ -43,7 +43,8 @@ namespace SoloX.ExpressionTools.Examples
             // Set the expression to parse
             var expToParse = "x => x + 1";
 
-            // We need to create the parser.
+            // We need to create the parser with a DictionaryParameterTypeResolver that will resolve the
+            // parameter name using the given Dictionary.
             var expressionParser = new ExpressionParser(
                 parameterTypeResolver: new DictionaryParameterTypeResolver(new Dictionary<string, Type>()
                 {
@@ -52,6 +53,23 @@ namespace SoloX.ExpressionTools.Examples
 
             // We can just parse the expression.
             var expression = expressionParser.Parse<Func<int, int>>(expToParse);
+        }
+
+        /// <summary>
+        /// Let's parse a lambda expression like "(double x, double y) => Max(x, y)" using a IMethodResolver.
+        /// </summary>
+        public static void ParseASimpleLambdaWithAMethodResolver()
+        {
+            // Set the expression to parse
+            var expToParse = "(double x, double y) => Max(x, y)";
+
+            // We need to create the parser with a StaticMethodResolver that will resolve methods with
+            // the System.Math class.
+            var expressionParser = new ExpressionParser(
+                methodResolver: new StaticMethodResolver(typeof(Math)));
+
+            // We can just parse the expression.
+            var expression = expressionParser.Parse<Func<double, double, double>>(expToParse);
         }
     }
 }
