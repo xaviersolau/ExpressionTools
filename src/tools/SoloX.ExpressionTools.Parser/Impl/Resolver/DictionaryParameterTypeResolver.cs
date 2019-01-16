@@ -12,7 +12,7 @@ using System.Text;
 namespace SoloX.ExpressionTools.Parser.Impl.Resolver
 {
     /// <summary>
-    /// ParameterTypeResolver implementation using a Dictionary as input.
+    /// IParameterTypeResolver implementation using a Dictionary as input.
     /// </summary>
     public class DictionaryParameterTypeResolver : IParameterTypeResolver
     {
