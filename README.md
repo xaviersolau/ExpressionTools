@@ -46,8 +46,8 @@ var expression = expressionParser.Parse<Func<int, int>>(expToParse);
 The Parse method will return an expression tree (from `System.Linq.Expressions`) reflecting the given textual
 C# lambda expression.
 
-More precisely, The resulting expression object in based on `System.Linq.Expressions.LambdaExpression`.
-It means that you can then use the Compile method to compute a Delegate in order to call the lambda at full speed.
+More precisely, The resulting expression object is based on `System.Linq.Expressions.LambdaExpression`.
+It means that you can then use the `Compile` method to compute a `Delegate` in order to call the lambda at full speed.
 
 #### Using a IParameterTypeResolver
 
