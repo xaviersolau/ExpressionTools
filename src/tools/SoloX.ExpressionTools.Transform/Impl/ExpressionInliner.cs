@@ -1,37 +1,37 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ParameterInliner.cs" company="SoloX Software">
+// <copyright file="ExpressionInliner.cs" company="SoloX Software">
 // Copyright (c) SoloX Software. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System.Linq.Expressions;
-using SoloX.ExpressionTools.Impl.Visitor;
+using SoloX.ExpressionTools.Transform.Impl.Visitor;
 
-namespace SoloX.ExpressionTools.Impl
+namespace SoloX.ExpressionTools.Transform.Impl
 {
     /// <inheritdoc />
-    public class ParameterInliner : IParameterInliner
+    public class ExpressionInliner : IExpressionInliner
     {
-        private InlinerVisitor inlinerVisitor;
+        private readonly InlinerVisitor inlinerVisitor;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParameterInliner"/> class with a given parameter resolver.
+        /// Initializes a new instance of the <see cref="ExpressionInliner"/> class with a given parameter resolver.
         /// </summary>
         /// <param name="parameterResolver">The parameter resolver that provides the expression to in-line replacing a given parameter.</param>
-        public ParameterInliner(IParameterResolver parameterResolver)
+        public ExpressionInliner(IParameterResolver parameterResolver)
         {
             this.inlinerVisitor = new InlinerVisitor(parameterResolver);
         }
 
         /// <inheritdoc />
-        public Expression<TOutputDelegate> Inline<TInputDelegate, TOutputDelegate>(Expression<TInputDelegate> expression)
+        public Expression<TOutputDelegate> Amend<TInputDelegate, TOutputDelegate>(Expression<TInputDelegate> expression)
         {
             return (Expression<TOutputDelegate>)this.inlinerVisitor.Visit(expression);
         }
 
         /// <inheritdoc />
-        public LambdaExpression Inline(LambdaExpression expression)
+        public LambdaExpression Amend(LambdaExpression expression)
         {
             return (LambdaExpression)this.inlinerVisitor.Visit(expression);
         }

@@ -19,7 +19,7 @@ namespace SoloX.ExpressionTools.Parser.UTest.Resolver
         [InlineData(typeof(Math), nameof(Math.Max), "max", new[] { typeof(double), typeof(double) }, true, true)]
         [InlineData(typeof(Math), nameof(Math.Max), "Max", new[] { typeof(double), typeof(double) }, false, true)]
         [InlineData(typeof(Math), nameof(Math.Max), "max", new[] { typeof(double), typeof(double) }, false, false)]
-        public void ResolveMethodParseTest(
+        public void ResolveMethodNameTest(
             Type type, string methodName, string lookupName, Type[] argumentsType, bool ignoreCase, bool expectedMatch)
         {
             var resolver = new StaticMethodResolver(ignoreCase, type);

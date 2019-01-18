@@ -15,7 +15,7 @@ namespace SoloX.ExpressionTools.Parser.UTest.Resolver
     public class DictionaryParameterTypeResolverTest
     {
         [Fact(DisplayName = "It must resolve a parameter type depending of the dictionary given at setup")]
-        public void ResolveTypeTest()
+        public void ResolveParameterTypeTest()
         {
             var resolver = new DictionaryParameterTypeResolver(new Dictionary<string, Type>()
             {

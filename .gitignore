@@ -8,4 +8,4 @@ src/tests/SoloX.ExpressionTools.Parser.UTest/SoloX.ExpressionTools.Parser.UTest.
 src/tests/SoloX.ExpressionTools.Sample/SoloX.ExpressionTools.Sample.xml
 src/tests/SoloX.ExpressionTools.UTest/SoloX.ExpressionTools.UTest.xml
 src/tools/SoloX.ExpressionTools.Parser/SoloX.ExpressionTools.Parser.xml
-src/tools/SoloX.ExpressionTools/SoloX.ExpressionTools.xml
+src/tools/SoloX.ExpressionTools.Transform/SoloX.ExpressionTools.Transform.xml

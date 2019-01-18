@@ -71,5 +71,22 @@ namespace SoloX.ExpressionTools.Examples
             // We can just parse the expression.
             var expression = expressionParser.Parse<Func<double, double, double>>(expToParse);
         }
+
+        /// <summary>
+        /// Let's parse a lambda expression like "(double x, double y) => Math.Max(x, y)" using a ITypeNameResolver.
+        /// </summary>
+        public static void ParseASimpleLambdaWithATypeNameResolver()
+        {
+            // Set the expression to parse
+            var expToParse = "(double x, double y) => Math.Max(x, y)";
+
+            // We need to create the parser with a TypeNameResolver that will resolve type name with
+            // the given System.Math class.
+            var expressionParser = new ExpressionParser(
+                typeNameResolver: new TypeNameResolver(typeof(Math)));
+
+            // We can just parse the expression.
+            var expression = expressionParser.Parse<Func<double, double, double>>(expToParse);
+        }
     }
 }

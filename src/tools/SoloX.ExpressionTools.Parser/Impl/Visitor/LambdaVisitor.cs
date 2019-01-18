@@ -433,13 +433,13 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 
         private bool TryToResolveAsAType(string text, out Type type)
         {
-            type = this.TypeNameResolver.ResolveTypeName(text);
+            type = this.TypeNameResolver?.ResolveTypeName(text);
             return type != null;
         }
 
         private bool TryToResolveAsAMethod(string text, Type[] argumentTypes, out MethodInfo methodInfo)
         {
-            methodInfo = (argumentTypes != null) ? this.MethodResolver.ResolveMethod(text, argumentTypes) : null;
+            methodInfo = (argumentTypes != null) ? this.MethodResolver?.ResolveMethod(text, argumentTypes) : null;
             return methodInfo != null;
         }
     }

@@ -13,13 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools", "src\tools\SoloX.ExpressionTools\SoloX.ExpressionTools.csproj", "{4BDA8338-210C-47A8-9278-2F4185A8A9C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Transform", "src\tools\SoloX.ExpressionTools.Transform\SoloX.ExpressionTools.Transform.csproj", "{4BDA8338-210C-47A8-9278-2F4185A8A9C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.UTest", "src\tests\SoloX.ExpressionTools.UTest\SoloX.ExpressionTools.UTest.csproj", "{2979EF4E-FBA7-4D06-BF17-DC00A12E946A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Transform.UTest", "src\tests\SoloX.ExpressionTools.Transform.UTest\SoloX.ExpressionTools.Transform.UTest.csproj", "{2979EF4E-FBA7-4D06-BF17-DC00A12E946A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Sample", "src\tests\SoloX.ExpressionTools.Sample\SoloX.ExpressionTools.Sample.csproj", "{6DA7CD29-00DC-4DF4-BD1B-3E8F275E0BCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoloX.ExpressionTools.Examples", "src\examples\SoloX.ExpressionTools.Examples\SoloX.ExpressionTools.Examples.csproj", "{B34D66F0-84C4-458A-BE08-09057AC765D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Examples", "src\examples\SoloX.ExpressionTools.Examples\SoloX.ExpressionTools.Examples.csproj", "{B34D66F0-84C4-458A-BE08-09057AC765D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
