@@ -110,6 +110,26 @@ var expressionParser = new ExpressionParser(
 var expression = expressionParser.Parse<Func<double, double, double>>(expToParse);
 ```
 
-### Inline C# Lambda expression parameter
+### Expression transformation
 
-Coming soon...
+#### Inline C# Lambda expression
+
+In the case where we would like the replace the parameter `b` from one expression like `"b => b * 2"` by another
+expression like `"a => a + 1"` resulting in `"a => (a + 1) * 2"`, we can use the `ExpressionInliner`.
+All its need is a `ParameterResolver` that will be used to get the expression to in-line instead of the parameter itself:
+
+```csharp
+// Setup the expressions to use as input
+Expression<Func<int, int>> expressionToInline = a => a + 1;
+Expression<Func<int, int>> expression = b => b * 2;
+
+// Setup the resolver telling that 'b' must be replaced by in-lined 'a => a + 1' lambda.
+var resolver = new ParameterResolver()
+    .Register("b", expressionToInline);
+
+// create the expression in-liner.
+var inliner = new ExpressionInliner(resolver);
+
+// Amend the given expression replacing parameter 'b' resulting in the lambda 'a => (a + 1) * 2'.
+var inlinedExpression = inliner.Amend<Func<int, int>, Func<int, int>>(expression);
+```

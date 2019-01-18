@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\tools\SoloX.ExpressionTools\SoloX.ExpressionTools.csproj" />
+    <ProjectReference Include="..\..\tools\SoloX.ExpressionTools.Transform\SoloX.ExpressionTools.Transform.csproj" />
     <ProjectReference Include="..\SoloX.ExpressionTools.Sample\SoloX.ExpressionTools.Sample.csproj" />
   </ItemGroup>
 

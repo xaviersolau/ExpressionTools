@@ -7,10 +7,10 @@
 
 using System.Linq.Expressions;
 
-namespace SoloX.ExpressionTools
+namespace SoloX.ExpressionTools.Transform
 {
     /// <summary>
-    /// Interface used by the ParameterInliner in order to resolve expression to in-line for a given parameter.
+    /// Interface used by the IExpressionInliner in order to resolve expression to in-line for a given parameter.
     /// </summary>
     public interface IParameterResolver
     {

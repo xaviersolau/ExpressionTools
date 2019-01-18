@@ -8,7 +8,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace SoloX.ExpressionTools.Impl.Visitor
+namespace SoloX.ExpressionTools.Transform.Impl.Visitor
 {
     /// <summary>
     /// InlinerVisitor class that will actually in-line expression and replace parameter use.

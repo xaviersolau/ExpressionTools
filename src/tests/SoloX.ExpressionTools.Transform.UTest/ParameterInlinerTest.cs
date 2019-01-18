@@ -10,12 +10,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Moq;
-using SoloX.ExpressionTools.Impl;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Sample.Impl;
+using SoloX.ExpressionTools.Transform.Impl;
 using Xunit;
 
-namespace SoloX.ExpressionTools.UTest
+namespace SoloX.ExpressionTools.Transform.UTest
 {
     public class ParameterInlinerTest
     {
@@ -24,7 +24,7 @@ namespace SoloX.ExpressionTools.UTest
         {
             var pi = CreateParameterInliner<Func<double>>(() => 1);
 
-            var resultingExp = pi.Inline<Func<double, double>, Func<double>>(s => s + 1);
+            var resultingExp = pi.Amend<Func<double, double>, Func<double>>(s => s + 1);
             Assert.NotNull(resultingExp);
 
             var func = resultingExp.Compile();
@@ -36,7 +36,7 @@ namespace SoloX.ExpressionTools.UTest
         {
             var pi = CreateParameterInliner<Func<double, double>>((a) => a * 3);
 
-            var resultingExp = pi.Inline<Func<double, double>, Func<double, double>>(s => s + 1);
+            var resultingExp = pi.Amend<Func<double, double>, Func<double, double>>(s => s + 1);
             Assert.NotNull(resultingExp);
 
             var func = resultingExp.Compile();
@@ -54,7 +54,7 @@ namespace SoloX.ExpressionTools.UTest
 
             var pi = CreateParameterInliner(expMap.ToDictionary(x => x.Key, x => (LambdaExpression)x.Value));
 
-            var resultingExp = pi.Inline<Func<double, double, double>, Func<double, double, double>>((x, y) => x + y + 1);
+            var resultingExp = pi.Amend<Func<double, double, double>, Func<double, double, double>>((x, y) => x + y + 1);
             Assert.NotNull(resultingExp);
 
             var func = resultingExp.Compile();
@@ -66,7 +66,7 @@ namespace SoloX.ExpressionTools.UTest
         {
             var pi = CreateParameterInliner<Func<IData1, IData2>>(s => s.Data2);
 
-            var resultingExp = pi.Inline<Func<IData2, IData3>, Func<IData1, IData3>>(s => s.Data3);
+            var resultingExp = pi.Amend<Func<IData2, IData3>, Func<IData1, IData3>>(s => s.Data3);
             Assert.NotNull(resultingExp);
 
             var input = new Data1()
@@ -92,7 +92,7 @@ namespace SoloX.ExpressionTools.UTest
 
             var pi = CreateParameterInliner(expMap);
 
-            var resultingExp = pi.Inline<Func<IObjectWithMethod, int, int>, Func<IObjectWithMethod, int>>((o, x) => o.BasicMethod(x));
+            var resultingExp = pi.Amend<Func<IObjectWithMethod, int, int>, Func<IObjectWithMethod, int>>((o, x) => o.BasicMethod(x));
             Assert.NotNull(resultingExp);
 
             var func = resultingExp.Compile();
@@ -111,7 +111,7 @@ namespace SoloX.ExpressionTools.UTest
 
             var pi = CreateParameterInliner(expMap);
 
-            var resultingExp = pi.Inline<Func<int, int>, Func<int, int>>((x) => x + 1);
+            var resultingExp = pi.Amend<Func<int, int>, Func<int, int>>((x) => x + 1);
             Assert.NotNull(resultingExp);
 
             var func = resultingExp.Compile();
@@ -119,11 +119,11 @@ namespace SoloX.ExpressionTools.UTest
             Assert.Equal(2, func(1));
         }
 
-        private static ParameterInliner CreateParameterInliner<TDelegate>(Expression<TDelegate> exp)
+        private static ExpressionInliner CreateParameterInliner<TDelegate>(Expression<TDelegate> exp)
         {
             var parameterResolver = CreateParameterResolver<TDelegate>(exp);
 
-            return new ParameterInliner(parameterResolver);
+            return new ExpressionInliner(parameterResolver);
         }
 
         private static IParameterResolver CreateParameterResolver<TDelegate>(Expression<TDelegate> exp)
@@ -137,11 +137,11 @@ namespace SoloX.ExpressionTools.UTest
             return parameterResolverMock.Object;
         }
 
-        private static ParameterInliner CreateParameterInliner(IReadOnlyDictionary<string, LambdaExpression> parameterMap)
+        private static ExpressionInliner CreateParameterInliner(IReadOnlyDictionary<string, LambdaExpression> parameterMap)
         {
             var parameterResolver = CreateParameterResolver(parameterMap);
 
-            return new ParameterInliner(parameterResolver);
+            return new ExpressionInliner(parameterResolver);
         }
 
         private static IParameterResolver CreateParameterResolver(IReadOnlyDictionary<string, LambdaExpression> parameterMap)
