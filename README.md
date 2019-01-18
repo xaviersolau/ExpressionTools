@@ -72,9 +72,28 @@ var expressionParser = new ExpressionParser(
 var expression = expressionParser.Parse<Func<int, int>>(expToParse);
 ```
 
+#### Using a ITypeNameResolver
+
+Let's now use a static method `Max` that is defined in `System.Math` with a full qualified name like
+`"(double x, double y) => Math.Max(x, y)"`.
+To support this use case, you will need to provide a `ITypeNameResolver` that will resolve the `Math` as `System.Math` class:
+
+```csharp
+// Set the expression to parse
+var expToParse = "(double x, double y) => Math.Max(x, y)";
+
+// We need to create the parser with a TypeNameResolver that will resolve type name with
+// the given System.Math class.
+var expressionParser = new ExpressionParser(
+    typeNameResolver: new TypeNameResolver(typeof(Math)));
+
+// We can just parse the expression.
+var expression = expressionParser.Parse<Func<double, double, double>>(expToParse);
+```
+
 #### Using a IMethodResolver
 
-Now we want our expression to use a static method `Max` that is defined in `System.Math` like
+Now we want our expression to use a static method `Max` that is defined in `System.Math` omitting the class name prefix like
 `"(double x, double y) => Max(x, y)"`.
 To support this use case, you will need to provide a `IMethodResolver` that will resolve the `Max` as `System.Math.Max`:
 
