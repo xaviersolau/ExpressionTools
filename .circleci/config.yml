@@ -6,8 +6,29 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Building the project
-          command: dotnet build
+          name: Build the projects
+          command: |
+            dotnet build -c Release
       - run:
           name: Run Unit Tests
-          command: dotnet test
+          command: |
+            cd src/tests/SoloX.ExpressionTools.Parser.UTest
+            dotnet test -c Release
+            cd ../../..
+            cd src/tests/SoloX.ExpressionTools.Transform.UTest
+            dotnet test -c Release
+            cd ../../..
+      - run:
+          name: Generate packages
+          command: |
+            mkdir packages
+            cd src/tools/SoloX.ExpressionTools.Parser
+            dotnet pack -c Release
+            cd ../../..
+            mv src/tools/SoloX.ExpressionTools.Parser/bin/Release/*.nupkg packages/
+            cd src/tools/SoloX.ExpressionTools.Transform
+            dotnet pack -c Release
+            cd ../../..
+            mv src/tools/SoloX.ExpressionTools.Transform/bin/Release/*.nupkg packages/
+      - store_artifacts:
+          path: packages
