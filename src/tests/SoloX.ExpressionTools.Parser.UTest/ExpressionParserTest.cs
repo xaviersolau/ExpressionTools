@@ -140,6 +140,20 @@ namespace SoloX.ExpressionTools.Parser.UTest
             Assert.Equal(2, func(1));
         }
 
+        [Fact(DisplayName = "It must parse use of array index in a lambda expression")]
+        public void ArrayIndexInLambdaParseTest()
+        {
+            var expParser = new ExpressionParser();
+
+            var lambda = expParser.Parse<Func<int[], int>>("(int[] s) => s[0] + 1");
+
+            Assert.NotNull(lambda);
+
+            var func = lambda.Compile();
+
+            Assert.Equal(2, func(new int[] { 1 }));
+        }
+
         private static void AssertItReturnData2PropertyValue(Expression<Func<IData1, IData2>> lambda)
         {
             var func = lambda.Compile();

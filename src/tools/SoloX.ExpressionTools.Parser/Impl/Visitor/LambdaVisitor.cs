@@ -11,6 +11,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -143,18 +144,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             return this.VisitWithNewAttribute(
                 attribute =>
                 {
-                    var args = new List<Expression>();
-
-                    foreach (var argument in node.ArgumentList.Arguments)
-                    {
-                        var argumentAttribute = this.Visit(argument);
-                        if (argumentAttribute.ResultingExpression == null)
-                        {
-                            throw new FormatException($"Unable to evaluate argument: {argument}");
-                        }
-
-                        args.Add(argumentAttribute.ResultingExpression);
-                    }
+                    var args = this.VisitArgumentList(node.ArgumentList.Arguments);
 
                     attribute.ArgumentTypes = args.Select(a => a.Type).ToArray();
 
@@ -262,6 +252,26 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         public override LambdaVisitorAttribute VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
         {
             return this.Visit(node.Expression);
+        }
+
+        /// <inheritdoc />
+        public override LambdaVisitorAttribute VisitElementAccessExpression(ElementAccessExpressionSyntax node)
+        {
+            return this.VisitWithNewAttribute(
+                attribute =>
+                {
+                    var args = this.VisitArgumentList(node.ArgumentList.Arguments);
+
+                    var argumentTypes = args.Select(a => a.Type).ToArray();
+
+                    var expressionAttribute = this.Visit(node.Expression);
+                    var exp = expressionAttribute.ResultingExpression;
+                    var methodInfo = exp.Type.GetMethod("Get", argumentTypes);
+
+                    attribute.ResultingExpression = Expression.ArrayIndex(
+                        exp,
+                        ConvertTypeForMethodCall(args, methodInfo));
+                });
         }
 
         /// <inheritdoc />
@@ -429,6 +439,24 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             this.attributes.Push(attribute);
             action(attribute);
             return this.attributes.Pop();
+        }
+
+        private List<Expression> VisitArgumentList(SeparatedSyntaxList<ArgumentSyntax> arguments)
+        {
+            var args = new List<Expression>();
+
+            foreach (var argument in arguments)
+            {
+                var argumentAttribute = this.Visit(argument);
+                if (argumentAttribute.ResultingExpression == null)
+                {
+                    throw new FormatException($"Unable to evaluate argument: {argument}");
+                }
+
+                args.Add(argumentAttribute.ResultingExpression);
+            }
+
+            return args;
         }
 
         private bool TryToResolveAsAType(string text, out Type type)

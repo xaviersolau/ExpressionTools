@@ -32,5 +32,17 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         {
             return PredefinedTypeMap[node.Keyword.Text];
         }
+
+        /// <inheritdoc />
+        public override Type VisitArrayType(ArrayTypeSyntax node)
+        {
+            var type = this.Visit(node.ElementType);
+
+            var rank = node.RankSpecifiers.Count;
+
+            return rank == 1
+                ? type.MakeArrayType()
+                : type.MakeArrayType(node.RankSpecifiers.Count);
+        }
     }
 }
