@@ -1,4 +1,4 @@
-# ExpressionTools [![CircleCI](https://circleci.com/gh/xaviersolau/ExpressionTools.svg?style=svg)](https://circleci.com/gh/xaviersolau/ExpressionTools) [![Coverage Status](https://coveralls.io/repos/github/xaviersolau/ExpressionTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/ExpressionTools?branch=master)
+# ExpressionTools [![CircleCI](https://circleci.com/gh/xaviersolau/ExpressionTools.svg?style=svg)](https://circleci.com/gh/xaviersolau/ExpressionTools) [![Coverage Status](https://coveralls.io/repos/github/xaviersolau/ExpressionTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/ExpressionTools?branch=master) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ExpressionTools is a library that helps you to handle C# lambda expression. It is written in C# and thanks to .Net Standard, it is cross platform.
 
