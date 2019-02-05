@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Parser", "src\tools\SoloX.ExpressionTools.Parser\SoloX.ExpressionTools.Parser.csproj", "{0A0D6737-BEDE-4FE5-82BF-DEE90E2AC3BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Parser", "src\libs\SoloX.ExpressionTools.Parser\SoloX.ExpressionTools.Parser.csproj", "{0A0D6737-BEDE-4FE5-82BF-DEE90E2AC3BB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Parser.UTest", "src\tests\SoloX.ExpressionTools.Parser.UTest\SoloX.ExpressionTools.Parser.UTest.csproj", "{E57753AA-21CF-4A6A-A382-57E0BDFDCF03}"
 EndProject
@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Transform", "src\tools\SoloX.ExpressionTools.Transform\SoloX.ExpressionTools.Transform.csproj", "{4BDA8338-210C-47A8-9278-2F4185A8A9C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Transform", "src\libs\SoloX.ExpressionTools.Transform\SoloX.ExpressionTools.Transform.csproj", "{4BDA8338-210C-47A8-9278-2F4185A8A9C8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Transform.UTest", "src\tests\SoloX.ExpressionTools.Transform.UTest\SoloX.ExpressionTools.Transform.UTest.csproj", "{2979EF4E-FBA7-4D06-BF17-DC00A12E946A}"
 EndProject
