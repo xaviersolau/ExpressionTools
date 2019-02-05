@@ -37,13 +37,13 @@ jobs:
           name: Generate packages
           command: |
             mkdir packages
-            cd src/tools/SoloX.ExpressionTools.Parser
+            cd src/libs/SoloX.ExpressionTools.Parser
             dotnet pack -c Release
             cd ../../..
-            mv src/tools/SoloX.ExpressionTools.Parser/bin/Release/*.nupkg packages/
-            cd src/tools/SoloX.ExpressionTools.Transform
+            mv src/libs/SoloX.ExpressionTools.Parser/bin/Release/*.nupkg packages/
+            cd src/libs/SoloX.ExpressionTools.Transform
             dotnet pack -c Release
             cd ../../..
-            mv src/tools/SoloX.ExpressionTools.Transform/bin/Release/*.nupkg packages/
+            mv src/libs/SoloX.ExpressionTools.Transform/bin/Release/*.nupkg packages/
       - store_artifacts:
           path: packages

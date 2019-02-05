@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\..\tools\.stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\..\libs\.stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,8 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\tools\SoloX.ExpressionTools.Parser\SoloX.ExpressionTools.Parser.csproj" />
-    <ProjectReference Include="..\..\tools\SoloX.ExpressionTools.Transform\SoloX.ExpressionTools.Transform.csproj" />
+    <ProjectReference Include="..\..\libs\SoloX.ExpressionTools.Parser\SoloX.ExpressionTools.Parser.csproj" />
+    <ProjectReference Include="..\..\libs\SoloX.ExpressionTools.Transform\SoloX.ExpressionTools.Transform.csproj" />
   </ItemGroup>
 
 </Project>
