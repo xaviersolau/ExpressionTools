@@ -14,7 +14,7 @@ ExpressionTools project is written by Xavier Solau. It's licensed under the MIT 
 
 ## Installation
 
-You can checkout this Github repository or use the NuGet package that will be available soon.
+You can checkout this Github repository or you can use the NuGet package that will be available soon.
 
 ## How to use it
 
