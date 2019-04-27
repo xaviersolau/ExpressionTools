@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Xavier Solau</Authors>
     <Company>Xavier Solau</Company>
-    <Version>0.1.0-alpha-1</Version>
+    <Version>1.0.0-alpha.1</Version>
     <Copyright>Copyright © 2019 Xavier Solau</Copyright>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <PackageTags>lambda, expression, tools</PackageTags>
