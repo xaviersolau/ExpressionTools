@@ -2,22 +2,26 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>Xavier Solau</Authors>
-    <Company>Xavier Solau</Company>
+
+    <PackageId>SoloX.ExpressionTools.Transform</PackageId>
+
     <Version>1.0.0-alpha.1</Version>
+    <Authors>Xavier Solau</Authors>
     <Copyright>Copyright © 2019 Xavier Solau</Copyright>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <PackageTags>lambda, expression, tools</PackageTags>
     <PackageLicenseUrl>https://raw.githubusercontent.com/xaviersolau/ExpressionTools/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/xaviersolau/ExpressionTools</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/xaviersolau/ExpressionTools.git</RepositoryUrl>
-    <Description>SoloX.ExpressionTools is a lambda expression handling library.</Description>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>lambda, expression, tools</PackageTags>
     <PackageReleaseNotes>- Implement ParameterInliner to inline lambda expression parameters.</PackageReleaseNotes>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Description>SoloX.ExpressionTools is a lambda expression handling library.</Description>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.0-rc.4" />
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+
+    <PackageId>SoloX.ExpressionTools.Parser</PackageId>
+
     <Version>1.0.0-alpha.1</Version>
     <Authors>Xavier Solau</Authors>
     <Copyright>Copyright © 2019 Xavier Solau</Copyright>
@@ -11,12 +14,14 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>lambda, expression, parser</PackageTags>
     <PackageReleaseNotes>- Implement ExpressionParser to parse C# lambda expression.</PackageReleaseNotes>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <Description>SoloX.ExpressionTools.Parser provides a c# lambda expression parser.</Description>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.0-rc.4" />
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
   </ItemGroup>
 
