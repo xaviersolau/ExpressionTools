@@ -1,6 +1,12 @@
-# ExpressionTools [![CircleCI](https://circleci.com/gh/xaviersolau/ExpressionTools.svg?style=svg)](https://circleci.com/gh/xaviersolau/ExpressionTools) [![Coverage Status](https://coveralls.io/repos/github/xaviersolau/ExpressionTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/ExpressionTools?branch=master) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+# ExpressionTools
+[![CircleCI](https://circleci.com/gh/xaviersolau/ExpressionTools.svg?style=svg)](https://circleci.com/gh/xaviersolau/ExpressionTools)
+[![Coverage Status](https://coveralls.io/repos/github/xaviersolau/ExpressionTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/ExpressionTools?branch=master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.ExpressionTools.Parser.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Parser)
+[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.ExpressionTools.Transform.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Transform)
 
-ExpressionTools is a library that helps you to handle C# lambda expression. It is written in C# and thanks to .Net Standard, it is cross platform.
+ExpressionTools is a library that helps you to handle C# lambda expression.
+It is written in C# and thanks to .Net Standard, it is cross platform.
 
 The project is based on System.Linq.Expressions and uses the C# Roslyn compiler.
 
@@ -14,7 +20,25 @@ ExpressionTools project is written by Xavier Solau. It's licensed under the MIT 
 
 ## Installation
 
-You can checkout this Github repository or you can use the NuGet package that will be available soon.
+You can checkout this Github repository or you can use the NuGet package:
+
+**Install using the command line from the Package Manager:**
+```bash
+Install-Package SoloX.ExpressionTools.Parser -version 1.0.0-alpha.1
+Install-Package SoloX.ExpressionTools.Transform -version 1.0.0-alpha.1
+```
+
+**Install using the .Net CLI:**
+```bash
+dotnet add package SoloX.ExpressionTools.Parser --version 1.0.0-alpha.1
+dotnet add package SoloX.ExpressionTools.Transform --version 1.0.0-alpha.1
+```
+
+**Install editing your project file (csproj):**
+```xml
+<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.0-alpha.1" />
+<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.0-alpha.1" />
+```
 
 ## How to use it
 
