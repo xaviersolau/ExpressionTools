@@ -5,10 +5,12 @@
 
     <PackageId>SoloX.ExpressionTools.Parser</PackageId>
 
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+
     <Version>1.0.0-alpha.1</Version>
     <Authors>Xavier Solau</Authors>
     <Copyright>Copyright © 2019 Xavier Solau</Copyright>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/xaviersolau/ExpressionTools/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/xaviersolau/ExpressionTools</PackageProjectUrl>
     <RepositoryUrl>https://github.com/xaviersolau/ExpressionTools.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
