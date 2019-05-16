@@ -13,11 +13,11 @@ jobs:
           name: Run Unit Tests
           command: |
             cd src/tests/SoloX.ExpressionTools.Parser.UTest
-            dotnet test -c Release
+            dotnet test -c Release --no-build
             cd ../../..
 
             cd src/tests/SoloX.ExpressionTools.Transform.UTest
-            dotnet test -c Release
+            dotnet test -c Release --no-build
             cd ../../..
       - run:
           name: Run Code coverage
@@ -25,11 +25,11 @@ jobs:
             dotnet tool install coveralls.net --version 1.0.0 --tool-path coveralls
 
             cd src/tests/SoloX.ExpressionTools.Parser.UTest
-            dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample]*,[SoloX.*.UTest]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.coverlet.json"
+            dotnet test -c Release --no-build -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample]*,[SoloX.*.UTest]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.coverlet.json"
             cd ../../..
 
             cd src/tests/SoloX.ExpressionTools.Transform.UTest
-            dotnet test -c Release -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample]*,[SoloX.*.UTest]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.opencover.xml" -p:CoverletOutputFormat="opencover"
+            dotnet test -c Release --no-build -p:CollectCoverage=true -p:Exclude=\"[xunit.*]*,[SoloX.*.Sample]*,[SoloX.*.UTest]*\" -p:MergeWith="../../../result.coverlet.json" -p:CoverletOutput="../../../result.opencover.xml" -p:CoverletOutputFormat="opencover"
             cd ../../..
 
             mkdir coverage
@@ -42,11 +42,11 @@ jobs:
           command: |
             mkdir packages
             cd src/libs/SoloX.ExpressionTools.Parser
-            dotnet pack -c Release
+            dotnet pack -c Release --no-build
             cd ../../..
             mv src/libs/SoloX.ExpressionTools.Parser/bin/Release/*.nupkg packages/
             cd src/libs/SoloX.ExpressionTools.Transform
-            dotnet pack -c Release
+            dotnet pack -c Release --no-build
             cd ../../..
             mv src/libs/SoloX.ExpressionTools.Transform/bin/Release/*.nupkg packages/
       - store_artifacts:
