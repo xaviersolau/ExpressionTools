@@ -45,7 +45,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Resolver
         /// <inheritdoc />
         public MethodInfo ResolveMethod(string methodName, Type[] argsType)
         {
-            var name = this.ignoreCase ? methodName.ToUpperInvariant() : methodName;
+            var name = this.ignoreCase ? methodName?.ToUpperInvariant() : methodName;
             var entry = new MethodEntry(name, argsType);
             return this.methodMap.TryGetValue(entry, out var methodInfo) ? methodInfo : null;
         }

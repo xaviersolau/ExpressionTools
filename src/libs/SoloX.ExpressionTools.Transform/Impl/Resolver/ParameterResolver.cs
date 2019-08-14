@@ -33,8 +33,8 @@ namespace SoloX.ExpressionTools.Transform.Impl.Resolver
         /// <inheritdoc />
         public LambdaExpression Resolve(ParameterExpression parameter)
         {
-            var name = parameter.Name;
-            return this.expressionMap.TryGetValue(name, out var exp) ? exp : null;
+            return parameter != null && this.expressionMap.TryGetValue(parameter.Name, out var exp)
+                ? exp : null;
         }
     }
 }
