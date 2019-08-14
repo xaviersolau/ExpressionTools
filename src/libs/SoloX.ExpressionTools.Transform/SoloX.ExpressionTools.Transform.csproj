@@ -7,7 +7,7 @@
 
     <NoPackageAnalysis>true</NoPackageAnalysis>
 
-    <Version>1.0.0-alpha.1</Version>
+    <Version>1.0.0-alpha.2</Version>
     <Authors>Xavier Solau</Authors>
     <Copyright>Copyright © 2019 Xavier Solau</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.0" />
+    <PackageReference Include="SoloX.CodeQuality.Prod" Version="1.0.2" />
   </ItemGroup>
 
 </Project>
