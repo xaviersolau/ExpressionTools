@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\SharedProperties.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
 
@@ -7,13 +9,6 @@
 
     <NoPackageAnalysis>true</NoPackageAnalysis>
 
-    <Version>1.0.0-alpha.2</Version>
-    <Authors>Xavier Solau</Authors>
-    <Copyright>Copyright © 2019 Xavier Solau</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/xaviersolau/ExpressionTools</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/xaviersolau/ExpressionTools.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
     <PackageTags>lambda, expression, tools</PackageTags>
     <PackageReleaseNotes>- Implement ParameterInliner to inline lambda expression parameters.</PackageReleaseNotes>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
