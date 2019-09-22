@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Parser", "src\libs\SoloX.ExpressionTools.Parser\SoloX.ExpressionTools.Parser.csproj", "{0A0D6737-BEDE-4FE5-82BF-DEE90E2AC3BB}"
 EndProject
@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
 		README.md = README.md
+		src\SharedProperties.props = src\SharedProperties.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Transform", "src\libs\SoloX.ExpressionTools.Transform\SoloX.ExpressionTools.Transform.csproj", "{4BDA8338-210C-47A8-9278-2F4185A8A9C8}"
