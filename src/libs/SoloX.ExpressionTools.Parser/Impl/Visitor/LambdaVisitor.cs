@@ -1,7 +1,8 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="LambdaVisitor.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="LambdaVisitor.cs" company="Xavier Solau">
+// Copyright © 2019 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
@@ -10,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -20,6 +20,8 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
     /// <summary>
     /// Visitor to convert Lambda CSharp syntax tree to Linq Expression.
     /// </summary>
+#pragma warning disable IDE0066 // Convertir l'instruction switch en expression
+#pragma warning disable IDE0010 // Remplir une instruction switch
     internal class LambdaVisitor : CSharpSyntaxVisitor<LambdaVisitorAttribute>
     {
         private readonly Stack<LambdaVisitorAttribute> attributes = new Stack<LambdaVisitorAttribute>();
@@ -414,7 +416,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             var argCount = args.Count;
             var convertedArgs = new Expression[argCount];
             var parameters = methodInfo.GetParameters();
-            for (int i = 0; i < argCount; i++)
+            for (var i = 0; i < argCount; i++)
             {
                 var exp = args[i];
                 var parameterInfo = parameters[i];
@@ -472,3 +474,5 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
     }
 }
+#pragma warning restore IDE0010 // Remplir une instruction switch
+#pragma warning restore IDE0066 // Convertir l'instruction switch en expression

@@ -1,7 +1,10 @@
-﻿// <copyright file="ExpressionParser.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+﻿// ----------------------------------------------------------------------
+// <copyright file="ExpressionParser.cs" company="Xavier Solau">
+// Copyright © 2019 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
+// ----------------------------------------------------------------------
 
 using System;
 using System.Linq.Expressions;
@@ -15,7 +18,7 @@ namespace SoloX.ExpressionTools.Parser.Impl
     /// <inheritdoc />
     public class ExpressionParser : IExpressionParser
     {
-        private LambdaVisitor visitor;
+        private readonly LambdaVisitor visitor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExpressionParser"/> class with a parameter
@@ -63,7 +66,11 @@ namespace SoloX.ExpressionTools.Parser.Impl
                 throw new FormatException($"error in expression, none or multiple member(s) detected: {text}");
             }
 
-            return (LambdaExpressionSyntax)((FieldDeclarationSyntax)root.Members[0]).Declaration.Variables[0].Initializer.Value;
+            var node = (GlobalStatementSyntax)root.Members[0];
+
+            var decl = (LocalDeclarationStatementSyntax)node.Statement;
+
+            return (LambdaExpressionSyntax)decl.Declaration.Variables[0].Initializer.Value;
         }
     }
 }

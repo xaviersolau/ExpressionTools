@@ -1,7 +1,8 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="InlinerVisitor.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="InlinerVisitor.cs" company="Xavier Solau">
+// Copyright © 2019 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
@@ -15,8 +16,8 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
     /// </summary>
     internal class InlinerVisitor : ExpressionVisitor
     {
-        private IParameterResolver parameterResolver;
-        private IDictionary<ParameterExpression, LambdaExpression> parameterMap;
+        private readonly IParameterResolver parameterResolver;
+        private readonly IDictionary<ParameterExpression, LambdaExpression> parameterMap;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InlinerVisitor"/> class.
