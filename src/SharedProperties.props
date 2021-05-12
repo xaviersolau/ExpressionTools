@@ -1,13 +1,23 @@
 <Project>
 
   <PropertyGroup>
-    <Version>1.0.0-alpha.4</Version>
+    <Version>1.0.0-alpha.5</Version>
     <Authors>Xavier Solau</Authors>
     <Copyright>Copyright © 2019 Xavier Solau</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/xaviersolau/ExpressionTools</PackageProjectUrl>
     <RepositoryUrl>https://github.com/xaviersolau/ExpressionTools.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+
+    <CodeQualityHeaderCompanyName>$(Authors)</CodeQualityHeaderCompanyName>
+    <CodeQualityHeaderCopyright>$(Copyright)</CodeQualityHeaderCopyright>
+    <CodeQualityHeaderLicense>$(PackageLicenseExpression)</CodeQualityHeaderLicense>
+    <CodeQualityHeaderLicenseFile>LICENSE</CodeQualityHeaderLicenseFile>
+
+    <CodeQualityUpdateGitIgnore>true</CodeQualityUpdateGitIgnore>
+
+    <!--<Nullable>enable</Nullable>-->
+
   </PropertyGroup>
 
 </Project>

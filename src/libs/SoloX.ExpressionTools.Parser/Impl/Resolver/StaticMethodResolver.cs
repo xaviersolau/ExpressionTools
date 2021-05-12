@@ -1,16 +1,15 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="StaticMethodResolver.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="StaticMethodResolver.cs" company="Xavier Solau">
+// Copyright © 2019 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace SoloX.ExpressionTools.Parser.Impl.Resolver
 {
@@ -88,7 +87,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Resolver
 
                 if (obj is MethodEntry entry && entry.Name == this.Name && entry.ArgumentsType.Length == this.ArgumentsType.Length)
                 {
-                    for (int i = 0; i < this.ArgumentsType.Length; i++)
+                    for (var i = 0; i < this.ArgumentsType.Length; i++)
                     {
                         if (!object.ReferenceEquals(this.ArgumentsType[i], entry.ArgumentsType[i]))
                         {

@@ -1,7 +1,8 @@
 // ----------------------------------------------------------------------
-// <copyright file="ExpressionErrorParserTest.cs" company="SoloX Software">
-// Copyright (c) SoloX Software. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// <copyright file="ExpressionErrorParserTest.cs" company="Xavier Solau">
+// Copyright © 2019 Xavier Solau.
+// Licensed under the MIT license.
+// See LICENSE file in the project root for full license information.
 // </copyright>
 // ----------------------------------------------------------------------
 
