@@ -1,0 +1,55 @@
+name: Build - PR
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-pr:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.103
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --configuration Release --no-restore --no-build
+
+    - name: Test Coverage SoloX.ExpressionTools.Parser.UTest
+      id: coverage-parser-utest
+      run: |
+        dotnet test ./src/tests/SoloX.ExpressionTools.Parser.UTest --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+        echo "::set-output name=FILE::$(find ./src/tests/SoloX.ExpressionTools.Parser.UTest -name 'coverage.info' -print)"
+    - name: Send to coverals
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ${{ steps.coverage-parser-utest.outputs.FILE }}
+        flag-name: coverage-parser-utest
+        parallel: true
+
+    - name: Test Coverage SoloX.ExpressionTools.Transform.UTest
+      id: coverage-transform-utest
+      run: |
+        dotnet test ./src/tests/SoloX.ExpressionTools.Transform.UTest --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+        echo "::set-output name=FILE::$(find ./src/tests/SoloX.ExpressionTools.Transform.UTest -name 'coverage.info' -print)"
+    - name: Send to coverals
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ${{ steps.coverage-transform-utest.outputs.FILE }}
+        flag-name: coverage-transform-utest
+        parallel: true
+
+    - name: Finish coverals
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true
