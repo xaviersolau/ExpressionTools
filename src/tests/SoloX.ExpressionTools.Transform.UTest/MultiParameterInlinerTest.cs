@@ -48,7 +48,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Assert.Equal(7, func(2));
         }
 
-        [Fact(DisplayName = "It must in-line multiple parameters")]
+        [Fact(DisplayName = "It must in-line multiple parameters expression")]
         public void MultiParametersInlineTest()
         {
             var pi = new MultiParameterInliner();
@@ -65,6 +65,28 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Assert.NotNull(resultingExp);
 
             var func = resultingExp.Compile();
+            Assert.Equal(20, func(3, 2));
+        }
+
+        [Fact(DisplayName = "It must in-line multiple parameters lambda expression")]
+        public void MultiParametersInlineLambdaTest()
+        {
+            var pi = new MultiParameterInliner();
+
+            var expMap = new Dictionary<string, Expression<Func<double, double>>>()
+            {
+                { "x", (a) => a * 3 },
+                { "y", (a) => a * 5 },
+            };
+
+            var parameterResolver = CreateParameterResolver(expMap.ToDictionary(x => x.Key, x => (LambdaExpression)x.Value));
+
+            Expression<Func<double, double, double>> expressionToAmend = (x, y) => x + y + 1;
+
+            var resultingExp = pi.Amend(parameterResolver, expressionToAmend);
+            Assert.NotNull(resultingExp);
+
+            var func = (Func<double, double, double>)resultingExp.Compile();
             Assert.Equal(20, func(3, 2));
         }
 
