@@ -25,17 +25,17 @@ namespace SoloX.ExpressionTools.Examples
         {
             // Setup the expressions to use as input
             Expression<Func<int, int>> expressionToInline = a => a + 1;
-            Expression<Func<int, int>> expression = b => b * 2;
+            Expression<Func<int, int>> expressionToAmend = b => b * 2;
+
+            // create the expression in-liner.
+            var inliner = new MultiParameterInliner();
 
             // Setup the resolver telling that 'b' must be replaced by in-lined 'a => a + 1' lambda.
             var resolver = new ParameterResolver()
                 .Register("b", expressionToInline);
 
-            // create the expression in-liner.
-            var inliner = new ExpressionInliner(resolver);
-
             // Amend the given expression replacing parameter 'b' resulting in the lambda 'a => (a + 1) * 2'.
-            var inlinedExpression = inliner.Amend<Func<int, int>, Func<int, int>>(expression);
+            var inlinedExpression = inliner.Amend<Func<int, int>, Func<int, int>>(resolver, expressionToAmend);
         }
     }
 }

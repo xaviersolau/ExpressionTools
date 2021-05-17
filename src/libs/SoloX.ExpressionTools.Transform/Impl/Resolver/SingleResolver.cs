@@ -43,4 +43,43 @@ namespace SoloX.ExpressionTools.Transform.Impl.Resolver
             return null;
         }
     }
+
+    /// <summary>
+    /// Single expression resolver.
+    /// </summary>
+    public class SingleResolver : IParameterResolver
+    {
+        private readonly Type outType;
+
+        /// <summary>
+        /// Get the expression to in-line.
+        /// </summary>
+        public LambdaExpression Expression { get; }
+
+        /// <summary>
+        /// Register an expression to be in-lined.
+        /// </summary>
+        /// <param name="expression">The expression to in-line.</param>
+        public SingleResolver(LambdaExpression expression)
+        {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            this.Expression = expression;
+            this.outType = expression.ReturnType;
+        }
+
+        /// <inheritdoc />
+        public LambdaExpression Resolve(ParameterExpression parameter)
+        {
+            if (parameter != null && parameter.Type == this.outType)
+            {
+                return Expression;
+            }
+
+            return null;
+        }
+    }
 }
