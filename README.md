@@ -1,16 +1,23 @@
 # ExpressionTools
-[![CircleCI](https://circleci.com/gh/xaviersolau/ExpressionTools.svg?style=svg)](https://circleci.com/gh/xaviersolau/ExpressionTools)
-[![Coverage Status](https://coveralls.io/repos/github/xaviersolau/ExpressionTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/ExpressionTools?branch=master)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.ExpressionTools.Parser.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Parser)
-[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.ExpressionTools.Transform.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Transform)
 
 ExpressionTools is a library that helps you to handle C# lambda expression.
 It is written in C# and thanks to .Net Standard, it is cross platform.
 
 The project is based on System.Linq.Expressions and uses the C# Roslyn compiler.
 
-Don't hesitate to post issue, pull request on the project or to fork and improve the project.
+Don't hesitate to post issues, pull requests on the project or to fork and improve the project.
+
+## Project dashboard
+
+[![Build - CI](https://github.com/xaviersolau/ExpressionTools/actions/workflows/build-ci.yml/badge.svg)](https://github.com/xaviersolau/ExpressionTools/actions/workflows/build-ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/xaviersolau/ExpressionTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/ExpressionTools?branch=master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+| Package                                    | Nuget.org |
+|--------------------------------------------|-----------|
+|**SoloX.ExpressionTools.Parser**            |[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.ExpressionTools.Parser.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Parser)|
+|**SoloX.ExpressionTools.Transform**            |[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.ExpressionTools.Transform.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Transform)|
+
 
 ## License and credits
 
