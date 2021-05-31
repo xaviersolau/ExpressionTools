@@ -35,5 +35,26 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<double, double>> expectedExp = i => i * 0.01d;
             Assert.Equal(expectedExp.ToString(), exp.ToString());
         }
+
+        [Fact]
+        public void IsShouldConvertExternalVariableAsConstInLambda()
+        {
+            var inliner = new ConstantInliner();
+
+            var externalValue = 0.01d;
+
+            LambdaExpression expToInline = (Expression<Func<double, double>>)(i => i * externalValue);
+
+            var exp = inliner.Amend(expToInline);
+
+            externalValue = 0.1d;
+
+            var func = (Func<double, double>)exp.Compile();
+
+            Assert.Equal(100d, func(10000));
+
+            Expression<Func<double, double>> expectedExp = i => i * 0.01d;
+            Assert.Equal(expectedExp.ToString(), exp.ToString());
+        }
     }
 }
