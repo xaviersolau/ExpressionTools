@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="ConstResolverTest.cs" company="Xavier Solau">
+// <copyright file="ConstantInlinerTest.cs" company="Xavier Solau">
 // Copyright © 2019 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -13,7 +13,7 @@ using Xunit;
 
 namespace SoloX.ExpressionTools.Transform.UTest
 {
-    public class ConstResolverTest
+    public class ConstantInlinerTest
     {
         [Fact]
         public void IsShouldConvertExternalVariableAsConst()

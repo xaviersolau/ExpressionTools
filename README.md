@@ -24,20 +24,20 @@ You can checkout this Github repository or you can use the NuGet package:
 
 **Install using the command line from the Package Manager:**
 ```bash
-Install-Package SoloX.ExpressionTools.Parser -version 1.0.0-alpha.5
-Install-Package SoloX.ExpressionTools.Transform -version 1.0.0-alpha.5
+Install-Package SoloX.ExpressionTools.Parser -version 1.0.0-alpha.6
+Install-Package SoloX.ExpressionTools.Transform -version 1.0.0-alpha.6
 ```
 
 **Install using the .Net CLI:**
 ```bash
-dotnet add package SoloX.ExpressionTools.Parser --version 1.0.0-alpha.5
-dotnet add package SoloX.ExpressionTools.Transform --version 1.0.0-alpha.5
+dotnet add package SoloX.ExpressionTools.Parser --version 1.0.0-alpha.6
+dotnet add package SoloX.ExpressionTools.Transform --version 1.0.0-alpha.6
 ```
 
 **Install editing your project file (csproj):**
 ```xml
-<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.0-alpha.5" />
-<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.0-alpha.5" />
+<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.0-alpha.6" />
+<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.0-alpha.6" />
 ```
 
 ## How to use it
@@ -184,3 +184,31 @@ var resolver = new ParameterResolver()
 // Amend the given expression replacing parameters resulting in the lambda '(c, d) => (c + 1) * (d - 1)'.
 var inlinedExpression = inliner.Amend<Func<int, int>, Func<int, int>>(resolver, expressionToAmend);
 ```
+
+#### Inline Constant expression
+
+Let's say that we need to convert a Lambda Expression using an external variable like this:
+
+```csharp
+// Here is a variable we are going to use in a Lambda Expression.
+var externalValue = 0.01d;
+
+// The expression is multiplying the input with the variable 'externalValue'.
+Expression<Func<double, double>> expToInline = i => i * externalValue;
+```
+
+The use case here is that we want to convert the expression in-lining the actual value of the variable like
+ `i => i * 0.01d`.
+
+It has never been simpler with the `ConstantInliner`: all we need is to call its `Amend` method:
+
+```csharp
+// Create the constant in-liner.
+var inliner = new ConstantInliner();
+
+// Amend the expToInline.
+var exp = inliner.Amend(expToInline);
+
+// That's yet, 'exp' is equal to 'i => i * 0.01d'
+```
+
