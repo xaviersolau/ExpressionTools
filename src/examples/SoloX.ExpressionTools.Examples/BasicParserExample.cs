@@ -84,7 +84,7 @@ namespace SoloX.ExpressionTools.Examples
             // We need to create the parser with a TypeNameResolver that will resolve type name with
             // the given System.Math class.
             var expressionParser = new ExpressionParser(
-                typeNameResolver: new TypeNameResolver(typeof(Math)));
+                typeNameResolver: new BasicTypeNameResolver(typeof(Math)));
 
             // We can just parse the expression.
             var expression = expressionParser.Parse<Func<double, double, double>>(expToParse);
