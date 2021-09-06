@@ -155,6 +155,26 @@ namespace SoloX.ExpressionTools.Parser.UTest
             Assert.Equal(2, func(new int[] { 1 }));
         }
 
+        [Fact(DisplayName = "It must parse string lambda expression")]
+        public void StringParseTest()
+        {
+            var expParser = ExpressionParserHelper.CreateExpressionParser<string>();
+
+            var lambda = expParser.Parse<Func<string, bool>>("d => d.Contains(\"a\")");
+
+            Assert.NotNull(lambda);
+        }
+
+        [Fact(DisplayName = "It must parse DateTime lambda expression")]
+        public void DateTimeParseTest()
+        {
+            var expParser = ExpressionParserHelper.CreateExpressionParser<DateTime>(typeNameFunc: typeName => typeof(DateTime));
+
+            var lambda = expParser.Parse<Func<DateTime, bool>>("d => d > DateTime.Now.AddYears(-18)");
+
+            Assert.NotNull(lambda);
+        }
+
         private static void AssertItReturnData2PropertyValue(Expression<Func<IData1, IData2>> lambda)
         {
             var func = lambda.Compile();

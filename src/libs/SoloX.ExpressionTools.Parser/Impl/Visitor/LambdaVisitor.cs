@@ -315,6 +315,9 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                 case SyntaxKind.NumericLiteralExpression:
                     attribute.ResultingExpression = Expression.Constant(node.Token.Value);
                     break;
+                case SyntaxKind.StringLiteralExpression:
+                    attribute.ResultingExpression = Expression.Constant(node.Token.Value);
+                    break;
                 default:
                     throw new FormatException($"unsupported operator {node.Token.ValueText}");
             }
