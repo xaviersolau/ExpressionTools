@@ -155,12 +155,14 @@ namespace SoloX.ExpressionTools.Parser.UTest
             Assert.Equal(2, func(new int[] { 1 }));
         }
 
-        [Fact(DisplayName = "It must parse string lambda expression")]
-        public void StringParseTest()
+        [Theory(DisplayName = "It must parse string lambda expression")]
+        [InlineData("d => d.Contains(\"a\")")]
+        [InlineData("d => d == \"a\"")]
+        public void StringParseTest(string stringExp)
         {
             var expParser = ExpressionParserHelper.CreateExpressionParser<string>();
 
-            var lambda = expParser.Parse<Func<string, bool>>("d => d.Contains(\"a\")");
+            var lambda = expParser.Parse<Func<string, bool>>(stringExp);
 
             Assert.NotNull(lambda);
         }
