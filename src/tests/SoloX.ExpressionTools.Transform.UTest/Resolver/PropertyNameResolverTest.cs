@@ -10,6 +10,7 @@ using FluentAssertions;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Transform.Impl.Resolver;
 using System;
+using System.Linq.Expressions;
 using Xunit;
 
 namespace SoloX.ExpressionTools.Transform.UTest.Resolver
@@ -22,6 +23,20 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
             var resolver = new PropertyNameResolver();
 
             var name = resolver.GetPropertyName<IData1, IData2>(x => x.Data2);
+
+            name.Should()
+                .NotBeNull()
+                .And.Be(nameof(IData1.Data2));
+        }
+
+        [Fact]
+        public void ItShouldReturnTheGivenPropertyNameFromLambda()
+        {
+            var resolver = new PropertyNameResolver();
+
+            Expression<Func<IData1, IData2>> lambdaExpression = (IData1 x) => x.Data2;
+
+            var name = resolver.GetPropertyName((LambdaExpression)lambdaExpression);
 
             name.Should()
                 .NotBeNull()
