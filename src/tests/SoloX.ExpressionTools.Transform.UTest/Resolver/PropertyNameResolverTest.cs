@@ -70,5 +70,54 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
 
             Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1[], IData2>(x => x[0].Data2));
         }
+
+
+        [Fact]
+        public void ItShouldThrowAnArgumentExceptionWithIdentity()
+        {
+            var resolver = new PropertyNameResolver();
+
+            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, IData1>(x => x));
+        }
+
+        [Fact]
+        public void ItShouldThrowAnArgumentExceptionWithConstant()
+        {
+            var resolver = new PropertyNameResolver();
+
+            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, int>(x => 10));
+        }
+
+        [Fact]
+        public void ItShouldThrowAnArgumentExceptionWithNew()
+        {
+            var resolver = new PropertyNameResolver();
+
+            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, object>(x => new object()));
+        }
+
+        [Fact]
+        public void ItShouldThrowAnArgumentExceptionWithNewArray()
+        {
+            var resolver = new PropertyNameResolver();
+
+            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, int[]>(x => new int[] { 0 }));
+        }
+
+        [Fact]
+        public void ItShouldThrowAnArgumentExceptionWithBinary()
+        {
+            var resolver = new PropertyNameResolver();
+
+            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, int>(x => 10 + 2));
+        }
+
+        [Fact]
+        public void ItShouldThrowAnArgumentExceptionWithUnary()
+        {
+            var resolver = new PropertyNameResolver();
+
+            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, int>(x => -10));
+        }
     }
 }

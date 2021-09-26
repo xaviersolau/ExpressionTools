@@ -21,6 +21,13 @@ namespace SoloX.ExpressionTools.Transform.Impl.Resolver
             var visitor = new PropertyNameResolverVisitor();
             visitor.Visit(expression);
 
+            var name = visitor.PropertyName;
+
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException($"unable to get the property name from the given expression.");
+            }
+
             return visitor.PropertyName;
         }
 
