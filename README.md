@@ -31,20 +31,20 @@ You can checkout this Github repository or you can use the NuGet package:
 
 **Install using the command line from the Package Manager:**
 ```bash
-Install-Package SoloX.ExpressionTools.Parser -version 1.0.0-alpha.7
-Install-Package SoloX.ExpressionTools.Transform -version 1.0.0-alpha.7
+Install-Package SoloX.ExpressionTools.Parser -version 1.0.0
+Install-Package SoloX.ExpressionTools.Transform -version 1.0.0
 ```
 
 **Install using the .Net CLI:**
 ```bash
-dotnet add package SoloX.ExpressionTools.Parser --version 1.0.0-alpha.7
-dotnet add package SoloX.ExpressionTools.Transform --version 1.0.0-alpha.7
+dotnet add package SoloX.ExpressionTools.Parser --version 1.0.0
+dotnet add package SoloX.ExpressionTools.Transform --version 1.0.0
 ```
 
 **Install editing your project file (csproj):**
 ```xml
-<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.0-alpha.7" />
-<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.0-alpha.7" />
+<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.0" />
+<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.0" />
 ```
 
 ## How to use it
@@ -219,3 +219,18 @@ var exp = inliner.Amend(expToInline);
 // That's yet, 'exp' is equal to 'i => i * 0.01d'
 ```
 
+#### Resolve Property Name
+
+In order to get the name of a property from a lambda like `i => i.MyProperty` we can use the `PropertyNameResolver`:
+
+```csharp
+
+// Create a instance of the resolver.
+var resolver = new PropertyNameResolver();
+
+// Resolve the property name of the given lambda.
+var name = resolver.GetPropertyName<IMyType, string>(x => x.MyProperty);
+
+// Here name is set to "MyProperty".
+
+```
