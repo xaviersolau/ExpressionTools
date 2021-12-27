@@ -16,6 +16,25 @@ namespace SoloX.ExpressionTools.Transform.UTest
     public class ConstantInlinerTest
     {
         [Fact]
+        public void IsShouldConvertExternalDateVariableAsConst()
+        {
+            var inliner = new ConstantInliner();
+
+            var externalValue = DateTime.Now;
+
+            Expression<Func<DateTime, bool>> expToInline = i => i < externalValue;
+
+            var exp = inliner.Amend(expToInline);
+
+            externalValue = DateTime.Now.AddDays(10);
+
+            var func = exp.Compile();
+
+            Assert.False(func(DateTime.Now.AddDays(1)));
+            Assert.True(func(DateTime.Now.AddDays(-1)));
+        }
+
+        [Fact]
         public void IsShouldConvertExternalVariableAsConst()
         {
             var inliner = new ConstantInliner();
@@ -55,6 +74,62 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             Expression<Func<double, double>> expectedExp = i => i * 0.01d;
             Assert.Equal(expectedExp.ToString(), exp.ToString());
+        }
+
+        [Fact]
+        public void IsShouldConvertExpressionWithDateTime()
+        {
+            Expression<Func<DateTime, bool>> exp = d => d < new DateTime(2021, 12, 24);
+
+            Assert.Equal("d => (d < new DateTime(2021, 12, 24))", exp.ToString());
+        }
+
+        [Fact]
+        public void IsShouldConvertExpressionWithConstDateTime()
+        {
+            var inliner = new ConstantInliner();
+
+            var externalValue = new DateTime(2021, 12, 24);
+
+            Expression<Func<DateTime, bool>> expToInline = d => d < externalValue;
+
+            var exp = inliner.Amend(expToInline);
+
+            Assert.Equal($"d => (d < new DateTime({externalValue.Ticks}))", exp.ToString());
+        }
+
+        [Fact]
+        public void IsShouldConvertExpressionWithConstDateTimeOffset()
+        {
+            var inliner = new ConstantInliner();
+
+            var offset = new TimeSpan(2, 0, 0);
+            var externalValue = new DateTimeOffset(2021, 12, 24, 10, 30, 12, offset);
+
+            Expression<Func<DateTimeOffset, bool>> expToInline = d => d < externalValue;
+
+            var exp = inliner.Amend(expToInline);
+
+            Assert.Equal($"d => (d < new DateTimeOffset({externalValue.Ticks}, new TimeSpan({offset.Ticks})))", exp.ToString());
+        }
+
+        internal class TestModel
+        {
+            public int Property { get; set; }
+        }
+
+        [Fact]
+        public void IsShouldConvertExpressionWithMemberAccess()
+        {
+            var inliner = new ConstantInliner();
+
+            var externalModelValue = new TestModel() { Property = 123 };
+
+            Expression<Func<int, bool>> expToInline = d => d < externalModelValue.Property;
+
+            var exp = inliner.Amend(expToInline);
+
+            Assert.Equal($"d => (d < 123)", exp.ToString());
         }
     }
 }

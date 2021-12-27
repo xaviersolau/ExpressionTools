@@ -14,6 +14,7 @@ using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SoloX.ExpressionTools.Parser.Impl.Resolver;
 
 namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 {
@@ -26,6 +27,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
     {
         private readonly Stack<LambdaVisitorAttribute> attributes = new Stack<LambdaVisitorAttribute>();
         private readonly TypeVisitor typeVisitor = new TypeVisitor();
+        private readonly ITypeNameResolver defaultSystemTypeNameResolver;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LambdaVisitor"/> class.
@@ -41,6 +43,8 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             this.ParameterTypeResolver = parameterTypeResolver;
             this.MethodResolver = methodResolver;
             this.TypeNameResolver = typeNameResolver;
+
+            this.defaultSystemTypeNameResolver = new NameSpaceTypeNameResolver(new string[] { "System" });
         }
 
         /// <summary>
@@ -57,6 +61,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         /// Gets the type name resolver.
         /// </summary>
         public ITypeNameResolver TypeNameResolver { get; }
+
 
         /// <inheritdoc />
         public override LambdaVisitorAttribute VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
@@ -171,6 +176,33 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
+        public override LambdaVisitorAttribute VisitPredefinedType(PredefinedTypeSyntax node)
+        {
+            var attribute = this.attributes.Peek();
+
+#pragma warning disable IDE0072 // Add missing cases
+            attribute.ResultingType = node.Keyword.Kind() switch
+            {
+                SyntaxKind.StringKeyword => typeof(string),
+                SyntaxKind.ByteKeyword => typeof(byte),
+                SyntaxKind.CharKeyword => typeof(char),
+                SyntaxKind.ShortKeyword => typeof(short),
+                SyntaxKind.UShortKeyword => typeof(ushort),
+                SyntaxKind.IntKeyword => typeof(int),
+                SyntaxKind.UIntKeyword => typeof(int),
+                SyntaxKind.LongKeyword => typeof(long),
+                SyntaxKind.ULongKeyword => typeof(long),
+                SyntaxKind.FloatKeyword => typeof(float),
+                SyntaxKind.DoubleKeyword => typeof(double),
+                SyntaxKind.DecimalKeyword => typeof(decimal),
+                _ => null,
+            };
+#pragma warning restore IDE0072 // Add missing cases
+
+            return attribute;
+        }
+
+        /// <inheritdoc />
         public override LambdaVisitorAttribute VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
             var attribute = this.attributes.Peek();
@@ -273,6 +305,25 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                     attribute.ResultingExpression = Expression.ArrayIndex(
                         exp,
                         ConvertTypeForMethodCall(args, methodInfo));
+                });
+        }
+
+        public override LambdaVisitorAttribute VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
+        {
+            return this.VisitWithNewAttribute(
+                attribute =>
+                {
+                    var args = this.VisitArgumentList(node.ArgumentList.Arguments);
+
+                    var argumentTypes = args.Select(a => a.Type).ToArray();
+
+                    var typeAttribute = this.Visit(node.Type);
+                    var typeToCreate = typeAttribute.ResultingType;
+                    var constructorInfo = typeToCreate.GetConstructor(argumentTypes);
+
+                    attribute.ResultingExpression = Expression.New(
+                        constructorInfo,
+                        ConvertTypeForConstructorCall(args, constructorInfo));
                 });
         }
 
@@ -414,11 +465,22 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             return Expression.Convert(expression, targetType);
         }
 
+        private static IEnumerable<Expression> ConvertTypeForConstructorCall(IReadOnlyList<Expression> args, ConstructorInfo constructorInfo)
+        {
+            var parameters = constructorInfo.GetParameters();
+            return ConvertArgumentsForCall(args, parameters);
+        }
+
         private static IEnumerable<Expression> ConvertTypeForMethodCall(IReadOnlyList<Expression> args, MethodInfo methodInfo)
+        {
+            var parameters = methodInfo.GetParameters();
+            return ConvertArgumentsForCall(args, parameters);
+        }
+
+        private static IEnumerable<Expression> ConvertArgumentsForCall(IReadOnlyList<Expression> args, ParameterInfo[] parameters)
         {
             var argCount = args.Count;
             var convertedArgs = new Expression[argCount];
-            var parameters = methodInfo.GetParameters();
             for (var i = 0; i < argCount; i++)
             {
                 var exp = args[i];
@@ -467,6 +529,12 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         private bool TryToResolveAsAType(string text, out Type type)
         {
             type = this.TypeNameResolver?.ResolveTypeName(text);
+
+            if (type == null)
+            {
+                type = this.defaultSystemTypeNameResolver.ResolveTypeName(text);
+            }
+
             return type != null;
         }
 
