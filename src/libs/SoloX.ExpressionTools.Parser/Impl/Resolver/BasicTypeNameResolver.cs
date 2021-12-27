@@ -24,6 +24,11 @@ namespace SoloX.ExpressionTools.Parser.Impl.Resolver
         /// <param name="types">The type list to match in the type name resolution.</param>
         public BasicTypeNameResolver(params Type[] types)
         {
+            if (types == null)
+            {
+                throw new ArgumentNullException(nameof(types));
+            }
+
             foreach (var type in types)
             {
                 this.typeMap.Add(type.Name, type);

@@ -157,6 +157,8 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
         [Theory(DisplayName = "It must parse string lambda expression")]
         [InlineData("d => d.Contains(\"a\")")]
+        [InlineData("d => string.Equals(d, \"a\")")]
+        [InlineData("d => String.Equals(d, \"a\")")]
         [InlineData("d => d == \"a\"")]
         public void StringParseTest(string stringExp)
         {
@@ -167,12 +169,14 @@ namespace SoloX.ExpressionTools.Parser.UTest
             Assert.NotNull(lambda);
         }
 
-        [Fact(DisplayName = "It must parse DateTime lambda expression")]
-        public void DateTimeParseTest()
+        [Theory(DisplayName = "It must parse DateTime lambda expression")]
+        [InlineData("d => d > DateTime.Now.AddYears(-18)")]
+        [InlineData("d => d > new DateTime(2021, 10, 01)")]
+        public void DateTimeParseTest(string stringExp)
         {
-            var expParser = ExpressionParserHelper.CreateExpressionParser<DateTime>(typeNameFunc: typeName => typeof(DateTime));
+            var expParser = ExpressionParserHelper.CreateExpressionParser<DateTime>();
 
-            var lambda = expParser.Parse<Func<DateTime, bool>>("d => d > DateTime.Now.AddYears(-18)");
+            var lambda = expParser.Parse<Func<DateTime, bool>>(stringExp);
 
             Assert.NotNull(lambda);
         }
