@@ -13,10 +13,10 @@ Don't hesitate to post issues, pull requests on the project or to fork and impro
 [![Coverage Status](https://coveralls.io/repos/github/xaviersolau/ExpressionTools/badge.svg?branch=master)](https://coveralls.io/github/xaviersolau/ExpressionTools?branch=master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-| Package                                    | Nuget.org |
-|--------------------------------------------|-----------|
-|**SoloX.ExpressionTools.Parser**            |[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.ExpressionTools.Parser.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Parser)|
-|**SoloX.ExpressionTools.Transform**            |[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.ExpressionTools.Transform.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Transform)|
+| Package                                    | Nuget.org | Pre-release |
+|--------------------------------------------|-----------|-------------|
+|**SoloX.ExpressionTools.Parser**            |[![NuGet Beta](https://img.shields.io/nuget/v/SoloX.ExpressionTools.Parser.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Parser)|[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.ExpressionTools.Parser.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Parser)|
+|**SoloX.ExpressionTools.Transform**         |[![NuGet Beta](https://img.shields.io/nuget/v/SoloX.ExpressionTools.Transform.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Transform)|[![NuGet Beta](https://img.shields.io/nuget/vpre/SoloX.ExpressionTools.Transform.svg)](https://www.nuget.org/packages/SoloX.ExpressionTools.Transform)|
 
 
 ## License and credits
@@ -31,20 +31,20 @@ You can checkout this Github repository or you can use the NuGet package:
 
 **Install using the command line from the Package Manager:**
 ```bash
-Install-Package SoloX.ExpressionTools.Parser -version 1.0.0
-Install-Package SoloX.ExpressionTools.Transform -version 1.0.0
+Install-Package SoloX.ExpressionTools.Parser -version 1.0.1-alpha.1
+Install-Package SoloX.ExpressionTools.Transform -version 1.0.1-alpha.1
 ```
 
 **Install using the .Net CLI:**
 ```bash
-dotnet add package SoloX.ExpressionTools.Parser --version 1.0.0
-dotnet add package SoloX.ExpressionTools.Transform --version 1.0.0
+dotnet add package SoloX.ExpressionTools.Parser --version 1.0.1-alpha.1
+dotnet add package SoloX.ExpressionTools.Transform --version 1.0.1-alpha.1
 ```
 
 **Install editing your project file (csproj):**
 ```xml
-<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.0" />
-<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.0" />
+<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.1-alpha.1" />
+<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.1-alpha.1" />
 ```
 
 ## How to use it
