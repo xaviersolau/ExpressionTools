@@ -181,6 +181,18 @@ namespace SoloX.ExpressionTools.Parser.UTest
             Assert.NotNull(lambda);
         }
 
+        [Theory(DisplayName = "It must parse lambda expression with array")]
+        [InlineData("x => new [] {1, 2, 3}.Contains(x)")]
+        [InlineData("x => new int[] {1, 2, 3}.Contains(x)")]
+        public void ArrayParseTest(string stringExp)
+        {
+            var expParser = ExpressionParserHelper.CreateExpressionParser<int>();
+
+            var lambda = expParser.Parse<Func<int, bool>>(stringExp);
+
+            Assert.NotNull(lambda);
+        }
+
         private static void AssertItReturnData2PropertyValue(Expression<Func<IData1, IData2>> lambda)
         {
             var func = lambda.Compile();

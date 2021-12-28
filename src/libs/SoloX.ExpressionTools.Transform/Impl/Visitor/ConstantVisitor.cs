@@ -7,6 +7,8 @@
 // ----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -84,8 +86,38 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
                         typeof(TimeSpan).GetConstructor(new Type[] { typeof(long) }),
                         Expression.Constant(date.Offset.Ticks)));
             }
+            else
+            {
+                var enumerable = type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
+
+                if (enumerable != null)
+                {
+                    var itemType = enumerable.GetGenericArguments()[0];
+
+                    return Expression.NewArrayInit(itemType, Tools.BuildConstantExpressionList(itemType, value));
+                }
+            }
 
             return Expression.Constant(value);
+        }
+
+        private static class Tools
+        {
+            public static IEnumerable<Expression> BuildConstantExpressionList(Type itemType, object list)
+            {
+                var methodGeneric = typeof(Tools).GetMethod(nameof(Tools.GenericBuildConstantExpressionList), new Type[] { typeof(object) });
+
+                var method = methodGeneric.MakeGenericMethod(itemType);
+
+                return (IEnumerable<Expression>)method.Invoke(null, new object[] { list });
+            }
+
+            public static IEnumerable<Expression> GenericBuildConstantExpressionList<T>(object list)
+            {
+                var items = (IEnumerable<T>)list;
+
+                return items.Select(i => BuildConstantExpression(typeof(T), i));
+            }
         }
     }
 }
