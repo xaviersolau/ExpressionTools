@@ -134,7 +134,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithConstArray()
+        public void IsShouldConvertExpressionWithConstArrayOfInt()
         {
             var inliner = new ConstantInliner();
 
@@ -144,7 +144,21 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var exp = inliner.Amend(expToInline);
 
-            Assert.Equal($"x => new [] {{1, 2, 3}}.Contains(x)", exp.ToString());
+            Assert.Equal("x => new [] {1, 2, 3}.Contains(x)", exp.ToString());
+        }
+
+        [Fact]
+        public void IsShouldConvertExpressionWithConstArrayOfString()
+        {
+            var inliner = new ConstantInliner();
+
+            var externalValue = new string[] { "abc" };
+
+            Expression<Func<string, bool>> expToInline = x => externalValue.Contains(x);
+
+            var exp = inliner.Amend(expToInline);
+
+            Assert.Equal("x => new [] {\"abc\"}.Contains(x)", exp.ToString());
         }
     }
 }
