@@ -160,5 +160,20 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             Assert.Equal("x => new [] {\"abc\"}.Contains(x)", exp.ToString());
         }
+
+        [Fact]
+        public void IsShouldConvertExpressionWithConstEnumerableOfString()
+        {
+            var inliner = new ConstantInliner();
+
+            var list = new string[] { "abc", "123" };
+            var externalValue = list.Where(x => x == "abc").Select(x => x);
+
+            Expression<Func<string, bool>> expToInline = x => externalValue.Contains(x);
+
+            var exp = inliner.Amend(expToInline);
+
+            Assert.Equal("x => new [] {\"abc\"}.Contains(x)", exp.ToString());
+        }
     }
 }

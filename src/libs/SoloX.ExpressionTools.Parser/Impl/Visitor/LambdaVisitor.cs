@@ -287,7 +287,9 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 
                 if (attribute.ResultingMethodInfo == null && type.IsArray)
                 {
-                    var enumerable = type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
+                    var enumerable = type.Name == typeof(IEnumerable<>).Name
+                        ? type
+                        : type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
                     var itemType = enumerable.GetGenericArguments()[0];
 
                     var methods = typeof(Enumerable).GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod)

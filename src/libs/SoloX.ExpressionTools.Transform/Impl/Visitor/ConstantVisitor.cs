@@ -88,7 +88,9 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
             }
             else if (type != typeof(string))
             {
-                var enumerable = type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
+                var enumerable = type.Name == typeof(IEnumerable<>).Name
+                    ? type
+                    : type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
 
                 if (enumerable != null)
                 {
