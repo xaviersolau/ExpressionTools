@@ -31,20 +31,20 @@ You can checkout this Github repository or you can use the NuGet package:
 
 **Install using the command line from the Package Manager:**
 ```bash
-Install-Package SoloX.ExpressionTools.Parser -version 1.0.1-alpha.2
-Install-Package SoloX.ExpressionTools.Transform -version 1.0.1-alpha.2
+Install-Package SoloX.ExpressionTools.Parser -version 1.0.1-alpha.3
+Install-Package SoloX.ExpressionTools.Transform -version 1.0.1-alpha.3
 ```
 
 **Install using the .Net CLI:**
 ```bash
-dotnet add package SoloX.ExpressionTools.Parser --version 1.0.1-alpha.2
-dotnet add package SoloX.ExpressionTools.Transform --version 1.0.1-alpha.2
+dotnet add package SoloX.ExpressionTools.Parser --version 1.0.1-alpha.3
+dotnet add package SoloX.ExpressionTools.Transform --version 1.0.1-alpha.3
 ```
 
 **Install editing your project file (csproj):**
 ```xml
-<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.1-alpha.2" />
-<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.1-alpha.2" />
+<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.1-alpha.3" />
+<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.1-alpha.3" />
 ```
 
 ## How to use it

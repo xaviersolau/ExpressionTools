@@ -86,7 +86,7 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
                         typeof(TimeSpan).GetConstructor(new Type[] { typeof(long) }),
                         Expression.Constant(date.Offset.Ticks)));
             }
-            else
+            else if (type != typeof(string))
             {
                 var enumerable = type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
 
