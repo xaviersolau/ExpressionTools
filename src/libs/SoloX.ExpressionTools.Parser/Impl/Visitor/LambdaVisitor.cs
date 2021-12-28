@@ -157,10 +157,20 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 
                     var expressionAttribute = this.Visit(node.Expression);
 
-                    attribute.ResultingExpression = Expression.Call(
-                        expressionAttribute.ResultingExpression,
-                        expressionAttribute.ResultingMethodInfo,
-                        ConvertTypeForMethodCall(args, expressionAttribute.ResultingMethodInfo));
+                    if (expressionAttribute.ResultingMethodInfo.IsStatic && expressionAttribute.ResultingExpression != null)
+                    {
+                        attribute.ResultingExpression = Expression.Call(
+                            null,
+                            expressionAttribute.ResultingMethodInfo,
+                            ConvertTypeForMethodCall(new Expression[] { expressionAttribute.ResultingExpression }.Concat(args).ToArray(), expressionAttribute.ResultingMethodInfo));
+                    }
+                    else
+                    {
+                        attribute.ResultingExpression = Expression.Call(
+                            expressionAttribute.ResultingExpression,
+                            expressionAttribute.ResultingMethodInfo,
+                            ConvertTypeForMethodCall(args, expressionAttribute.ResultingMethodInfo));
+                    }
                 });
         }
 
@@ -178,28 +188,70 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         /// <inheritdoc />
         public override LambdaVisitorAttribute VisitPredefinedType(PredefinedTypeSyntax node)
         {
-            var attribute = this.attributes.Peek();
-
+            return this.VisitWithNewAttribute(
+                attribute =>
+                {
 #pragma warning disable IDE0072 // Add missing cases
-            attribute.ResultingType = node.Keyword.Kind() switch
-            {
-                SyntaxKind.StringKeyword => typeof(string),
-                SyntaxKind.ByteKeyword => typeof(byte),
-                SyntaxKind.CharKeyword => typeof(char),
-                SyntaxKind.ShortKeyword => typeof(short),
-                SyntaxKind.UShortKeyword => typeof(ushort),
-                SyntaxKind.IntKeyword => typeof(int),
-                SyntaxKind.UIntKeyword => typeof(int),
-                SyntaxKind.LongKeyword => typeof(long),
-                SyntaxKind.ULongKeyword => typeof(long),
-                SyntaxKind.FloatKeyword => typeof(float),
-                SyntaxKind.DoubleKeyword => typeof(double),
-                SyntaxKind.DecimalKeyword => typeof(decimal),
-                _ => null,
-            };
+                    attribute.ResultingType = node.Keyword.Kind() switch
+                    {
+                        SyntaxKind.StringKeyword => typeof(string),
+                        SyntaxKind.ByteKeyword => typeof(byte),
+                        SyntaxKind.CharKeyword => typeof(char),
+                        SyntaxKind.ShortKeyword => typeof(short),
+                        SyntaxKind.UShortKeyword => typeof(ushort),
+                        SyntaxKind.IntKeyword => typeof(int),
+                        SyntaxKind.UIntKeyword => typeof(int),
+                        SyntaxKind.LongKeyword => typeof(long),
+                        SyntaxKind.ULongKeyword => typeof(long),
+                        SyntaxKind.FloatKeyword => typeof(float),
+                        SyntaxKind.DoubleKeyword => typeof(double),
+                        SyntaxKind.DecimalKeyword => typeof(decimal),
+                        _ => null,
+                    };
 #pragma warning restore IDE0072 // Add missing cases
+                });
+        }
 
-            return attribute;
+        public override LambdaVisitorAttribute VisitImplicitArrayCreationExpression(ImplicitArrayCreationExpressionSyntax node)
+        {
+            return BuildArrayCreationLambda(node.Initializer.Expressions, null);
+        }
+
+        public override LambdaVisitorAttribute VisitArrayCreationExpression(ArrayCreationExpressionSyntax node)
+        {
+            var typeAttr = this.Visit(node.Type.ElementType);
+            var itemType = typeAttr.ResultingType;
+
+            return BuildArrayCreationLambda(node.Initializer.Expressions, itemType);
+        }
+
+        private LambdaVisitorAttribute BuildArrayCreationLambda(SeparatedSyntaxList<ExpressionSyntax> itemsNode, Type itemType)
+        {
+            var expressions = new List<Expression>();
+
+            var attr = this.VisitWithNewAttribute(
+                attribute =>
+                {
+
+                    foreach (var exp in itemsNode)
+                    {
+                        var itemAttr = this.Visit(exp);
+
+                        expressions.Add(itemAttr.ResultingExpression);
+
+                        if (itemType == null)
+                        {
+                            itemType = itemAttr.ResultingExpression.Type;
+                        }
+                        else if (itemType != itemAttr.ResultingExpression.Type)
+                        {
+                            throw new FormatException($"Expecting item type: {itemType.Name} but got {itemAttr.ResultingExpression.Type.Name}");
+                        }
+                    }
+                });
+
+            attr.ResultingExpression = Expression.NewArrayInit(itemType, expressions);
+            return attr;
         }
 
         /// <inheritdoc />
@@ -232,6 +284,19 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             if (attribute.ArgumentTypes != null)
             {
                 attribute.ResultingMethodInfo = type.GetMethod(memberName, attribute.ArgumentTypes);
+
+                if (attribute.ResultingMethodInfo == null && type.IsArray)
+                {
+                    var enumerable = type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
+                    var itemType = enumerable.GetGenericArguments()[0];
+
+                    var methods = typeof(Enumerable).GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod)
+                        .Where(m => m.Name == memberName && m.GetParameters().Length == attribute.ArgumentTypes.Length + 1);
+
+                    var method = methods.FirstOrDefault();
+
+                    attribute.ResultingMethodInfo = method?.MakeGenericMethod(itemType);
+                }
             }
 
             if (attribute.ResultingMethodInfo == null)

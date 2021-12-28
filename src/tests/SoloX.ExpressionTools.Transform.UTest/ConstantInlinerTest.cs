@@ -8,6 +8,7 @@
 
 using SoloX.ExpressionTools.Transform.Impl;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Xunit;
 
@@ -130,6 +131,20 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var exp = inliner.Amend(expToInline);
 
             Assert.Equal($"d => (d < 123)", exp.ToString());
+        }
+
+        [Fact]
+        public void IsShouldConvertExpressionWithConstArray()
+        {
+            var inliner = new ConstantInliner();
+
+            var externalValue = new int[] { 1, 2, 3 };
+
+            Expression<Func<int, bool>> expToInline = x => externalValue.Contains(x);
+
+            var exp = inliner.Amend(expToInline);
+
+            Assert.Equal($"x => new [] {{1, 2, 3}}.Contains(x)", exp.ToString());
         }
     }
 }
