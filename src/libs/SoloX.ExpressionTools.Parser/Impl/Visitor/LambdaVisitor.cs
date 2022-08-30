@@ -44,7 +44,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             this.MethodResolver = methodResolver;
             this.TypeNameResolver = typeNameResolver;
 
-            this.defaultSystemTypeNameResolver = new NameSpaceTypeNameResolver(new string[] { "System" });
+            this.defaultSystemTypeNameResolver = new NameSpaceTypeNameResolver(new (string, string)[] { ("System", null), ("System.Linq", "System.Linq") });
         }
 
         /// <summary>
@@ -259,7 +259,13 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         {
             var attribute = this.attributes.Peek();
 
-            var memberName = node.Name.Identifier.Text;
+            var identifierAttribute = this.VisitWithNewAttribute(attr =>
+            {
+                this.Visit(node.Name);
+            });
+
+            var memberName = identifierAttribute.ResultingIdentifier;
+            var genericParameters = identifierAttribute.GenericParameters;
 
             var expressionAttribute = this.Visit(node.Expression);
             var exp = expressionAttribute.ResultingExpression;
@@ -285,19 +291,53 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             {
                 attribute.ResultingMethodInfo = type.GetMethod(memberName, attribute.ArgumentTypes);
 
-                if (attribute.ResultingMethodInfo == null && type.IsArray)
+                if (attribute.ResultingMethodInfo == null)
                 {
-                    var enumerable = type.Name == typeof(IEnumerable<>).Name
-                        ? type
-                        : type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
-                    var itemType = enumerable.GetGenericArguments()[0];
+                    if (type.IsArray)
+                    {
+                        var enumerable = type.Name == typeof(IEnumerable<>).Name
+                            ? type
+                            : type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
+                        var itemType = enumerable.GetGenericArguments()[0];
 
-                    var methods = typeof(Enumerable).GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod)
-                        .Where(m => m.Name == memberName && m.GetParameters().Length == attribute.ArgumentTypes.Length + 1);
+                        var methods = typeof(Enumerable).GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod)
+                            .Where(m => m.Name == memberName && m.GetParameters().Length == attribute.ArgumentTypes.Length + 1);
 
-                    var method = methods.FirstOrDefault();
+                        var method = methods.FirstOrDefault();
 
-                    attribute.ResultingMethodInfo = method?.MakeGenericMethod(itemType);
+                        attribute.ResultingMethodInfo = method?.MakeGenericMethod(itemType);
+                    }
+                    else
+                    {
+                        var arity = genericParameters?.Length ?? 0;
+                        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod).Where(m => m.Name == memberName);
+
+                        if (arity != 0)
+                        {
+                            methods = methods.Where(m => m.IsGenericMethodDefinition).Select(m => m.MakeGenericMethod(genericParameters));
+                        }
+
+                        methods = methods.Where(m =>
+                        {
+                            if (m.GetParameters().Length >= attribute.ArgumentTypes.Length && m.GetParameters().Where(p => !p.IsOptional).Count() <= attribute.ArgumentTypes.Length)
+                            {
+                                for (var i = 0; i < attribute.ArgumentTypes.Length; i++)
+                                {
+                                    var parameter = m.GetParameters()[i];
+                                    var argument = attribute.ArgumentTypes[i];
+                                    if (!parameter.ParameterType.IsAssignableFrom(argument))
+                                    {
+                                        return false;
+                                    }
+                                }
+
+                                return true;
+                            }
+                            return false;
+                        }).ToArray();
+
+                        attribute.ResultingMethodInfo = methods.SingleOrDefault();
+                    }
                 }
             }
 
@@ -324,7 +364,8 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         {
             var attribute = this.attributes.Peek();
 
-            var text = node.Identifier.Text;
+            var text = $"{attribute.QualifiedNamePrefix}{node.Identifier.Text}";
+
             if (string.IsNullOrEmpty(text))
             {
                 throw new FormatException($"Identifier must be specified");
@@ -339,6 +380,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
             else if (this.TryToResolveAsAType(text, out var type))
             {
+                attribute.ResultingIdentifier = text;
                 attribute.ResultingType = type;
             }
             else
@@ -350,9 +392,78 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
+        public override LambdaVisitorAttribute VisitQualifiedName(QualifiedNameSyntax node)
+        {
+            var attribute = this.attributes.Peek();
+
+            var prefix = node.Left.ToString();
+
+            attribute.QualifiedNamePrefix += prefix + '.';
+
+            return this.Visit(node.Right);
+        }
+
+        /// <inheritdoc />
+        public override LambdaVisitorAttribute VisitGenericName(GenericNameSyntax node)
+        {
+            var attribute = this.attributes.Peek();
+
+            var arguments = new List<Type>();
+            foreach (var argument in node.TypeArgumentList.Arguments)
+            {
+                var attr = this.VisitWithNewAttribute(
+                    attribute =>
+                    {
+                        var typeAttribute = this.Visit(argument);
+                        var typeToCreate = typeAttribute.ResultingType;
+                    });
+
+                arguments.Add(attr.ResultingType);
+            }
+
+            var text = $"{attribute.QualifiedNamePrefix}{node.Identifier.Text}`{node.Arity}";
+
+            if (string.IsNullOrEmpty(node.Identifier.Text))
+            {
+                throw new FormatException($"Identifier must be specified");
+            }
+            else if (this.TryToResolveAsAType(text, out var genType))
+            {
+                attribute.ResultingIdentifier = text;
+
+                attribute.ResultingType = genType.MakeGenericType(arguments.ToArray());
+            }
+            else
+            {
+                attribute.ResultingIdentifier = node.Identifier.Text;
+
+                attribute.GenericParameters = arguments.ToArray();
+            }
+
+            return attribute;
+        }
+
+        /// <inheritdoc />
         public override LambdaVisitorAttribute VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
         {
             return this.Visit(node.Expression);
+        }
+
+        /// <inheritdoc />
+        public override LambdaVisitorAttribute VisitCastExpression(CastExpressionSyntax node)
+        {
+            var attr = this.VisitWithNewAttribute(
+                attribute =>
+                {
+                    var typeAttribute = this.Visit(node.Type);
+                    var typeToCreate = typeAttribute.ResultingType;
+
+                    var expressionAttribute = this.Visit(node.Expression);
+                    var exp = expressionAttribute.ResultingExpression;
+
+                    attribute.ResultingExpression = Expression.Convert(exp, typeToCreate);
+                });
+            return attr;
         }
 
         /// <inheritdoc />
@@ -435,6 +546,9 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                     break;
                 case SyntaxKind.StringLiteralExpression:
                     attribute.ResultingExpression = Expression.Constant(node.Token.Value);
+                    break;
+                case SyntaxKind.NullLiteralExpression:
+                    attribute.ResultingExpression = Expression.Default(typeof(object));
                     break;
                 default:
                     throw new FormatException($"unsupported operator {node.Token.ValueText}");
@@ -525,6 +639,12 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
 
             if (expression.Type == typeof(float) && targetType != typeof(double))
+            {
+                return expression;
+            }
+
+            // If exp is nullable we should not convert.
+            if (expression.Type.IsValueType && expression.Type.IsGenericType && expression.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 return expression;
             }

@@ -33,6 +33,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         public Type[] ArgumentTypes { get; internal set; }
+        public Type[] GenericParameters { get; internal set; }
 
         public Expression ResultingExpression { get; internal set; }
 
@@ -45,5 +46,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         public List<ParameterExpression> Parameters { get; }
 
         public Dictionary<string, ParameterExpression> ParameterMap { get; }
+
+        public string QualifiedNamePrefix { get; internal set; } = string.Empty;
     }
 }

@@ -80,9 +80,14 @@ namespace SoloX.ExpressionTools.Transform.UTest
         [Fact]
         public void IsShouldConvertExpressionWithDateTime()
         {
-            Expression<Func<DateTime, bool>> exp = d => d < new DateTime(2021, 12, 24);
+            var inliner = new ConstantInliner();
 
-            Assert.Equal("d => (d < new DateTime(2021, 12, 24))", exp.ToString());
+            Expression<Func<DateTime, bool>> expToInline = d => d < new DateTime(2021, 12, 24);
+
+            var exp = inliner.Amend(expToInline);
+            var txt = exp.Serialize();
+
+            Assert.Equal("d => (d < new DateTime(2021, 12, 24))", txt);
         }
 
         [Fact]
@@ -95,8 +100,9 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<DateTime, bool>> expToInline = d => d < externalValue;
 
             var exp = inliner.Amend(expToInline);
+            var txt = exp.Serialize();
 
-            Assert.Equal($"d => (d < new DateTime({externalValue.Ticks}))", exp.ToString());
+            Assert.Equal($"d => (d < new DateTime({externalValue.Ticks}))", txt);
         }
 
         [Fact]
@@ -110,8 +116,39 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<DateTimeOffset, bool>> expToInline = d => d < externalValue;
 
             var exp = inliner.Amend(expToInline);
+            var txt = exp.Serialize();
 
-            Assert.Equal($"d => (d < new DateTimeOffset({externalValue.Ticks}, new TimeSpan({offset.Ticks})))", exp.ToString());
+            Assert.Equal($"d => (d < new DateTimeOffset({externalValue.Ticks}, new TimeSpan({offset.Ticks})))", txt);
+        }
+
+        [Fact]
+        public void IsShouldConvertExpressionWithGuid()
+        {
+            var inliner = new ConstantInliner();
+
+            var externalValue = Guid.NewGuid();
+
+            Expression<Func<Guid, bool>> expToInline = d => d == externalValue;
+
+            var exp = inliner.Amend(expToInline);
+            var txt = exp.Serialize();
+
+            Assert.Equal($"d => (d == new Guid(\"{externalValue}\"))", txt);
+        }
+
+        [Fact]
+        public void IsShouldConvertExpressionWithNullableGuid()
+        {
+            var inliner = new ConstantInliner();
+
+            Guid? externalValue = Guid.NewGuid();
+
+            Expression<Func<Guid?, bool>> expToInline = d => d == null || d == externalValue;
+
+            var exp = inliner.Amend(expToInline);
+            var txt = exp.Serialize();
+
+            Assert.Equal($"d => ((d == null) || (d == ((Nullable<Guid>)(new Guid(\"{externalValue}\")))))", txt);
         }
 
         internal class TestModel
@@ -129,8 +166,9 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<int, bool>> expToInline = d => d < externalModelValue.Property;
 
             var exp = inliner.Amend(expToInline);
+            var txt = exp.Serialize();
 
-            Assert.Equal($"d => (d < 123)", exp.ToString());
+            Assert.Equal($"d => (d < 123)", txt);
         }
 
         [Fact]
@@ -143,8 +181,9 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<int, bool>> expToInline = x => externalValue.Contains(x);
 
             var exp = inliner.Amend(expToInline);
+            var txt = exp.Serialize();
 
-            Assert.Equal("x => new [] {1, 2, 3}.Contains(x)", exp.ToString());
+            Assert.Equal("x => Enumerable.Contains<Int32>(new Int32[] { 1, 2, 3 }, x)", txt);
         }
 
         [Fact]
@@ -157,8 +196,9 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<string, bool>> expToInline = x => externalValue.Contains(x);
 
             var exp = inliner.Amend(expToInline);
+            var txt = exp.Serialize();
 
-            Assert.Equal("x => new [] {\"abc\"}.Contains(x)", exp.ToString());
+            Assert.Equal("x => Enumerable.Contains<String>(new String[] { \"abc\" }, x)", txt);
         }
 
         [Fact]
@@ -172,8 +212,9 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<string, bool>> expToInline = x => externalValue.Contains(x);
 
             var exp = inliner.Amend(expToInline);
+            var txt = exp.Serialize();
 
-            Assert.Equal("x => new [] {\"abc\"}.Contains(x)", exp.ToString());
+            Assert.Equal("x => Enumerable.Contains<String>(new String[] { \"abc\" }, x)", txt);
         }
     }
 }

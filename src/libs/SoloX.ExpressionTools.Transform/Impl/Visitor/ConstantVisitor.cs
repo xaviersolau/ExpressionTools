@@ -86,6 +86,32 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
                         typeof(TimeSpan).GetConstructor(new Type[] { typeof(long) }),
                         Expression.Constant(date.Offset.Ticks)));
             }
+            else if (type == typeof(Guid))
+            {
+                var guid = (Guid)value;
+
+                return Expression.New(
+                    typeof(Guid).GetConstructor(new Type[] { typeof(string) }),
+                    Expression.Constant(guid.ToString()));
+            }
+            else if (type.IsValueType && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                var underlyingType = Nullable.GetUnderlyingType(type);
+
+                var hasValueProperty = type.GetProperty(nameof(Nullable<int>.HasValue));
+
+                if ((bool)hasValueProperty.GetValue(value))
+                {
+                    var valueProperty = type.GetProperty(nameof(Nullable<int>.Value));
+                    return Expression.Convert(
+                        BuildConstantExpression(underlyingType, valueProperty.GetValue(value)),
+                        type);
+                }
+                else
+                {
+                    return Expression.Default(type);
+                }
+            }
             else if (type != typeof(string))
             {
                 var enumerable = type.Name == typeof(IEnumerable<>).Name
