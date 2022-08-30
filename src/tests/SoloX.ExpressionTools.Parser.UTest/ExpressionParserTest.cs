@@ -9,6 +9,7 @@
 using System;
 using System.Linq.Expressions;
 using SoloX.ExpressionTools.Parser.Impl;
+using SoloX.ExpressionTools.Parser.Impl.Resolver;
 using SoloX.ExpressionTools.Parser.UTest.Utils;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Sample.Impl;
@@ -184,11 +185,25 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [Theory(DisplayName = "It must parse lambda expression with array")]
         [InlineData("x => new [] {1, 2, 3}.Contains(x)")]
         [InlineData("x => new int[] {1, 2, 3}.Contains(x)")]
+        [InlineData("x => System.Linq.Enumerable.Contains<Int32>(new Int32[]{1, 2, 3}, x)")]
         public void ArrayParseTest(string stringExp)
         {
             var expParser = ExpressionParserHelper.CreateExpressionParser<int>();
 
             var lambda = expParser.Parse<Func<int, bool>>(stringExp);
+
+            Assert.NotNull(lambda);
+        }
+
+        [Theory(DisplayName = "It must parse lambda expression with guid")]
+        [InlineData("d => ((d == null) || (d == new Guid(\"f45132ed-e1cf-4ddf-b8f9-62e660d2b4cb\")))")]
+        [InlineData("d => ((d == null) || (d == ((Nullable<Guid>)(new Guid(\"f45132ed-e1cf-4ddf-b8f9-62e660d2b4cb\")))))")]
+        [InlineData("d => ((d == null) || (d == ((System.Nullable<System.Guid>)(new System.Guid(\"f45132ed-e1cf-4ddf-b8f9-62e660d2b4cb\")))))")]
+        public void ItShouldParseExpressionWithGuid(string expression)
+        {
+            var expressionParser = new ExpressionParser(new SingleParameterTypeResolver(typeof(Guid?)), new StaticMethodResolver(typeof(string)));
+
+            var lambda = expressionParser.Parse(expression);
 
             Assert.NotNull(lambda);
         }

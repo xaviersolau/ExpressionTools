@@ -16,36 +16,79 @@ namespace SoloX.ExpressionTools.Parser.Impl.Resolver
     /// </summary>
     public class NameSpaceTypeNameResolver : ITypeNameResolver
     {
-        private readonly IEnumerable<string> namespaces;
+        private readonly IEnumerable<(string, string)> namespaceAssemblyItems;
 
         /// <summary>
         /// Setup the NameSpace type resolver.
         /// </summary>
-        /// <param name="namespaces"></param>
-        public NameSpaceTypeNameResolver(IEnumerable<string> namespaces)
+        /// <param name="namespaceAssemblyItems"></param>
+        public NameSpaceTypeNameResolver(IEnumerable<(string, string)> namespaceAssemblyItems)
         {
-            this.namespaces = namespaces;
+            this.namespaceAssemblyItems = namespaceAssemblyItems;
         }
 
         /// <inheritdoc/>
         public Type ResolveTypeName(string typeName)
         {
-            var type = Type.GetType(typeName);
-            if (type != null)
+            if (typeName == null)
+            {
+                throw new ArgumentNullException(nameof(typeName));
+            }
+
+            if (TryResolveTypeNameWithAssembly(typeName, out var type))
             {
                 return type;
             }
 
-            foreach (var nameSpace in this.namespaces)
+            foreach (var nameSpace in this.namespaceAssemblyItems)
             {
-                type = Type.GetType($"{nameSpace}.{typeName}");
-                if (type != null)
+                if (TryResolveTypeNameWithAssembly($"{nameSpace.Item1}.{typeName}", out type))
                 {
                     return type;
                 }
             }
 
+            // Try to remove partial namespace in typeName
+            var idx = typeName.IndexOf('.');
+            while (idx >= 0)
+            {
+                typeName = typeName.Substring(idx + 1, typeName.Length - idx - 1);
+
+                type = ResolveTypeName(typeName);
+
+                if (type != null)
+                {
+                    return type;
+                }
+
+                idx = typeName.IndexOf('.');
+            }
+
             return null;
+        }
+
+        private bool TryResolveTypeNameWithAssembly(string typeName, out Type type)
+        {
+            type = Type.GetType(typeName);
+            if (type != null)
+            {
+                return true;
+            }
+
+            // Check if the type name start with a registered namespaceAssembly Items
+            foreach (var nameSpace in this.namespaceAssemblyItems)
+            {
+                if (!string.IsNullOrEmpty(nameSpace.Item2) && typeName.StartsWith($"{nameSpace.Item1}.", StringComparison.Ordinal))
+                {
+                    type = Type.GetType($"{typeName}, {nameSpace.Item2}");
+                    if (type != null)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }
