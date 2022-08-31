@@ -209,6 +209,19 @@ namespace SoloX.ExpressionTools.Parser.UTest
             Assert.NotNull(lambda);
         }
 
+        [Theory(DisplayName = "It must parse lambda expression with CultureInfo")]
+        [InlineData("p => p.ToUpper(System.Globalization.CultureInfo.InvariantCulture)")]
+        [InlineData("p => p.ToUpper(CultureInfo.InvariantCulture)")]
+        public void ItShouldParseExpressionWithCultureInfo(string expression)
+        {
+            var expressionParser = new ExpressionParser(new SingleParameterTypeResolver(typeof(string)), new StaticMethodResolver(typeof(string)));
+
+            var lambda = expressionParser.Parse(expression);
+
+            Assert.NotNull(lambda);
+        }
+
+
         private static void AssertItReturnData2PropertyValue(Expression<Func<IData1, IData2>> lambda)
         {
             var func = lambda.Compile();
