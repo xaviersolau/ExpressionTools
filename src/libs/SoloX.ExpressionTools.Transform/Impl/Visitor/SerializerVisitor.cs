@@ -18,7 +18,7 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
     {
         private readonly StringBuilder stringBuilder = new StringBuilder();
 
-        private readonly HashSet<string> defaultNamespaces = new HashSet<string>(new[] { "System", "System.Linq" });
+        private readonly HashSet<string> defaultNamespaces = new HashSet<string>(new[] { "System", "System.Linq", "System.Globalization" });
 
         public string GetString()
         {
@@ -166,7 +166,15 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
         protected override Expression VisitLoop(LoopExpression node) { return node; }
         protected override Expression VisitMember(MemberExpression node)
         {
-            base.Visit(node.Expression);
+            if (node.Expression != null)
+            {
+                base.Visit(node.Expression);
+            }
+            else
+            {
+                this.stringBuilder.Append(SerializeTypeName(node.Member.DeclaringType));
+            }
+
             this.stringBuilder.Append('.');
             this.stringBuilder.Append(node.Member.Name);
 

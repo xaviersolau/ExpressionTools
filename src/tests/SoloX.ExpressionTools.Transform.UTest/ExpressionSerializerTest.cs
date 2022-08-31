@@ -9,6 +9,7 @@
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Transform.Impl;
 using System;
+using System.Globalization;
 using System.Linq.Expressions;
 using Xunit;
 
@@ -122,6 +123,18 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var txt = serializer.Serialize(expression);
 
             Assert.Equal("(a, b, c) => (((a * b) / c) + ((-(a)) * c))", txt);
+        }
+
+        [Fact]
+        public void ItShouldSerializeExpressionWithUseOfStaticCultureInfo()
+        {
+            Expression<Func<string, string>> expression = p => p.ToUpper(CultureInfo.InvariantCulture);
+
+            var serializer = new ExpressionSerializer();
+
+            var txt = serializer.Serialize(expression);
+
+            Assert.Equal("p => p.ToUpper(CultureInfo.InvariantCulture)", txt);
         }
     }
 }

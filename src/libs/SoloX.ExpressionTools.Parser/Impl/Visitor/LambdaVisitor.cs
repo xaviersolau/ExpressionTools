@@ -44,7 +44,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             this.MethodResolver = methodResolver;
             this.TypeNameResolver = typeNameResolver;
 
-            this.defaultSystemTypeNameResolver = new NameSpaceTypeNameResolver(new (string, string)[] { ("System", null), ("System.Linq", "System.Linq") });
+            this.defaultSystemTypeNameResolver = new NameSpaceTypeNameResolver(new (string, string)[] { ("System", null), ("System.Linq", "System.Linq"), ("System.Globalization", null) });
         }
 
         /// <summary>
