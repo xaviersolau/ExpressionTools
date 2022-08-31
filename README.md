@@ -31,20 +31,20 @@ You can checkout this Github repository or you can use the NuGet package:
 
 **Install using the command line from the Package Manager:**
 ```bash
-Install-Package SoloX.ExpressionTools.Parser -version 1.0.1-alpha.4
-Install-Package SoloX.ExpressionTools.Transform -version 1.0.1-alpha.4
+Install-Package SoloX.ExpressionTools.Parser -version 1.0.1-alpha.5
+Install-Package SoloX.ExpressionTools.Transform -version 1.0.1-alpha.5
 ```
 
 **Install using the .Net CLI:**
 ```bash
-dotnet add package SoloX.ExpressionTools.Parser --version 1.0.1-alpha.4
-dotnet add package SoloX.ExpressionTools.Transform --version 1.0.1-alpha.4
+dotnet add package SoloX.ExpressionTools.Parser --version 1.0.1-alpha.5
+dotnet add package SoloX.ExpressionTools.Transform --version 1.0.1-alpha.5
 ```
 
 **Install editing your project file (csproj):**
 ```xml
-<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.1-alpha.4" />
-<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.1-alpha.4" />
+<PackageReference Include="SoloX.ExpressionTools.Parser" Version="1.0.1-alpha.5" />
+<PackageReference Include="SoloX.ExpressionTools.Transform" Version="1.0.1-alpha.5" />
 ```
 
 ## How to use it
@@ -234,3 +234,21 @@ var name = resolver.GetPropertyName<IMyType, string>(x => x.MyProperty);
 // Here name is set to "MyProperty".
 
 ```
+
+#### Expression serializer
+
+To serialize your expression as a string, you can use the Serialize method like this:
+
+```csharp
+
+using SoloX.ExpressionTools.Transform;
+
+Expression<Func<double, double, double>> expression = (a, b) => Math.Pow(a, b);
+
+var txt = expression.Serialize();
+
+// will give you the string:
+// "(a, b) => Math.Pow(a, b)"
+
+```
+
