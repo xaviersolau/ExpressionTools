@@ -183,7 +183,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var exp = inliner.Amend(expToInline);
             var txt = exp.Serialize();
 
-            Assert.Equal("x => Enumerable.Contains<Int32>(new Int32[] { 1, 2, 3 }, x)", txt);
+            Assert.Equal("x => new Int32[] { 1, 2, 3 }.Contains<Int32>(x)", txt);
         }
 
         [Fact]
@@ -198,7 +198,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var exp = inliner.Amend(expToInline);
             var txt = exp.Serialize();
 
-            Assert.Equal("x => Enumerable.Contains<String>(new String[] { \"abc\" }, x)", txt);
+            Assert.Equal("x => new String[] { \"abc\" }.Contains<String>(x)", txt);
         }
 
         [Fact]
@@ -214,7 +214,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var exp = inliner.Amend(expToInline);
             var txt = exp.Serialize();
 
-            Assert.Equal("x => Enumerable.Contains<String>(new String[] { \"abc\" }, x)", txt);
+            Assert.Equal("x => new String[] { \"abc\" }.Contains<String>(x)", txt);
         }
     }
 }

@@ -175,21 +175,14 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
         protected override Expression VisitMemberInit(MemberInitExpression node) { return node; }
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
-            if (node.Method.IsStatic)
+            if (node.Method.IsStatic && node.Method.DeclaringType == typeof(Enumerable) && node.Arguments.Count > 0)
             {
-                this.stringBuilder.Append(SerializeTypeName(node.Method.DeclaringType));
-                this.stringBuilder.Append('.');
-                this.stringBuilder.Append(node.Method.Name);
-            }
-            else
-            {
-                base.Visit(node.Object);
-                this.stringBuilder.Append('.');
-                this.stringBuilder.Append(node.Method.Name);
-            }
+                var thisArg = node.Arguments.First();
+                base.Visit(thisArg);
 
-            if (node.Method.IsGenericMethod)
-            {
+                this.stringBuilder.Append('.');
+                this.stringBuilder.Append(node.Method.Name);
+
                 var genArgs = node.Method.GetGenericArguments();
                 this.stringBuilder.Append('<');
 
@@ -209,26 +202,83 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
                 }
 
                 this.stringBuilder.Append('>');
-            }
 
-            this.stringBuilder.Append('(');
+                this.stringBuilder.Append('(');
 
-            var first = true;
-            foreach (var argument in node.Arguments)
-            {
-                if (first)
+                var first = true;
+                foreach (var argument in node.Arguments.Skip(1))
                 {
-                    first = false;
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        this.stringBuilder.Append(", ");
+                    }
+
+                    base.Visit(argument);
+                }
+
+                this.stringBuilder.Append(')');
+            }
+            else
+            {
+                if (node.Method.IsStatic)
+                {
+                    this.stringBuilder.Append(SerializeTypeName(node.Method.DeclaringType));
+                    this.stringBuilder.Append('.');
+                    this.stringBuilder.Append(node.Method.Name);
                 }
                 else
                 {
-                    this.stringBuilder.Append(", ");
+                    base.Visit(node.Object);
+                    this.stringBuilder.Append('.');
+                    this.stringBuilder.Append(node.Method.Name);
                 }
 
-                base.Visit(argument);
-            }
+                if (node.Method.IsGenericMethod)
+                {
+                    var genArgs = node.Method.GetGenericArguments();
+                    this.stringBuilder.Append('<');
 
-            this.stringBuilder.Append(')');
+                    var firstArg = true;
+                    foreach (var arg in genArgs)
+                    {
+                        if (firstArg)
+                        {
+                            firstArg = false;
+                        }
+                        else
+                        {
+                            this.stringBuilder.Append(", ");
+                        }
+
+                        this.stringBuilder.Append(SerializeTypeName(arg));
+                    }
+
+                    this.stringBuilder.Append('>');
+                }
+
+                this.stringBuilder.Append('(');
+
+                var first = true;
+                foreach (var argument in node.Arguments)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        this.stringBuilder.Append(", ");
+                    }
+
+                    base.Visit(argument);
+                }
+
+                this.stringBuilder.Append(')');
+            }
 
             return node;
         }
