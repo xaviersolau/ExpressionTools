@@ -186,6 +186,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [InlineData("x => new [] {1, 2, 3}.Contains(x)")]
         [InlineData("x => new int[] {1, 2, 3}.Contains(x)")]
         [InlineData("x => System.Linq.Enumerable.Contains<Int32>(new Int32[]{1, 2, 3}, x)")]
+        [InlineData("x => new Int32[]{1, 2, 3}.Contains<Int32>(x)")]
         public void ArrayParseTest(string stringExp)
         {
             var expParser = ExpressionParserHelper.CreateExpressionParser<int>();
