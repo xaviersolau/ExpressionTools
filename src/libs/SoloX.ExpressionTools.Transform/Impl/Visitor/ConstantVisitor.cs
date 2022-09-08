@@ -58,6 +58,12 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
 
                     return BuildConstantExpression(propertyInfo.PropertyType, value);
                 }
+                if (expNode == null)
+                {
+                    var value = propertyInfo.GetValue(null);
+
+                    return BuildConstantExpression(propertyInfo.PropertyType, value);
+                }
                 else
                 {
                     return Expression.MakeMemberAccess(expNode, propertyInfo);

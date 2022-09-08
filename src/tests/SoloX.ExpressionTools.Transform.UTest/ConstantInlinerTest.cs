@@ -91,6 +91,21 @@ namespace SoloX.ExpressionTools.Transform.UTest
         }
 
         [Fact]
+        public void IsShouldConvertExpressionWithStaticMember()
+        {
+            var inliner = new ConstantInliner();
+
+            Expression<Func<DateTime, bool>> expToInline = d => d < DateTime.Now.Date;
+
+            var exp = inliner.Amend(expToInline);
+            var txt = exp.Serialize();
+
+            var expected = $"d => (d < new DateTime({DateTime.Now.Ticks}).Date)";
+            Assert.StartsWith(expected.Substring(0, 30), txt, StringComparison.Ordinal);
+            Assert.EndsWith(").Date)", txt, StringComparison.Ordinal);
+        }
+
+        [Fact]
         public void IsShouldConvertExpressionWithConstDateTime()
         {
             var inliner = new ConstantInliner();
