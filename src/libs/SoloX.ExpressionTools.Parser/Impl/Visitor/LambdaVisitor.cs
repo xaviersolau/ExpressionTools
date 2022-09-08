@@ -343,13 +343,29 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 
             if (attribute.ResultingMethodInfo == null)
             {
-                MemberInfo member = type.GetProperty(memberName);
+                var property = type.GetProperty(memberName);
+                MemberInfo member = property;
+                var isStatic = false;
+
                 if (member == null)
                 {
-                    member = type.GetField(memberName);
+                    var field = type.GetField(memberName);
+                    member = field;
+                    isStatic = field.IsStatic;
+                }
+                else
+                {
+                    isStatic = property?.GetGetMethod()?.IsStatic ?? false;
                 }
 
-                attribute.ResultingExpression = Expression.MakeMemberAccess(exp, member);
+                if (isStatic)
+                {
+                    attribute.ResultingExpression = Expression.MakeMemberAccess(null, member);
+                }
+                else
+                {
+                    attribute.ResultingExpression = Expression.MakeMemberAccess(exp, member);
+                }
             }
             else
             {

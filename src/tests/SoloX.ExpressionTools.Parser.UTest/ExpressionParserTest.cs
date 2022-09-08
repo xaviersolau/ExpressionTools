@@ -173,6 +173,8 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [Theory(DisplayName = "It must parse DateTime lambda expression")]
         [InlineData("d => d > DateTime.Now.AddYears(-18)")]
         [InlineData("d => d > new DateTime(2021, 10, 01)")]
+        [InlineData("d => d > DateTime.Now")]
+        [InlineData("d => d > DateTime.Now.Date")]
         public void DateTimeParseTest(string stringExp)
         {
             var expParser = ExpressionParserHelper.CreateExpressionParser<DateTime>();
