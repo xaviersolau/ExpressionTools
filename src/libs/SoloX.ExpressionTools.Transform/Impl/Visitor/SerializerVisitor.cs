@@ -79,10 +79,11 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
                 ExpressionType.Divide => "/",
                 ExpressionType.Multiply => "*",
                 ExpressionType.Modulo => "%",
-                ExpressionType.Or => "||",
+                ExpressionType.Or => "|",
                 ExpressionType.OrElse => "||",
-                ExpressionType.And => "&&",
+                ExpressionType.And => "&",
                 ExpressionType.AndAlso => "&&",
+                ExpressionType.ExclusiveOr => "^",
                 _ => throw new NotSupportedException(),
             });
 #pragma warning restore IDE0072 // Add missing cases

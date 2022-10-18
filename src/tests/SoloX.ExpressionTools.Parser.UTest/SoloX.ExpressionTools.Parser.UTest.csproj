@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\libs\SoloX.ExpressionTools.Parser\SoloX.ExpressionTools.Parser.csproj" />
+    <ProjectReference Include="..\..\libs\SoloX.ExpressionTools.Transform\SoloX.ExpressionTools.Transform.csproj" />
     <ProjectReference Include="..\SoloX.ExpressionTools.Sample\SoloX.ExpressionTools.Sample.csproj" />
   </ItemGroup>
 
