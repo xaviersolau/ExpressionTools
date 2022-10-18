@@ -13,6 +13,7 @@ using SoloX.ExpressionTools.Parser.Impl.Resolver;
 using SoloX.ExpressionTools.Parser.UTest.Utils;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Sample.Impl;
+using SoloX.ExpressionTools.Transform;
 using Xunit;
 
 namespace SoloX.ExpressionTools.Parser.UTest
@@ -174,6 +175,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [InlineData("d => d > DateTime.Now.AddYears(-18)")]
         [InlineData("d => d > new DateTime(2021, 10, 01)")]
         [InlineData("d => d > DateTime.Now")]
+        [InlineData("d => d > DateTime.Today")]
         [InlineData("d => d > DateTime.Now.Date")]
         public void DateTimeParseTest(string stringExp)
         {
@@ -209,6 +211,24 @@ namespace SoloX.ExpressionTools.Parser.UTest
             var lambda = expressionParser.Parse(expression);
 
             Assert.NotNull(lambda);
+        }
+
+        [Theory(DisplayName = "It must parse lambda expression with guid")]
+        [InlineData("d => ((d > 1) && (d < 100))")]
+        [InlineData("d => ((d > 1) || (d < 100))")]
+        [InlineData("d => ((d > 1) & (d < 100))")]
+        [InlineData("d => ((d > 1) | (d < 100))")]
+        public void ItShouldParseExpressionWithLogicalOperator(string expression)
+        {
+            var expressionParser = new ExpressionParser(new SingleParameterTypeResolver(typeof(int)));
+
+            var lambda = expressionParser.Parse<Func<int, bool>>(expression);
+
+            Assert.NotNull(lambda);
+
+            var txt = lambda.Serialize();
+
+            Assert.Equal(expression, txt);
         }
 
         [Theory(DisplayName = "It must parse lambda expression with CultureInfo")]

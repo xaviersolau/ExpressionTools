@@ -616,10 +616,14 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                     return Expression.Equal(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 case SyntaxKind.ExclamationEqualsToken:
                     return Expression.NotEqual(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
-                case SyntaxKind.AmpersandAmpersandToken:
+                case SyntaxKind.AmpersandToken:
                     return Expression.And(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
-                case SyntaxKind.BarBarToken:
+                case SyntaxKind.BarToken:
                     return Expression.Or(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.AmpersandAmpersandToken:
+                    return Expression.AndAlso(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
+                case SyntaxKind.BarBarToken:
+                    return Expression.OrElse(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 case SyntaxKind.CaretToken:
                     return Expression.ExclusiveOr(ConvertIfNeeded(le, re.Type), ConvertIfNeeded(re, le.Type));
                 default:
