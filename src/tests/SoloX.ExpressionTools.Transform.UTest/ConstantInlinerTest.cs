@@ -166,7 +166,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Assert.Equal($"d => ((d == null) || (d == ((Nullable<Guid>)(new Guid(\"{externalValue}\")))))", txt);
         }
 
-        internal class TestModel
+        internal sealed class TestModel
         {
             public int Property { get; set; }
         }
