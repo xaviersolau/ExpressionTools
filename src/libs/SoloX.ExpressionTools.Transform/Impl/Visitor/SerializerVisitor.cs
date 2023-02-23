@@ -14,7 +14,7 @@ using System.Text;
 
 namespace SoloX.ExpressionTools.Transform.Impl.Visitor
 {
-    internal class SerializerVisitor : ExpressionVisitor
+    internal sealed class SerializerVisitor : ExpressionVisitor
     {
         private readonly StringBuilder stringBuilder = new StringBuilder();
 

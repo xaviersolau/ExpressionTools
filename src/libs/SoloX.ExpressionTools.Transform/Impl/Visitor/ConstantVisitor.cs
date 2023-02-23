@@ -17,7 +17,7 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
     /// <summary>
     /// Evaluate all constant node.
     /// </summary>
-    internal class ConstantVisitor : ExpressionVisitor
+    internal sealed class ConstantVisitor : ExpressionVisitor
     {
         /// <inheritdoc/>
         public override Expression Visit(Expression node)
