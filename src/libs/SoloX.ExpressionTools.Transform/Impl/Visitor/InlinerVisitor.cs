@@ -14,7 +14,7 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
     /// <summary>
     /// InlinerVisitor class that will actually in-line expression and replace parameter use.
     /// </summary>
-    internal class InlinerVisitor : ExpressionVisitor
+    internal sealed class InlinerVisitor : ExpressionVisitor
     {
         private readonly IParameterResolver parameterResolver;
         private readonly IDictionary<ParameterExpression, LambdaExpression> parameterMap;

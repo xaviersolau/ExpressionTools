@@ -23,7 +23,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
     /// </summary>
 #pragma warning disable IDE0066 // Convertir l'instruction switch en expression
 #pragma warning disable IDE0010 // Remplir une instruction switch
-    internal class LambdaVisitor : CSharpSyntaxVisitor<LambdaVisitorAttribute>
+    internal sealed class LambdaVisitor : CSharpSyntaxVisitor<LambdaVisitorAttribute>
     {
         private readonly Stack<LambdaVisitorAttribute> attributes = new Stack<LambdaVisitorAttribute>();
         private readonly TypeVisitor typeVisitor = new TypeVisitor();

@@ -16,7 +16,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
     /// <summary>
     /// TypeVisitor class that will actually identify Type.
     /// </summary>
-    internal class TypeVisitor : CSharpSyntaxVisitor<Type>
+    internal sealed class TypeVisitor : CSharpSyntaxVisitor<Type>
     {
         private static readonly IReadOnlyDictionary<string, Type> PredefinedTypeMap = new Dictionary<string, Type>()
         {

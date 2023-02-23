@@ -16,7 +16,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
     /// <summary>
     /// LambdaVisitor attribute.
     /// </summary>
-    internal class LambdaVisitorAttribute
+    internal sealed class LambdaVisitorAttribute
     {
         public LambdaVisitorAttribute(LambdaVisitorAttribute attribute)
         {

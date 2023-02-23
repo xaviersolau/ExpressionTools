@@ -12,7 +12,7 @@ using System.Text;
 
 namespace SoloX.ExpressionTools.Transform.Impl.Visitor
 {
-    internal class PropertyNameResolverVisitor : ExpressionVisitor
+    internal sealed class PropertyNameResolverVisitor : ExpressionVisitor
     {
         private readonly StringBuilder name = new StringBuilder();
         private bool isSet;
