@@ -26,7 +26,8 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
     internal sealed class LambdaVisitor : CSharpSyntaxVisitor<LambdaVisitorAttribute>
     {
         private readonly Stack<LambdaVisitorAttribute> attributes = new Stack<LambdaVisitorAttribute>();
-        private readonly TypeVisitor typeVisitor = new TypeVisitor();
+
+        private readonly TypeVisitor typeVisitor;
         private readonly ITypeNameResolver defaultSystemTypeNameResolver;
 
         /// <summary>
@@ -43,6 +44,9 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             this.ParameterTypeResolver = parameterTypeResolver;
             this.MethodResolver = methodResolver;
             this.TypeNameResolver = typeNameResolver;
+
+            this.typeVisitor = new TypeVisitor(s => TryToResolveAsAType(s, out var type) ? type : null);
+
 
             this.defaultSystemTypeNameResolver = new NameSpaceTypeNameResolver(new (string, string)[] { ("System", null), ("System.Linq", "System.Linq"), ("System.Globalization", null) });
         }
@@ -289,56 +293,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 
             if (attribute.ArgumentTypes != null)
             {
-                attribute.ResultingMethodInfo = type.GetMethod(memberName, attribute.ArgumentTypes);
-
-                if (attribute.ResultingMethodInfo == null)
-                {
-                    if (type.IsArray)
-                    {
-                        var enumerable = type.Name == typeof(IEnumerable<>).Name
-                            ? type
-                            : type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
-                        var itemType = enumerable.GetGenericArguments()[0];
-
-                        var methods = typeof(Enumerable).GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod)
-                            .Where(m => m.Name == memberName && m.GetParameters().Length == attribute.ArgumentTypes.Length + 1);
-
-                        var method = methods.FirstOrDefault();
-
-                        attribute.ResultingMethodInfo = method?.MakeGenericMethod(itemType);
-                    }
-                    else
-                    {
-                        var arity = genericParameters?.Length ?? 0;
-                        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod).Where(m => m.Name == memberName);
-
-                        if (arity != 0)
-                        {
-                            methods = methods.Where(m => m.IsGenericMethodDefinition).Select(m => m.MakeGenericMethod(genericParameters));
-                        }
-
-                        methods = methods.Where(m =>
-                        {
-                            if (m.GetParameters().Length >= attribute.ArgumentTypes.Length && m.GetParameters().Where(p => !p.IsOptional).Count() <= attribute.ArgumentTypes.Length)
-                            {
-                                for (var i = 0; i < attribute.ArgumentTypes.Length; i++)
-                                {
-                                    var parameter = m.GetParameters()[i];
-                                    var argument = attribute.ArgumentTypes[i];
-                                    if (!parameter.ParameterType.IsAssignableFrom(argument))
-                                    {
-                                        return false;
-                                    }
-                                }
-
-                                return true;
-                            }
-                            return false;
-                        }).ToArray();
-
-                        attribute.ResultingMethodInfo = methods.SingleOrDefault();
-                    }
-                }
+                attribute.ResultingMethodInfo = TryLoadResultingMethod(attribute.ArgumentTypes, memberName, genericParameters, type);
             }
 
             if (attribute.ResultingMethodInfo == null)
@@ -373,6 +328,67 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
 
             return attribute;
+        }
+
+        private static MethodInfo TryLoadResultingMethod(Type[] argumentTypes, string memberName, Type[] genericParameters, Type type)
+        {
+            var resultingMethodInfo = type.GetMethod(memberName, argumentTypes);
+
+            if (resultingMethodInfo == null && type.IsInterface && memberName == nameof(Object.ToString) && !argumentTypes.Any())
+            {
+                resultingMethodInfo = typeof(object).GetMethod(memberName);
+            }
+
+            if (resultingMethodInfo == null)
+            {
+                if (type.IsArray)
+                {
+                    var enumerable = type.Name == typeof(IEnumerable<>).Name
+                        ? type
+                        : type.GetTypeInfo().GetInterface(typeof(IEnumerable<>).Name);
+                    var itemType = enumerable.GetGenericArguments()[0];
+
+                    var methods = typeof(Enumerable).GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod)
+                        .Where(m => m.Name == memberName && m.GetParameters().Length == argumentTypes.Length + 1);
+
+                    var method = methods.FirstOrDefault();
+
+                    resultingMethodInfo = method?.MakeGenericMethod(itemType);
+                }
+                else
+                {
+                    var arity = genericParameters?.Length ?? 0;
+                    var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod).Where(m => m.Name == memberName);
+
+                    if (arity != 0)
+                    {
+                        methods = methods.Where(m => m.IsGenericMethodDefinition).Select(m => m.MakeGenericMethod(genericParameters));
+                    }
+
+                    methods = methods.Where(m =>
+                    {
+                        if (m.GetParameters().Length >= argumentTypes.Length && m.GetParameters().Where(p => !p.IsOptional).Count() <= argumentTypes.Length)
+                        {
+                            for (var i = 0; i < argumentTypes.Length; i++)
+                            {
+                                var parameter = m.GetParameters()[i];
+                                var argument = argumentTypes[i];
+                                if (!parameter.ParameterType.IsAssignableFrom(argument))
+                                {
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        }
+                        return false;
+                    }).ToArray();
+
+                    resultingMethodInfo = methods.SingleOrDefault();
+                }
+            }
+
+            return resultingMethodInfo;
         }
 
         /// <inheritdoc />

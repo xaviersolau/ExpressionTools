@@ -243,6 +243,23 @@ namespace SoloX.ExpressionTools.Parser.UTest
             Assert.NotNull(lambda);
         }
 
+        private interface ITest
+        {
+            string Name { get; }
+        }
+
+
+        [Theory(DisplayName = "It must parse lambda expression with typed parameter")]
+        [InlineData("(ITest p) => p.ToString()")]
+        [InlineData("(ITest p) => p.Name")]
+        public void ItShouldParseExpressionWithTypedParameter(string expression)
+        {
+            var expressionParser = new ExpressionParser(typeNameResolver: new BasicTypeNameResolver(typeof(ITest)));
+
+            var lambda = expressionParser.Parse(expression);
+
+            Assert.NotNull(lambda);
+        }
 
         private static void AssertItReturnData2PropertyValue(Expression<Func<IData1, IData2>> lambda)
         {

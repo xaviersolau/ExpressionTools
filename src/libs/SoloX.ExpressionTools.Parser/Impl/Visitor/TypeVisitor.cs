@@ -28,6 +28,13 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             { "string", typeof(string) },
         };
 
+        private readonly Func<string, Type> typeNameResolver;
+
+        public TypeVisitor(Func<string, Type> typeNameResolver)
+        {
+            this.typeNameResolver = typeNameResolver;
+        }
+
         /// <inheritdoc />
         public override Type VisitPredefinedType(PredefinedTypeSyntax node)
         {
@@ -44,6 +51,12 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             return rank == 1
                 ? type.MakeArrayType()
                 : type.MakeArrayType(node.RankSpecifiers.Count);
+        }
+
+        /// <inheritdoc />
+        public override Type VisitIdentifierName(IdentifierNameSyntax node)
+        {
+            return this.typeNameResolver(node.Identifier.Text);
         }
     }
 }
