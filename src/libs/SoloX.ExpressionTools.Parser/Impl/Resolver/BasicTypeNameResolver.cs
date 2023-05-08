@@ -32,7 +32,15 @@ namespace SoloX.ExpressionTools.Parser.Impl.Resolver
             foreach (var type in types)
             {
                 this.typeMap.Add(type.Name, type);
-                this.typeMap.Add(type.FullName, type);
+
+                if (type.IsNested)
+                {
+                    this.typeMap.Add(type.FullName.Replace('+', '.'), type);
+                }
+                else
+                {
+                    this.typeMap.Add(type.FullName, type);
+                }
             }
         }
 
