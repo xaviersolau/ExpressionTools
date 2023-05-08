@@ -252,6 +252,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
         [Theory(DisplayName = "It must parse lambda expression with typed parameter")]
         [InlineData("(ITest p) => p.ToString()")]
         [InlineData("(ITest p) => p.Name")]
+        [InlineData("(SoloX.ExpressionTools.Parser.UTest.ExpressionParserTest.ITest p) => p.Name")]
         public void ItShouldParseExpressionWithTypedParameter(string expression)
         {
             var expressionParser = new ExpressionParser(typeNameResolver: new BasicTypeNameResolver(typeof(ITest)));

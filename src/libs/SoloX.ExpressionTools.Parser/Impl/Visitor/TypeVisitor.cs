@@ -58,5 +58,11 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         {
             return this.typeNameResolver(node.Identifier.Text);
         }
+
+        /// <inheritdoc />
+        public override Type VisitQualifiedName(QualifiedNameSyntax node)
+        {
+            return this.typeNameResolver(node.ToString());
+        }
     }
 }
