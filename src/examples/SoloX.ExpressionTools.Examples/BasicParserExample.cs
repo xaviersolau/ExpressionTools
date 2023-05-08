@@ -89,5 +89,48 @@ namespace SoloX.ExpressionTools.Examples
             // We can just parse the expression.
             var expression = expressionParser.Parse<Func<double, double, double>>(expToParse);
         }
+
+        /// <summary>
+        /// Let's parse a lambda expression with a custom type as parameter like "(IFoo x) => c.Value + 1".
+        /// </summary>
+        public static void ParseASimpleLambdaWithACustomTypeNameResolver1()
+        {
+            // Set the expression to parse
+            var expToParse = "(IFoo x) => x.Value + 1";
+
+            // We need to create the parser with a TypeNameResolver that will resolve the parameter type.
+            var expressionParser = new ExpressionParser(
+                typeNameResolver: new BasicTypeNameResolver(typeof(IFoo)));
+
+            // We can just parse the expression.
+            var expression = expressionParser.Parse<Func<IFoo, int>>(expToParse);
+        }
+
+        /// <summary>
+        /// Let's parse a lambda expression with a custom type as parameter like "x => c.Value + 1" using a ITypeNameResolver.
+        /// </summary>
+        public static void ParseASimpleLambdaWithACustomTypeNameResolver2()
+        {
+            // Set the expression to parse
+            var expToParse = "x => x.Value + 1";
+
+            // We need to create the parser with a ParameterTypeResolver that will resolve the 'x' parameter as 'IFoo'.
+            var expressionParser = new ExpressionParser(
+                parameterTypeResolver: new SingleParameterTypeResolver(typeof(IFoo)));
+
+            // We can just parse the expression.
+            var expression = expressionParser.Parse<Func<IFoo, int>>(expToParse);
+        }
+    }
+
+    /// <summary>
+    /// IFoo interface to take as a custom type.
+    /// </summary>
+    public interface IFoo
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        int Value { get; set; }
     }
 }
