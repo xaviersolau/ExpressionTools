@@ -38,7 +38,7 @@ namespace SoloX.ExpressionTools.Parser.UTest.Resolver
             if (shouldResolve)
             {
                 var resolvedType = resolver.ResolveType(nameToResolve);
-                resolvedType.Should().Be(typeof(string));
+                resolvedType.Should().Be<string>();
             }
             else
             {

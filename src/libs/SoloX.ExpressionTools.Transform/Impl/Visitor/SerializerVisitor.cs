@@ -115,6 +115,12 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
                 this.stringBuilder.Append(node.Value);
                 this.stringBuilder.Append('"');
             }
+            else if (node.Type == typeof(char))
+            {
+                this.stringBuilder.Append('\'');
+                this.stringBuilder.Append(node.Value);
+                this.stringBuilder.Append('\'');
+            }
             else if (node.Type == typeof(bool))
             {
                 var value = (bool)node.Value;

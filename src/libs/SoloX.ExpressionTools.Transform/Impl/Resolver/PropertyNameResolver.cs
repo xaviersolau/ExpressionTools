@@ -18,26 +18,64 @@ namespace SoloX.ExpressionTools.Transform.Impl.Resolver
         /// <inheritdoc/>
         public string GetPropertyName<TElement, TResult>(Expression<Func<TElement, TResult>> expression)
         {
-            var visitor = new PropertyNameResolverVisitor();
+            var visitor = new PropertyOrMethodNameResolverVisitor(false);
             visitor.Visit(expression);
 
-            var name = visitor.PropertyName;
+            var name = visitor.PropertyOrMethodName;
 
             if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentException($"unable to get the property name from the given expression.");
             }
 
-            return visitor.PropertyName;
+            return visitor.PropertyOrMethodName;
         }
 
         /// <inheritdoc/>
         public string GetPropertyName(LambdaExpression expression)
         {
-            var visitor = new PropertyNameResolverVisitor();
+            var visitor = new PropertyOrMethodNameResolverVisitor(false);
             visitor.Visit(expression);
 
-            return visitor.PropertyName;
+            return visitor.PropertyOrMethodName;
+        }
+
+        /// <inheritdoc/>
+        public string GetMethodName<TElement, TDelegate>(Expression<Func<TElement, TDelegate>> expression)
+        {
+            var visitor = new PropertyOrMethodNameResolverVisitor(true);
+            visitor.Visit(expression);
+
+            var name = visitor.PropertyOrMethodName;
+
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException($"unable to get the method name from the given expression.");
+            }
+
+            return visitor.PropertyOrMethodName;
+        }
+
+        /// <inheritdoc/>
+        public string GetMethodName<TElement>(Expression<Func<TElement, Delegate>> expression)
+        {
+            return GetMethodName<TElement, Delegate>(expression);
+        }
+
+        /// <inheritdoc/>
+        public string GetMethodName(LambdaExpression expression)
+        {
+            var visitor = new PropertyOrMethodNameResolverVisitor(true);
+            visitor.Visit(expression);
+
+            var name = visitor.PropertyOrMethodName;
+
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException($"unable to get the method name from the given expression.");
+            }
+
+            return visitor.PropertyOrMethodName;
         }
     }
 }

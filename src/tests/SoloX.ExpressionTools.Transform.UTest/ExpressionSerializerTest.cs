@@ -136,5 +136,29 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             Assert.Equal("p => p.ToUpper(CultureInfo.InvariantCulture)", txt);
         }
+
+        [Fact]
+        public void ItShouldSerializeExpressionWithUseOfContainsChar()
+        {
+            Expression<Func<string, bool>> expression = p => p.Contains('j');
+
+            var serializer = new ExpressionSerializer();
+
+            var txt = serializer.Serialize(expression);
+
+            Assert.Equal("p => p.Contains('j')", txt);
+        }
+
+        [Fact]
+        public void ItShouldSerializeExpressionWithUseOfContainsString()
+        {
+            Expression<Func<string, bool>> expression = p => p.Contains("abc");
+
+            var serializer = new ExpressionSerializer();
+
+            var txt = serializer.Serialize(expression);
+
+            Assert.Equal("p => p.Contains(\"abc\")", txt);
+        }
     }
 }

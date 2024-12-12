@@ -28,7 +28,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         private readonly Stack<LambdaVisitorAttribute> attributes = new Stack<LambdaVisitorAttribute>();
 
         private readonly TypeVisitor typeVisitor;
-        private readonly ITypeNameResolver defaultSystemTypeNameResolver;
+        private readonly NameSpaceTypeNameResolver defaultSystemTypeNameResolver;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LambdaVisitor"/> class.
@@ -334,7 +334,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         {
             var resultingMethodInfo = type.GetMethod(memberName, argumentTypes);
 
-            if (resultingMethodInfo == null && type.IsInterface && memberName == nameof(Object.ToString) && !argumentTypes.Any())
+            if (resultingMethodInfo == null && type.IsInterface && memberName == nameof(Object.ToString) && (argumentTypes.Length == 0))
             {
                 resultingMethodInfo = typeof(object).GetMethod(memberName);
             }
@@ -582,6 +582,9 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                 case SyntaxKind.NullLiteralExpression:
                     attribute.ResultingExpression = Expression.Default(typeof(object));
                     break;
+                case SyntaxKind.CharacterLiteralExpression:
+                    attribute.ResultingExpression = Expression.Constant(node.Token.Value);
+                    break;
                 default:
                     throw new FormatException($"unsupported operator {node.Token.ValueText}");
             }
@@ -606,7 +609,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             return attribute;
         }
 
-        private static Expression CreateBinaryExpression(SyntaxKind kind, Expression le, Expression re, BinaryExpressionSyntax node)
+        private static BinaryExpression CreateBinaryExpression(SyntaxKind kind, Expression le, Expression re, BinaryExpressionSyntax node)
         {
             switch (kind)
             {
@@ -647,7 +650,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
         }
 
-        private static Expression CreatePrefixUnaryExpression(SyntaxKind kind, Expression exp, PrefixUnaryExpressionSyntax node)
+        private static UnaryExpression CreatePrefixUnaryExpression(SyntaxKind kind, Expression exp, PrefixUnaryExpressionSyntax node)
         {
             switch (kind)
             {
@@ -688,19 +691,19 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             return Expression.Convert(expression, targetType);
         }
 
-        private static IEnumerable<Expression> ConvertTypeForConstructorCall(IReadOnlyList<Expression> args, ConstructorInfo constructorInfo)
+        private static Expression[] ConvertTypeForConstructorCall(IReadOnlyList<Expression> args, ConstructorInfo constructorInfo)
         {
             var parameters = constructorInfo.GetParameters();
             return ConvertArgumentsForCall(args, parameters);
         }
 
-        private static IEnumerable<Expression> ConvertTypeForMethodCall(IReadOnlyList<Expression> args, MethodInfo methodInfo)
+        private static Expression[] ConvertTypeForMethodCall(IReadOnlyList<Expression> args, MethodInfo methodInfo)
         {
             var parameters = methodInfo.GetParameters();
             return ConvertArgumentsForCall(args, parameters);
         }
 
-        private static IEnumerable<Expression> ConvertArgumentsForCall(IReadOnlyList<Expression> args, ParameterInfo[] parameters)
+        private static Expression[] ConvertArgumentsForCall(IReadOnlyList<Expression> args, ParameterInfo[] parameters)
         {
             var argCount = args.Count;
             var convertedArgs = new Expression[argCount];
@@ -725,7 +728,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
 
         private LambdaVisitorAttribute VisitWithNewAttribute(Action<LambdaVisitorAttribute> action)
         {
-            var attribute = new LambdaVisitorAttribute(this.attributes.Any() ? this.attributes.Peek() : null);
+            var attribute = new LambdaVisitorAttribute(this.attributes.Count > 0 ? this.attributes.Peek() : null);
             this.attributes.Push(attribute);
             action(attribute);
             return this.attributes.Pop();

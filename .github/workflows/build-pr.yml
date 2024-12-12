@@ -6,7 +6,6 @@ on:
 
 jobs:
   build-pr:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -14,7 +13,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 7.0.100
+        dotnet-version: 9.0.101
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -22,34 +21,45 @@ jobs:
     - name: Test
       run: dotnet test --configuration Release --no-restore --no-build
 
-    - name: Test Coverage SoloX.ExpressionTools.Parser.UTest
-      id: coverage-parser-utest
-      run: |
-        dotnet test ./src/tests/SoloX.ExpressionTools.Parser.UTest --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
-        echo "::set-output name=FILE::$(find ./src/tests/SoloX.ExpressionTools.Parser.UTest -name 'coverage.info' -print)"
+  coverage-pr:
+    needs: build-pr
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        test_path:
+          - src/tests/SoloX.ExpressionTools.Parser.UTest
+          - src/tests/SoloX.ExpressionTools.Transform.UTest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 9.0.101
+    - name: Install dependencies ${{ matrix.test_path }}
+      run: dotnet restore ${{ matrix.test_path }}
+    - name: Build ${{ matrix.test_path }}
+      run: dotnet build ${{ matrix.test_path }} --configuration Release --no-restore
+    - name: Test Coverage ${{ matrix.test_path }}
+      run: dotnet test ${{ matrix.test_path }} --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+    - name: Moving test results
+      run: mv ${{ matrix.test_path }}/TestResults/**/coverage.cobertura.xml ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
     - name: Send to coverals
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2.2.3
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ${{ steps.coverage-parser-utest.outputs.FILE }}
-        flag-name: coverage-parser-utest
+        file: ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
+        format: cobertura
+        flag-name: test-${{ matrix.test_path }}
         parallel: true
 
-    - name: Test Coverage SoloX.ExpressionTools.Transform.UTest
-      id: coverage-transform-utest
-      run: |
-        dotnet test ./src/tests/SoloX.ExpressionTools.Transform.UTest --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
-        echo "::set-output name=FILE::$(find ./src/tests/SoloX.ExpressionTools.Transform.UTest -name 'coverage.info' -print)"
-    - name: Send to coverals
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ${{ steps.coverage-transform-utest.outputs.FILE }}
-        flag-name: coverage-transform-utest
-        parallel: true
-
+  end-coverage-pr:
+    needs: coverage-pr
+    runs-on: ubuntu-latest
+    steps:
     - name: Finish coverals
-      uses: coverallsapp/github-action@master
+      uses: coverallsapp/github-action@v2.2.3
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true

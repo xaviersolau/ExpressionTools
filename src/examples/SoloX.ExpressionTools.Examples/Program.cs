@@ -11,7 +11,7 @@ namespace SoloX.ExpressionTools.Examples
     /// <summary>
     /// Example program.
     /// </summary>
-    public static class Program
+    internal static class Program
     {
         /// <summary>
         /// Main program entry point.

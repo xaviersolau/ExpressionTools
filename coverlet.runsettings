@@ -2,15 +2,15 @@
 <RunSettings>
   <DataCollectionRunSettings>
     <DataCollectors>
-      <DataCollector friendlyName="XPlat code coverage">
+      <DataCollector friendlyName="XPlat Code Coverage">
         <Configuration>
-          <Format>lcov</Format>
-          <Exclude>[SoloX.ExpressionTools.Sample]*</Exclude>
+          <Format>cobertura</Format>
           <SingleHit>false</SingleHit>
-          <UseSourceLink>true</UseSourceLink>
+          <UseSourceLink>false</UseSourceLink>
           <IncludeTestAssembly>false</IncludeTestAssembly>
           <SkipAutoProps>true</SkipAutoProps>
-          <DeterministicReport>false</DeterministicReport>
+          <DeterministicReport>true</DeterministicReport>
+          <Exclude>[SoloX.ExpressionTools.Sample]*</Exclude>
         </Configuration>
       </DataCollector>
     </DataCollectors>

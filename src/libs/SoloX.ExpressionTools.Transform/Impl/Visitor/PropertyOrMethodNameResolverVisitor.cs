@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="PropertyNameResolverVisitor.cs" company="Xavier Solau">
+// <copyright file="PropertyOrMethodNameResolverVisitor.cs" company="Xavier Solau">
 // Copyright © 2019 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
@@ -8,14 +8,21 @@
 
 using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 namespace SoloX.ExpressionTools.Transform.Impl.Visitor
 {
-    internal sealed class PropertyNameResolverVisitor : ExpressionVisitor
+    internal sealed class PropertyOrMethodNameResolverVisitor : ExpressionVisitor
     {
         private readonly StringBuilder name = new StringBuilder();
+        private readonly bool enableMethod;
         private bool isSet;
+
+        public PropertyOrMethodNameResolverVisitor(bool enableMethod)
+        {
+            this.enableMethod = enableMethod;
+        }
 
         public override Expression Visit(Expression node)
         {
@@ -42,7 +49,18 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
 
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
-            throw new ArgumentException($"Unexpected use of the method {node.Method.Name} in the given expression.");
+            var mi = typeof(MethodInfo).GetMethod("CreateDelegate", [typeof(Type), typeof(object)]);
+
+            if (node.Method == mi && this.enableMethod)
+            {
+                Visit(node.Object);
+
+                return node;
+            }
+            else
+            {
+                throw new ArgumentException($"Unexpected use of the method {node.Method.Name} in the given expression.");
+            }
         }
 
         protected override SwitchCase VisitSwitchCase(SwitchCase node)
@@ -72,7 +90,25 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
 
         protected override Expression VisitConstant(ConstantExpression node)
         {
-            throw new ArgumentException($"Unexpected use of constant in the given expression.");
+            if (node.Type == typeof(MethodInfo) && this.enableMethod)
+            {
+                if (this.isSet)
+                {
+                    this.name.Append('.');
+                }
+                else
+                {
+                    this.isSet = true;
+                }
+
+                this.name.Append(((MethodInfo)node.Value).Name);
+
+                return base.VisitConstant(node);
+            }
+            else
+            {
+                throw new ArgumentException($"Unexpected use of constant in the given expression.");
+            }
         }
 
         protected override Expression VisitDebugInfo(DebugInfoExpression node)
@@ -167,9 +203,16 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
 
         protected override Expression VisitUnary(UnaryExpression node)
         {
-            throw new ArgumentException($"Unexpected use of unary in the given expression.");
+            if (node.NodeType == ExpressionType.Convert && this.enableMethod)
+            {
+                return base.VisitUnary(node);
+            }
+            else
+            {
+                throw new ArgumentException($"Unexpected use of unary in the given expression.");
+            }
         }
 
-        public string PropertyName => this.name.ToString();
+        public string PropertyOrMethodName => this.name.ToString();
     }
 }

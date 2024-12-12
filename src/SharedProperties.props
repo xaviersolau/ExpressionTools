@@ -18,6 +18,7 @@
 
     <!--<Nullable>enable</Nullable>-->
 
+    <NoWarn>$(NoWarn),CA1515</NoWarn>
   </PropertyGroup>
 
 </Project>

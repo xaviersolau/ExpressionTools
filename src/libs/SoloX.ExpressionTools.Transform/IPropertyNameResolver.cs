@@ -34,5 +34,31 @@ namespace SoloX.ExpressionTools.Transform
         /// <returns>The name of the property.</returns>
         /// <remarks>It will throw an exception if the lambda is unexpected.</remarks>
         string GetPropertyName(LambdaExpression expression);
+
+        /// <summary>
+        /// Return the name of the method used in the lambda expression.
+        /// </summary>
+        /// <typeparam name="TElement">Type of the root element.</typeparam>
+        /// <typeparam name="TDelegate">The delegate type Action or Func.</typeparam>
+        /// <param name="expression">The lambda expression to get the method name from.</param>
+        /// <returns>The name of the method.</returns>
+        /// <remarks>It will throw an exception if the lambda is unexpected.</remarks>
+        string GetMethodName<TElement, TDelegate>(Expression<Func<TElement, TDelegate>> expression);
+
+        /// <summary>
+        /// Return the name of the method used in the lambda expression.
+        /// </summary>
+        /// <typeparam name="TElement">Type of the root element.</typeparam>
+        /// <param name="expression">The lambda expression to get the method name from.</param>
+        /// <returns>The name of the method.</returns>
+        /// <remarks>It will throw an exception if the lambda is unexpected.</remarks>
+        string GetMethodName<TElement>(Expression<Func<TElement, Delegate>> expression);
+
+        /// <summary>
+        /// Return the name of the method used in the lambda expression.
+        /// </summary>
+        /// <param name="expression">The lambda expression to get the method name from.</param>
+        /// <returns>The name of the method.</returns>
+        string GetMethodName(LambdaExpression expression);
     }
 }

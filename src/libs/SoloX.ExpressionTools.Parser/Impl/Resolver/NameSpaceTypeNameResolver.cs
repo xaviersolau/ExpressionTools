@@ -52,7 +52,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Resolver
             var idx = typeName.IndexOf('.');
             while (idx >= 0)
             {
-                typeName = typeName.Substring(idx + 1, typeName.Length - idx - 1);
+                typeName = typeName.Substring(idx + 1);
 
                 type = ResolveTypeName(typeName);
 

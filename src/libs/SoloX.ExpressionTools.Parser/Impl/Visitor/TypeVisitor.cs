@@ -18,7 +18,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
     /// </summary>
     internal sealed class TypeVisitor : CSharpSyntaxVisitor<Type>
     {
-        private static readonly IReadOnlyDictionary<string, Type> PredefinedTypeMap = new Dictionary<string, Type>()
+        private static readonly Dictionary<string, Type> PredefinedTypeMap = new Dictionary<string, Type>()
         {
             { "float", typeof(float) },
             { "double", typeof(double) },
