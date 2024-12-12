@@ -17,7 +17,7 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
     internal sealed class InlinerVisitor : ExpressionVisitor
     {
         private readonly IParameterResolver parameterResolver;
-        private readonly IDictionary<ParameterExpression, LambdaExpression> parameterMap;
+        private readonly Dictionary<ParameterExpression, LambdaExpression> parameterMap;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InlinerVisitor"/> class.

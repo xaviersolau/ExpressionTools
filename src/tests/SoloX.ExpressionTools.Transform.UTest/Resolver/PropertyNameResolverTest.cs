@@ -30,6 +30,56 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
         }
 
         [Fact]
+        public void ItShouldReturnTheGivenMethodNameWithFunc()
+        {
+            var resolver = new PropertyNameResolver();
+
+            var name = resolver.GetMethodName<IObjectWithMethod, Func<int, IObjectWithMethod>>(x => x.TestMethod1);
+
+            name.Should()
+                .NotBeNull()
+                .And.Be(nameof(IObjectWithMethod.TestMethod1));
+        }
+
+        [Fact]
+        public void ItShouldReturnTheGivenMethodNameWithDelegate()
+        {
+            var resolver = new PropertyNameResolver();
+
+            var name = resolver.GetMethodName<IObjectWithMethod, Delegate>(x => x.TestMethod1);
+
+            name.Should()
+                .NotBeNull()
+                .And.Be(nameof(IObjectWithMethod.TestMethod1));
+        }
+
+        [Fact]
+        public void ItShouldReturnTheGivenMethodNameWithLambda()
+        {
+            var resolver = new PropertyNameResolver();
+
+            Expression<Func<IObjectWithMethod, Delegate>> lambdaExpression = x => x.TestMethod1;
+
+            var name = resolver.GetMethodName((LambdaExpression)lambdaExpression);
+
+            name.Should()
+                .NotBeNull()
+                .And.Be(nameof(IObjectWithMethod.TestMethod1));
+        }
+
+        [Fact]
+        public void ItShouldReturnTheGivenMethodName()
+        {
+            var resolver = new PropertyNameResolver();
+
+            var name = resolver.GetMethodName<IObjectWithMethod>(x => x.TestMethod1);
+
+            name.Should()
+                .NotBeNull()
+                .And.Be(nameof(IObjectWithMethod.TestMethod1));
+        }
+
+        [Fact]
         public void ItShouldReturnTheGivenPropertyNameFromLambda()
         {
             var resolver = new PropertyNameResolver();
@@ -101,7 +151,9 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
         {
             var resolver = new PropertyNameResolver();
 
+#pragma warning disable CA1861 // Avoid constant arrays as arguments
             Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, int[]>(x => new int[] { 0 }));
+#pragma warning restore CA1861 // Avoid constant arrays as arguments
         }
 
         [Fact]

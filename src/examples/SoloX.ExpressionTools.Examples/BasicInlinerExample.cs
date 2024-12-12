@@ -16,7 +16,7 @@ namespace SoloX.ExpressionTools.Examples
     /// <summary>
     /// This class shows how to use the ParameterInliner.
     /// </summary>
-    public static class BasicInlinerExample
+    internal static class BasicInlinerExample
     {
         /// <summary>
         /// Let's in-line a lambda expression into one-another: a => a + 1 into b => b * 2 giving us a => (a + 1) * 2.

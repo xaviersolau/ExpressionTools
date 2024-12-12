@@ -165,7 +165,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
             return parameterResolverMock.Object;
         }
 
-        private static IParameterResolver CreateParameterResolver(IReadOnlyDictionary<string, LambdaExpression> parameterMap)
+        private static IParameterResolver CreateParameterResolver(Dictionary<string, LambdaExpression> parameterMap)
         {
             var parameterResolverMock = new Mock<IParameterResolver>();
 

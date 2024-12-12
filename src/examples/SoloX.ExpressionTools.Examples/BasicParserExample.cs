@@ -16,7 +16,7 @@ namespace SoloX.ExpressionTools.Examples
     /// <summary>
     /// This class shows how to use the ExpressionParser.
     /// </summary>
-    public static class BasicParserExample
+    internal static class BasicParserExample
     {
         /// <summary>
         /// Let's parse a self described lambda expression like "(int x) => x + 1".
@@ -126,7 +126,7 @@ namespace SoloX.ExpressionTools.Examples
     /// <summary>
     /// IFoo interface to take as a custom type.
     /// </summary>
-    public interface IFoo
+    internal interface IFoo
     {
         /// <summary>
         /// 
