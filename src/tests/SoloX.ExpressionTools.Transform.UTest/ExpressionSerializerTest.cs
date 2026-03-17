@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Shouldly;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Transform.Impl;
 using System;
@@ -26,7 +27,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("d => (d > 10)", txt);
+            txt.ShouldBe("d => (d > 10)");
         }
 
         [Fact]
@@ -38,7 +39,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("d => ((d == null) || (d == ((Nullable<Guid>)(new Guid(\"f45132ed-e1cf-4ddf-b8f9-62e660d2b4cb\")))))", txt);
+            txt.ShouldBe("d => ((d == null) || (d == ((Nullable<Guid>)(new Guid(\"f45132ed-e1cf-4ddf-b8f9-62e660d2b4cb\")))))");
         }
 
         [Fact]
@@ -50,7 +51,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("d => ((d.MyInt % 2) == 0)", txt);
+            txt.ShouldBe("d => ((d.MyInt % 2) == 0)");
         }
 
         [Fact]
@@ -62,7 +63,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("d => ((((d.MyArray).Length) > 0) && ((d.MyArray[0] % 2) == 0))", txt);
+            txt.ShouldBe("d => ((((d.MyArray).Length) > 0) && ((d.MyArray[0] % 2) == 0))");
         }
 
         [Fact]
@@ -74,7 +75,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("d => (d.Data2.Data3 != null)", txt);
+            txt.ShouldBe("d => (d.Data2.Data3 != null)");
         }
 
         [Fact]
@@ -86,7 +87,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("d => (d != 0)", txt);
+            txt.ShouldBe("d => (d != 0)");
         }
 
         [Fact]
@@ -98,7 +99,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("d => ((d > 0) ? true : false)", txt);
+            txt.ShouldBe("d => ((d > 0) ? true : false)");
         }
 
         [Fact]
@@ -110,7 +111,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("(a, b) => Math.Pow(a, b)", txt);
+            txt.ShouldBe("(a, b) => Math.Pow(a, b)");
         }
 
         [Fact]
@@ -122,7 +123,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("(a, b, c) => (((a * b) / c) + ((-(a)) * c))", txt);
+            txt.ShouldBe("(a, b, c) => (((a * b) / c) + ((-(a)) * c))");
         }
 
         [Fact]
@@ -134,7 +135,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("p => p.ToUpper(CultureInfo.InvariantCulture)", txt);
+            txt.ShouldBe("p => p.ToUpper(CultureInfo.InvariantCulture)");
         }
 
         [Fact]
@@ -146,7 +147,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("p => p.Contains('j')", txt);
+            txt.ShouldBe("p => p.Contains('j')");
         }
 
         [Fact]
@@ -158,7 +159,31 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var txt = serializer.Serialize(expression);
 
-            Assert.Equal("p => p.Contains(\"abc\")", txt);
+            txt.ShouldBe("p => p.Contains(\"abc\")");
+        }
+
+        [Fact]
+        public void ItShouldSerializeExpressionWithUseOfIntArray()
+        {
+            Expression<Func<int, bool>> expression = i => new int[] { 1, 2, 3 }.Contains(i);
+
+            var serializer = new ExpressionSerializer();
+
+            var txt = serializer.Serialize(expression);
+
+            txt.ShouldBe("i => new Int32[] { 1, 2, 3 }.Contains<Int32>(i)");
+        }
+
+        [Fact]
+        public void ItShouldSerializeExpressionWithUseOfStringArray()
+        {
+            Expression<Func<string, bool>> expression = i => new string[] { "a", "b" }.Contains(i);
+
+            var serializer = new ExpressionSerializer();
+
+            var txt = serializer.Serialize(expression);
+
+            txt.ShouldBe(@"i => new String[] { ""a"", ""b"" }.Contains<String>(i)");
         }
     }
 }

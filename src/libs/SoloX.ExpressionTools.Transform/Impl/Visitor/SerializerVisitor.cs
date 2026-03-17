@@ -190,7 +190,11 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
         protected override Expression VisitMemberInit(MemberInitExpression node) { return node; }
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
-            if (node.Method.IsStatic && node.Method.DeclaringType == typeof(Enumerable) && node.Arguments.Count > 0)
+            if (IsMemorySpanImplicitConversion(node))
+            {
+                base.Visit(node.Arguments.First());
+            }
+            else if (IsEnumerableExtensionMethod(node))
             {
                 var thisArg = node.Arguments.First();
                 base.Visit(thisArg);
@@ -297,6 +301,26 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
 
             return node;
         }
+
+        private static bool IsEnumerableExtensionMethod(MethodCallExpression node)
+        {
+            return node.Method.IsStatic
+                            && node.Arguments.Count > 0
+                            && (node.Method.DeclaringType == typeof(Enumerable)
+                                || node.Method.DeclaringType.FullName == "System.MemoryExtensions");
+        }
+
+        private static bool IsMemorySpanImplicitConversion(MethodCallExpression node)
+        {
+            return node.Method.IsStatic
+                            && node.Arguments.Count == 1
+                            && node.Method.Name == "op_Implicit"
+                            && node.Method.DeclaringType.Namespace == "System"
+                            && (node.Method.DeclaringType.Name == "ReadOnlySpan`1"
+                                || node.Method.DeclaringType.Name == "ReadOnlyMemory`1"
+                                || node.Method.DeclaringType.Name == "Memory`1");
+        }
+
         protected override Expression VisitNew(NewExpression node)
         {
             this.stringBuilder.Append("new ");

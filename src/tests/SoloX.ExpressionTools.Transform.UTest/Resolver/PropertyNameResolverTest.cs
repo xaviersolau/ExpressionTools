@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Transform.Impl.Resolver;
 using System;
@@ -24,9 +24,9 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
 
             var name = resolver.GetPropertyName<IData1, IData2>(x => x.Data2);
 
-            name.Should()
-                .NotBeNull()
-                .And.Be(nameof(IData1.Data2));
+            name.ShouldSatisfyAllConditions(
+                n => n.ShouldNotBeNull(),
+                n => n.ShouldBe(nameof(IData1.Data2)));
         }
 
         [Fact]
@@ -36,9 +36,9 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
 
             var name = resolver.GetMethodName<IObjectWithMethod, Func<int, IObjectWithMethod>>(x => x.TestMethod1);
 
-            name.Should()
-                .NotBeNull()
-                .And.Be(nameof(IObjectWithMethod.TestMethod1));
+            name.ShouldSatisfyAllConditions(
+                n => n.ShouldNotBeNull(),
+                n => n.ShouldBe(nameof(IObjectWithMethod.TestMethod1)));
         }
 
         [Fact]
@@ -48,9 +48,9 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
 
             var name = resolver.GetMethodName<IObjectWithMethod, Delegate>(x => x.TestMethod1);
 
-            name.Should()
-                .NotBeNull()
-                .And.Be(nameof(IObjectWithMethod.TestMethod1));
+            name.ShouldSatisfyAllConditions(
+                n => n.ShouldNotBeNull(),
+                n => n.ShouldBe(nameof(IObjectWithMethod.TestMethod1)));
         }
 
         [Fact]
@@ -62,9 +62,9 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
 
             var name = resolver.GetMethodName((LambdaExpression)lambdaExpression);
 
-            name.Should()
-                .NotBeNull()
-                .And.Be(nameof(IObjectWithMethod.TestMethod1));
+            name.ShouldSatisfyAllConditions(
+                n => n.ShouldNotBeNull(),
+                n => n.ShouldBe(nameof(IObjectWithMethod.TestMethod1)));
         }
 
         [Fact]
@@ -74,9 +74,9 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
 
             var name = resolver.GetMethodName<IObjectWithMethod>(x => x.TestMethod1);
 
-            name.Should()
-                .NotBeNull()
-                .And.Be(nameof(IObjectWithMethod.TestMethod1));
+            name.ShouldSatisfyAllConditions(
+                n => n.ShouldNotBeNull(),
+                n => n.ShouldBe(nameof(IObjectWithMethod.TestMethod1)));
         }
 
         [Fact]
@@ -88,9 +88,9 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
 
             var name = resolver.GetPropertyName((LambdaExpression)lambdaExpression);
 
-            name.Should()
-                .NotBeNull()
-                .And.Be(nameof(IData1.Data2));
+            name.ShouldSatisfyAllConditions(
+                n => n.ShouldNotBeNull(),
+                n => n.ShouldBe(nameof(IData1.Data2)));
         }
 
         [Fact]
@@ -100,9 +100,9 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
 
             var name = resolver.GetPropertyName<IData1, IData3>(x => x.Data2.Data3);
 
-            name.Should()
-                .NotBeNull()
-                .And.Be($"{nameof(IData1.Data2)}.{nameof(IData2.Data3)}");
+            name.ShouldSatisfyAllConditions(
+                n => n.ShouldNotBeNull(),
+                n => n.ShouldBe($"{nameof(IData1.Data2)}.{nameof(IData2.Data3)}"));
         }
 
         [Fact]
@@ -110,7 +110,7 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
         {
             var resolver = new PropertyNameResolver();
 
-            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, string>(x => x.ToString()));
+            Should.Throw<ArgumentException>(() => resolver.GetPropertyName<IData1, string>(x => x.ToString()));
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
         {
             var resolver = new PropertyNameResolver();
 
-            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1[], IData2>(x => x[0].Data2));
+            Should.Throw<ArgumentException>(() => resolver.GetPropertyName<IData1[], IData2>(x => x[0].Data2));
         }
 
 
@@ -127,7 +127,7 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
         {
             var resolver = new PropertyNameResolver();
 
-            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, IData1>(x => x));
+            Should.Throw<ArgumentException>(() => resolver.GetPropertyName<IData1, IData1>(x => x));
         }
 
         [Fact]
@@ -135,7 +135,7 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
         {
             var resolver = new PropertyNameResolver();
 
-            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, int>(x => 10));
+            Should.Throw<ArgumentException>(() => resolver.GetPropertyName<IData1, int>(x => 10));
         }
 
         [Fact]
@@ -143,7 +143,7 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
         {
             var resolver = new PropertyNameResolver();
 
-            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, object>(x => new object()));
+            Should.Throw<ArgumentException>(() => resolver.GetPropertyName<IData1, object>(x => new object()));
         }
 
         [Fact]
@@ -152,7 +152,7 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
             var resolver = new PropertyNameResolver();
 
 #pragma warning disable CA1861 // Avoid constant arrays as arguments
-            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, int[]>(x => new int[] { 0 }));
+            Should.Throw<ArgumentException>(() => resolver.GetPropertyName<IData1, int[]>(x => new int[] { 0 }));
 #pragma warning restore CA1861 // Avoid constant arrays as arguments
         }
 
@@ -161,7 +161,7 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
         {
             var resolver = new PropertyNameResolver();
 
-            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, int>(x => 10 + 2));
+            Should.Throw<ArgumentException>(() => resolver.GetPropertyName<IData1, int>(x => 10 + 2));
         }
 
         [Fact]
@@ -169,7 +169,7 @@ namespace SoloX.ExpressionTools.Transform.UTest.Resolver
         {
             var resolver = new PropertyNameResolver();
 
-            Assert.Throws<ArgumentException>(() => resolver.GetPropertyName<IData1, int>(x => -10));
+            Should.Throw<ArgumentException>(() => resolver.GetPropertyName<IData1, int>(x => -10));
         }
     }
 }
