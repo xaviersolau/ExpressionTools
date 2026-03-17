@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Shouldly;
 using SoloX.ExpressionTools.Transform.Impl;
 using System;
 using System.Linq.Expressions;
@@ -26,8 +27,8 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var func = resultingExp.Compile();
 
-            Assert.True(func(1000));
-            Assert.False(func(10));
+            func(1000).ShouldBeTrue();
+            func(10).ShouldBeFalse();
         }
 
         [Fact(DisplayName = "It must in-line a single parameter lambda expression")]
@@ -47,8 +48,8 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var func = (Func<int, bool>)resultingExp.Compile();
 
-            Assert.True(func(1000));
-            Assert.False(func(10));
+            func(1000).ShouldBeTrue();
+            func(10).ShouldBeFalse();
         }
     }
 }

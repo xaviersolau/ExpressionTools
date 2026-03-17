@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System;
+using Shouldly;
 using SoloX.ExpressionTools.Parser.UTest.Utils;
 using Xunit;
 
@@ -47,12 +48,12 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<bool, bool>>(expression);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
 
             var func = lambda.Compile();
 
             var output = func(operandA);
-            Assert.Equal(expectedResult, output);
+            output.ShouldBe(expectedResult);
         }
 
         private static void AssertEval(string expression, bool operandA, bool operandB, bool expectedResult)
@@ -61,12 +62,12 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<bool, bool, bool>>(expression);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
 
             var func = lambda.Compile();
 
             var output = func(operandA, operandB);
-            Assert.Equal(expectedResult, output);
+            output.ShouldBe(expectedResult);
         }
     }
 }

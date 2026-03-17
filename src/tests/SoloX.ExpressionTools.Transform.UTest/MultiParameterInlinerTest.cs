@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Moq;
+using Shouldly;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Sample.Impl;
 using SoloX.ExpressionTools.Transform.Impl;
@@ -28,10 +29,10 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var parameterResolver = CreateParameterResolver<Func<double>>(() => 1);
 
             var resultingExp = pi.Amend<Func<double, double>, Func<double>>(parameterResolver, s => s + 1);
-            Assert.NotNull(resultingExp);
+            resultingExp.ShouldNotBeNull();
 
             var func = resultingExp.Compile();
-            Assert.Equal(2, func());
+            func().ShouldBe(2);
         }
 
         [Fact(DisplayName = "It must in-line a basic one argument function expression")]
@@ -42,10 +43,10 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var parameterResolver = CreateParameterResolver<Func<double, double>>((a) => a * 3);
 
             var resultingExp = pi.Amend<Func<double, double>, Func<double, double>>(parameterResolver, s => s + 1);
-            Assert.NotNull(resultingExp);
+            resultingExp.ShouldNotBeNull();
 
             var func = resultingExp.Compile();
-            Assert.Equal(7, func(2));
+            func(2).ShouldBe(7);
         }
 
         [Fact(DisplayName = "It must in-line multiple parameters expression")]
@@ -62,10 +63,10 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var parameterResolver = CreateParameterResolver(expMap.ToDictionary(x => x.Key, x => (LambdaExpression)x.Value));
 
             var resultingExp = pi.Amend<Func<double, double, double>, Func<double, double, double>>(parameterResolver, (x, y) => x + y + 1);
-            Assert.NotNull(resultingExp);
+            resultingExp.ShouldNotBeNull();
 
             var func = resultingExp.Compile();
-            Assert.Equal(20, func(3, 2));
+            func(3, 2).ShouldBe(20);
         }
 
         [Fact(DisplayName = "It must in-line multiple parameters lambda expression")]
@@ -84,10 +85,10 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<double, double, double>> expressionToAmend = (x, y) => x + y + 1;
 
             var resultingExp = pi.Amend(parameterResolver, expressionToAmend);
-            Assert.NotNull(resultingExp);
+            resultingExp.ShouldNotBeNull();
 
             var func = (Func<double, double, double>)resultingExp.Compile();
-            Assert.Equal(20, func(3, 2));
+            func(3, 2).ShouldBe(20);
         }
 
         [Fact(DisplayName = "It must in-line member access")]
@@ -98,7 +99,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var parameterResolver = CreateParameterResolver<Func<IData1, IData2>>(s => s.Data2);
 
             var resultingExp = pi.Amend<Func<IData2, IData3>, Func<IData1, IData3>>(parameterResolver, s => s.Data3);
-            Assert.NotNull(resultingExp);
+            resultingExp.ShouldNotBeNull();
 
             var input = new Data1()
             {
@@ -109,7 +110,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
             };
 
             var func = resultingExp.Compile();
-            Assert.Same(input.Data2.Data3, func(input));
+            func(input).ShouldBeSameAs(input.Data2.Data3);
         }
 
         [Fact(DisplayName = "It must in-line method argument")]
@@ -126,12 +127,12 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var parameterResolver = CreateParameterResolver(expMap);
 
             var resultingExp = pi.Amend<Func<IObjectWithMethod, int, int>, Func<IObjectWithMethod, int>>(parameterResolver, (o, x) => o.BasicMethod(x));
-            Assert.NotNull(resultingExp);
+            resultingExp.ShouldNotBeNull();
 
             var func = resultingExp.Compile();
 
             var objWithMethod = new ObjectWithMethod();
-            Assert.Equal(10, func(objWithMethod));
+            func(objWithMethod).ShouldBe(10);
         }
 
         [Fact(DisplayName = "It must not change expression if no argument to in-line")]
@@ -147,11 +148,11 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var parameterResolver = CreateParameterResolver(expMap);
 
             var resultingExp = pi.Amend<Func<int, int>, Func<int, int>>(parameterResolver, (x) => x + 1);
-            Assert.NotNull(resultingExp);
+            resultingExp.ShouldNotBeNull();
 
             var func = resultingExp.Compile();
 
-            Assert.Equal(2, func(1));
+            func(1).ShouldBe(2);
         }
 
         private static IParameterResolver CreateParameterResolver<TDelegate>(Expression<TDelegate> exp)

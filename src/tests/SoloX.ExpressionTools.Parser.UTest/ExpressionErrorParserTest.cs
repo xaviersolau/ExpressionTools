@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 using System;
+using Shouldly;
 using SoloX.ExpressionTools.Parser.UTest.Utils;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
         {
             var expParser = ExpressionParserHelper.CreateExpressionParser<object>();
 
-            Assert.Throws<FormatException>(() => expParser.Parse("s => s; var tmp = y => y"));
+            Should.Throw<FormatException>(() => expParser.Parse("s => s; var tmp = y => y"));
         }
     }
 }

@@ -6,7 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
-using FluentAssertions;
+using Shouldly;
 using SoloX.ExpressionTools.Parser.Impl.Resolver;
 using System;
 using Xunit;
@@ -24,7 +24,7 @@ namespace SoloX.ExpressionTools.Parser.UTest.Resolver
 
             var resolvedType = resolver.ResolveType("any");
 
-            resolvedType.Should().Be(typeToResolve);
+            resolvedType.ShouldBe(typeToResolve);
         }
 
         [Theory]
@@ -38,7 +38,7 @@ namespace SoloX.ExpressionTools.Parser.UTest.Resolver
             if (shouldResolve)
             {
                 var resolvedType = resolver.ResolveType(nameToResolve);
-                resolvedType.Should().Be<string>();
+                resolvedType.ShouldBe(typeof(string));
             }
             else
             {

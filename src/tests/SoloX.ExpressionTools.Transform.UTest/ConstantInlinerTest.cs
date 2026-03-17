@@ -6,6 +6,7 @@
 // </copyright>
 // ----------------------------------------------------------------------
 
+using Shouldly;
 using SoloX.ExpressionTools.Transform.Impl;
 using System;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
     public class ConstantInlinerTest
     {
         [Fact]
-        public void IsShouldConvertExternalDateVariableAsConst()
+        public void ItShouldConvertExternalDateVariableAsConst()
         {
             var inliner = new ConstantInliner();
 
@@ -31,12 +32,12 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var func = exp.Compile();
 
-            Assert.False(func(DateTime.Now.AddDays(1)));
-            Assert.True(func(DateTime.Now.AddDays(-1)));
+            func(DateTime.Now.AddDays(1)).ShouldBeFalse();
+            func(DateTime.Now.AddDays(-1)).ShouldBeTrue();
         }
 
         [Fact]
-        public void IsShouldConvertExternalVariableAsConst()
+        public void ItShouldConvertExternalVariableAsConst()
         {
             var inliner = new ConstantInliner();
 
@@ -50,14 +51,15 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var func = exp.Compile();
 
-            Assert.Equal(100d, func(10000));
+            func(10000).ShouldBe(100d);
 
             Expression<Func<double, double>> expectedExp = i => i * 0.01d;
-            Assert.Equal(expectedExp.ToString(), exp.ToString());
+
+            exp.ToString().ShouldBe(expectedExp.ToString());
         }
 
         [Fact]
-        public void IsShouldConvertExternalVariableAsConstInLambda()
+        public void ItShouldConvertExternalVariableAsConstInLambda()
         {
             var inliner = new ConstantInliner();
 
@@ -71,42 +73,55 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
             var func = (Func<double, double>)exp.Compile();
 
-            Assert.Equal(100d, func(10000));
+            func(10000).ShouldBe(100d);
 
             Expression<Func<double, double>> expectedExp = i => i * 0.01d;
-            Assert.Equal(expectedExp.ToString(), exp.ToString());
+            exp.ToString().ShouldBe(expectedExp.ToString());
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithDateTime()
+        public void ItShouldConvertExpressionWithDateTime()
         {
             var inliner = new ConstantInliner();
 
             Expression<Func<DateTime, bool>> expToInline = d => d < new DateTime(2021, 12, 24);
 
             var exp = inliner.Amend(expToInline);
+
+            var func = exp.Compile();
+
+            func(new DateTime(2020, 12, 24)).ShouldBeTrue();
+            func(new DateTime(2022, 12, 24)).ShouldBeFalse();
+
             var txt = exp.Serialize();
 
-            Assert.Equal("d => (d < new DateTime(2021, 12, 24))", txt);
+            txt.ShouldBe("d => (d < new DateTime(2021, 12, 24))");
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithStaticMember()
+        public void ItShouldConvertExpressionWithStaticMember()
         {
             var inliner = new ConstantInliner();
 
             Expression<Func<DateTime, bool>> expToInline = d => d < DateTime.Now.Date;
 
             var exp = inliner.Amend(expToInline);
+
+            var func = exp.Compile();
+
+            func(DateTime.Now.Date.AddDays(-1)).ShouldBeTrue();
+            func(DateTime.Now.Date.AddDays(1)).ShouldBeFalse();
+
             var txt = exp.Serialize();
 
             var expected = $"d => (d < new DateTime({DateTime.Now.Ticks}).Date)";
-            Assert.StartsWith(expected.Substring(0, 30), txt, StringComparison.Ordinal);
-            Assert.EndsWith(").Date)", txt, StringComparison.Ordinal);
+
+            txt.ShouldStartWith(expected.Substring(0, 30));
+            txt.ShouldEndWith(").Date)");
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithConstDateTime()
+        public void ItShouldConvertExpressionWithConstDateTime()
         {
             var inliner = new ConstantInliner();
 
@@ -115,13 +130,19 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<DateTime, bool>> expToInline = d => d < externalValue;
 
             var exp = inliner.Amend(expToInline);
+
+            var func = exp.Compile();
+
+            func(new DateTime(2020, 12, 24)).ShouldBeTrue();
+            func(new DateTime(2022, 12, 24)).ShouldBeFalse();
+
             var txt = exp.Serialize();
 
-            Assert.Equal($"d => (d < new DateTime({externalValue.Ticks}))", txt);
+            txt.ShouldBe($"d => (d < new DateTime({externalValue.Ticks}))");
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithConstDateTimeOffset()
+        public void ItShouldConvertExpressionWithConstDateTimeOffset()
         {
             var inliner = new ConstantInliner();
 
@@ -131,13 +152,19 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<DateTimeOffset, bool>> expToInline = d => d < externalValue;
 
             var exp = inliner.Amend(expToInline);
+
+            var func = exp.Compile();
+
+            func(externalValue.AddDays(-1)).ShouldBeTrue();
+            func(externalValue.AddDays(1)).ShouldBeFalse();
+
             var txt = exp.Serialize();
 
-            Assert.Equal($"d => (d < new DateTimeOffset({externalValue.Ticks}, new TimeSpan({offset.Ticks})))", txt);
+            txt.ShouldBe($"d => (d < new DateTimeOffset({externalValue.Ticks}, new TimeSpan({offset.Ticks})))");
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithGuid()
+        public void ItShouldConvertExpressionWithGuid()
         {
             var inliner = new ConstantInliner();
 
@@ -146,13 +173,19 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<Guid, bool>> expToInline = d => d == externalValue;
 
             var exp = inliner.Amend(expToInline);
+
+            var func = exp.Compile();
+
+            func(externalValue).ShouldBeTrue();
+            func(Guid.NewGuid()).ShouldBeFalse();
+
             var txt = exp.Serialize();
 
-            Assert.Equal($"d => (d == new Guid(\"{externalValue}\"))", txt);
+            txt.ShouldBe($"d => (d == new Guid(\"{externalValue}\"))");
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithNullableGuid()
+        public void ItShouldConvertExpressionWithNullableGuid()
         {
             var inliner = new ConstantInliner();
 
@@ -161,9 +194,15 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<Guid?, bool>> expToInline = d => d == null || d == externalValue;
 
             var exp = inliner.Amend(expToInline);
+
+            var func = exp.Compile();
+
+            func(externalValue).ShouldBeTrue();
+            func(Guid.NewGuid()).ShouldBeFalse();
+
             var txt = exp.Serialize();
 
-            Assert.Equal($"d => ((d == null) || (d == ((Nullable<Guid>)(new Guid(\"{externalValue}\")))))", txt);
+            txt.ShouldBe($"d => ((d == null) || (d == ((Nullable<Guid>)(new Guid(\"{externalValue}\")))))");
         }
 
         internal sealed class TestModel
@@ -172,7 +211,7 @@ namespace SoloX.ExpressionTools.Transform.UTest
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithMemberAccess()
+        public void ItShouldConvertExpressionWithMemberAccess()
         {
             var inliner = new ConstantInliner();
 
@@ -181,13 +220,19 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<int, bool>> expToInline = d => d < externalModelValue.Property;
 
             var exp = inliner.Amend(expToInline);
+
+            var func = exp.Compile();
+
+            func(124).ShouldBeFalse();
+            func(122).ShouldBeTrue();
+
             var txt = exp.Serialize();
 
-            Assert.Equal($"d => (d < 123)", txt);
+            txt.ShouldBe($"d => (d < 123)");
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithConstArrayOfInt()
+        public void ItShouldConvertExpressionWithConstArrayOfInt()
         {
             var inliner = new ConstantInliner();
 
@@ -196,13 +241,22 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<int, bool>> expToInline = x => externalValue.Contains(x);
 
             var exp = inliner.Amend(expToInline);
+
+            var func = exp.Compile();
+
+            func(0).ShouldBeFalse();
+            func(1).ShouldBeTrue();
+            func(2).ShouldBeTrue();
+            func(3).ShouldBeTrue();
+            func(4).ShouldBeFalse();
+
             var txt = exp.Serialize();
 
-            Assert.Equal("x => new Int32[] { 1, 2, 3 }.Contains<Int32>(x)", txt);
+            txt.ShouldBe("x => new Int32[] { 1, 2, 3 }.Contains<Int32>(x)");
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithConstArrayOfString()
+        public void ItShouldConvertExpressionWithConstArrayOfString()
         {
             var inliner = new ConstantInliner();
 
@@ -211,13 +265,19 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<string, bool>> expToInline = x => externalValue.Contains(x);
 
             var exp = inliner.Amend(expToInline);
+
+            var func = exp.Compile();
+
+            func("abc").ShouldBeTrue();
+            func("xyz").ShouldBeFalse();
+
             var txt = exp.Serialize();
 
-            Assert.Equal("x => new String[] { \"abc\" }.Contains<String>(x)", txt);
+            txt.ShouldBe("x => new String[] { \"abc\" }.Contains<String>(x)");
         }
 
         [Fact]
-        public void IsShouldConvertExpressionWithConstEnumerableOfString()
+        public void ItShouldConvertExpressionWithConstEnumerableOfString()
         {
             var inliner = new ConstantInliner();
 
@@ -227,9 +287,15 @@ namespace SoloX.ExpressionTools.Transform.UTest
             Expression<Func<string, bool>> expToInline = x => externalValue.Contains(x);
 
             var exp = inliner.Amend(expToInline);
+
+            var func = exp.Compile();
+
+            func("abc").ShouldBeTrue();
+            func("123").ShouldBeFalse();
+
             var txt = exp.Serialize();
 
-            Assert.Equal("x => new String[] { \"abc\" }.Contains<String>(x)", txt);
+            txt.ShouldBe("x => new String[] { \"abc\" }.Contains<String>(x)");
         }
     }
 }

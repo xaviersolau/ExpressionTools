@@ -8,6 +8,7 @@
 
 using System;
 using System.Linq.Expressions;
+using Shouldly;
 using SoloX.ExpressionTools.Parser.Impl;
 using SoloX.ExpressionTools.Parser.Impl.Resolver;
 using SoloX.ExpressionTools.Parser.UTest.Utils;
@@ -32,14 +33,14 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<object, object>>("s => s");
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
 
             var func = lambda.Compile();
 
             var input = new object();
             var output = func(input);
 
-            Assert.Same(input, output);
+            output.ShouldBeSameAs(input);
         }
 
         [Fact(DisplayName = "It must parse a member access expression")]
@@ -49,7 +50,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<IData1, IData2>>("s => s.Data2");
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
 
             AssertItReturnData2PropertyValue(lambda);
         }
@@ -65,7 +66,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<IData1, IData2>>("s => GetData2FromData1(s)");
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
 
             AssertItReturnData2PropertyValue(lambda);
         }
@@ -88,7 +89,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<IData1, IData2>>(expression);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
 
             AssertItReturnData2PropertyValue(lambda);
         }
@@ -104,13 +105,13 @@ namespace SoloX.ExpressionTools.Parser.UTest
             var expParser = ExpressionParserHelper.CreateExpressionParser<IObjectWithMethod>();
 
             var lambda = expParser.Parse<Func<IObjectWithMethod, int>>(expression);
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
 
             var func = lambda.Compile();
 
             var input = new ObjectWithMethod();
             var output = func(input);
-            Assert.Equal(expectedRes, output);
+            output.ShouldBe(expectedRes);
         }
 
         [Theory(DisplayName = "It must parse a conditional expression")]
@@ -123,10 +124,10 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<int, int>>(conditionalExpression);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
             var func = lambda.Compile();
 
-            Assert.Equal(expected, func(input));
+            func(input).ShouldBe(expected);
         }
 
         [Fact(DisplayName = "It must parse a self described lambda expression")]
@@ -136,11 +137,11 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<int, int>>("(int s) => s + 1");
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
 
             var func = lambda.Compile();
 
-            Assert.Equal(2, func(1));
+            func(1).ShouldBe(2);
         }
 
         [Fact(DisplayName = "It must parse use of array index in a lambda expression")]
@@ -150,11 +151,11 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<int[], int>>("(int[] s) => s[0] + 1");
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
 
             var func = lambda.Compile();
 
-            Assert.Equal(2, func([1]));
+            func([1]).ShouldBe(2);
         }
 
         [Theory(DisplayName = "It must parse string lambda expression")]
@@ -169,7 +170,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<string, bool>>(stringExp);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
         }
 
         [Theory(DisplayName = "It must parse DateTime lambda expression")]
@@ -184,7 +185,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<DateTime, bool>>(stringExp);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
         }
 
         [Theory(DisplayName = "It must parse lambda expression with array")]
@@ -198,7 +199,15 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expParser.Parse<Func<int, bool>>(stringExp);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
+
+            var func = lambda.Compile();
+
+            func(0).ShouldBeFalse();
+            func(1).ShouldBeTrue();
+            func(2).ShouldBeTrue();
+            func(3).ShouldBeTrue();
+            func(4).ShouldBeFalse();
         }
 
         [Theory(DisplayName = "It must parse lambda expression with guid")]
@@ -211,7 +220,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expressionParser.Parse(expression);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
         }
 
         [Theory(DisplayName = "It must parse lambda expression with guid")]
@@ -225,11 +234,11 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expressionParser.Parse<Func<int, bool>>(expression);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
 
             var txt = lambda.Serialize();
 
-            Assert.Equal(expression, txt);
+            txt.ShouldBe(expression);
         }
 
         [Theory(DisplayName = "It must parse lambda expression with CultureInfo")]
@@ -241,7 +250,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expressionParser.Parse(expression);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
         }
 
         private interface ITest
@@ -260,7 +269,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
 
             var lambda = expressionParser.Parse(expression);
 
-            Assert.NotNull(lambda);
+            lambda.ShouldNotBeNull();
         }
 
         private static void AssertItReturnData2PropertyValue(Expression<Func<IData1, IData2>> lambda)
@@ -273,7 +282,7 @@ namespace SoloX.ExpressionTools.Parser.UTest
             };
 
             var output = func(input);
-            Assert.Same(input.Data2, output);
+            output.ShouldBeSameAs(input.Data2);
         }
     }
 }
