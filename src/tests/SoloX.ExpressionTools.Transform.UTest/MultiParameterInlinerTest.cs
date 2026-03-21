@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Moq;
+using NSubstitute;
 using Shouldly;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Sample.Impl;
@@ -157,24 +157,24 @@ namespace SoloX.ExpressionTools.Transform.UTest
 
         private static IParameterResolver CreateParameterResolver<TDelegate>(Expression<TDelegate> exp)
         {
-            var parameterResolverMock = new Mock<IParameterResolver>();
+            var parameterResolverMock = Substitute.For<IParameterResolver>();
 
             parameterResolverMock
-                .Setup(r => r.Resolve(It.IsAny<ParameterExpression>()))
+                .Resolve(Arg.Any<ParameterExpression>())
                 .Returns(exp);
 
-            return parameterResolverMock.Object;
+            return parameterResolverMock;
         }
 
         private static IParameterResolver CreateParameterResolver(Dictionary<string, LambdaExpression> parameterMap)
         {
-            var parameterResolverMock = new Mock<IParameterResolver>();
+            var parameterResolverMock = Substitute.For<IParameterResolver>();
 
             parameterResolverMock
-                .Setup(r => r.Resolve(It.IsAny<ParameterExpression>()))
-                .Returns((ParameterExpression p) => parameterMap.TryGetValue(p.Name, out var exp) ? exp : null);
+                .Resolve(Arg.Any<ParameterExpression>())
+                .Returns(ci => parameterMap.TryGetValue(ci.Arg<ParameterExpression>().Name!, out var exp) ? exp : null);
 
-            return parameterResolverMock.Object;
+            return parameterResolverMock;
         }
     }
 }
