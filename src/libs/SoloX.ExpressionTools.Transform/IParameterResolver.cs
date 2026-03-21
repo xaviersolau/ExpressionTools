@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="IParameterResolver.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -20,6 +20,6 @@ namespace SoloX.ExpressionTools.Transform
         /// </summary>
         /// <param name="parameter">The parameter to resolve.</param>
         /// <returns>The expression to in-line or null if the parameter must not be replaced.</returns>
-        LambdaExpression Resolve(ParameterExpression parameter);
+        LambdaExpression? Resolve(ParameterExpression parameter);
     }
 }

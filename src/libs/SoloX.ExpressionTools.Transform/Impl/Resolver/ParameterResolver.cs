@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="ParameterResolver.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -32,7 +32,7 @@ namespace SoloX.ExpressionTools.Transform.Impl.Resolver
         }
 
         /// <inheritdoc />
-        public LambdaExpression Resolve(ParameterExpression parameter)
+        public LambdaExpression? Resolve(ParameterExpression parameter)
         {
             return parameter != null && this.expressionMap.TryGetValue(parameter.Name, out var exp)
                 ? exp : null;

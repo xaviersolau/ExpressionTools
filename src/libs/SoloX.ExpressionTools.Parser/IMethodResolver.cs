@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="IMethodResolver.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -22,6 +22,6 @@ namespace SoloX.ExpressionTools.Parser
         /// <param name="methodName">The method name.</param>
         /// <param name="argsType">The method argument types.</param>
         /// <returns>The MethodInfo.</returns>
-        MethodInfo ResolveMethod(string methodName, Type[] argsType);
+        MethodInfo? ResolveMethod(string methodName, Type[] argsType);
     }
 }

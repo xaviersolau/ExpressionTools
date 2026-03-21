@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="LambdaVisitorAttribute.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -32,20 +32,20 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             }
         }
 
-        public Type[] ArgumentTypes { get; internal set; }
-        public Type[] GenericParameters { get; internal set; }
-
-        public Expression ResultingExpression { get; internal set; }
-
-        public Type ResultingType { get; internal set; }
-
-        public MethodInfo ResultingMethodInfo { get; internal set; }
-
-        public string ResultingIdentifier { get; internal set; }
-
         public List<ParameterExpression> Parameters { get; }
 
         public Dictionary<string, ParameterExpression> ParameterMap { get; }
+
+        public Type[]? ArgumentTypes { get; internal set; }
+        public Type[]? GenericParameters { get; internal set; }
+
+        public Expression? ResultingExpression { get; internal set; }
+
+        public Type? ResultingType { get; internal set; }
+
+        public MethodInfo? ResultingMethodInfo { get; internal set; }
+
+        public string? ResultingIdentifier { get; internal set; }
 
         public string QualifiedNamePrefix { get; internal set; } = string.Empty;
     }

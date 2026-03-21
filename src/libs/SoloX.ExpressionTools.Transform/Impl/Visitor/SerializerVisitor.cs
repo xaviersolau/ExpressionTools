@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="SerializerVisitor.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -18,7 +18,7 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
     {
         private readonly StringBuilder stringBuilder = new StringBuilder();
 
-        private readonly HashSet<string> defaultNamespaces = new HashSet<string>(new[] { "System", "System.Linq", "System.Globalization" });
+        private readonly HashSet<string> defaultNamespaces = new HashSet<string>(new[] { "System", "System.Linq", "System.Globalization", "System.Collections", "System.Collections.Generic" });
 
         public string GetString()
         {
@@ -398,17 +398,24 @@ namespace SoloX.ExpressionTools.Transform.Impl.Visitor
         protected override Expression VisitTypeBinary(TypeBinaryExpression node) { return node; }
         protected override Expression VisitUnary(UnaryExpression node)
         {
-            this.stringBuilder.Append('(');
+            if (node.NodeType == ExpressionType.Convert && node.Type == node.Operand.Type)
+            {
+                base.Visit(node.Operand);
+            }
+            else
+            {
+                this.stringBuilder.Append('(');
 
-            AppendPreUnaryOperator(node);
+                AppendPreUnaryOperator(node);
 
-            this.stringBuilder.Append('(');
-            base.Visit(node.Operand);
-            this.stringBuilder.Append(')');
+                this.stringBuilder.Append('(');
+                base.Visit(node.Operand);
+                this.stringBuilder.Append(')');
 
-            AppendPostUnaryOperator(node);
+                AppendPostUnaryOperator(node);
 
-            this.stringBuilder.Append(')');
+                this.stringBuilder.Append(')');
+            }
 
             return node;
         }

@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="DictionaryParameterTypeResolver.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -29,7 +29,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Resolver
         }
 
         /// <inheritdoc />
-        public Type ResolveType(string parameterName)
+        public Type? ResolveType(string parameterName)
         {
             return this.typeMap.TryGetValue(parameterName, out var type) ? type : null;
         }

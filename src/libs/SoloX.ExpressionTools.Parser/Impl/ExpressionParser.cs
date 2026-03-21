@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="ExpressionParser.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -27,7 +27,7 @@ namespace SoloX.ExpressionTools.Parser.Impl
         /// <param name="parameterTypeResolver">Resolver that will be used to associate a Type to a given parameter name.</param>
         /// <param name="methodResolver">Resolver that will be used to identify a method given a name and an argument type list.</param>
         /// <param name="typeNameResolver">Resolver that will be used to identify a type given a name.</param>
-        public ExpressionParser(IParameterTypeResolver parameterTypeResolver = null, IMethodResolver methodResolver = null, ITypeNameResolver typeNameResolver = null)
+        public ExpressionParser(IParameterTypeResolver? parameterTypeResolver = null, IMethodResolver? methodResolver = null, ITypeNameResolver? typeNameResolver = null)
         {
             this.visitor = new LambdaVisitor(parameterTypeResolver, methodResolver, typeNameResolver);
         }
@@ -37,7 +37,15 @@ namespace SoloX.ExpressionTools.Parser.Impl
         {
             var stree = GetLambdaSyntaxNode(lambdaExpressionText);
 
-            var expRes = this.visitor.Visit(stree).ResultingExpression;
+            var attributes = this.visitor.Visit(stree);
+
+            if (attributes == null || attributes.ResultingExpression == null)
+            {
+                throw new FormatException($"failed to parse error: {lambdaExpressionText}");
+            }
+
+            var expRes = attributes.ResultingExpression;
+
             return (Expression<TDelegate>)expRes;
         }
 
@@ -46,7 +54,15 @@ namespace SoloX.ExpressionTools.Parser.Impl
         {
             var stree = GetLambdaSyntaxNode(lambdaExpressionText);
 
-            var expRes = this.visitor.Visit(stree).ResultingExpression;
+            var attributes = this.visitor.Visit(stree);
+
+            if (attributes == null || attributes.ResultingExpression == null)
+            {
+                throw new FormatException($"failed to parse error: {lambdaExpressionText}");
+            }
+
+            var expRes = attributes.ResultingExpression;
+
             return (LambdaExpression)expRes;
         }
 

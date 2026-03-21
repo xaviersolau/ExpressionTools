@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="NameSpaceTypeNameResolver.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,19 +16,19 @@ namespace SoloX.ExpressionTools.Parser.Impl.Resolver
     /// </summary>
     public class NameSpaceTypeNameResolver : ITypeNameResolver
     {
-        private readonly IEnumerable<(string, string)> namespaceAssemblyItems;
+        private readonly IEnumerable<(string, string?)> namespaceAssemblyItems;
 
         /// <summary>
         /// Setup the NameSpace type resolver.
         /// </summary>
         /// <param name="namespaceAssemblyItems"></param>
-        public NameSpaceTypeNameResolver(IEnumerable<(string, string)> namespaceAssemblyItems)
+        public NameSpaceTypeNameResolver(IEnumerable<(string, string?)> namespaceAssemblyItems)
         {
             this.namespaceAssemblyItems = namespaceAssemblyItems;
         }
 
         /// <inheritdoc/>
-        public Type ResolveTypeName(string typeName)
+        public Type? ResolveTypeName(string typeName)
         {
             if (typeName == null)
             {
