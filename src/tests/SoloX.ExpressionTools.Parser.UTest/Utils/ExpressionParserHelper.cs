@@ -8,7 +8,7 @@
 
 using System;
 using System.Reflection;
-using Moq;
+using NSubstitute;
 using SoloX.ExpressionTools.Parser.Impl;
 
 namespace SoloX.ExpressionTools.Parser.UTest.Utils
@@ -21,34 +21,34 @@ namespace SoloX.ExpressionTools.Parser.UTest.Utils
         {
             var typeResolver = CreateParameterTypeResolver<T>();
 
-            var methodResolverMock = new Mock<IMethodResolver>();
+            var methodResolverMock = Substitute.For<IMethodResolver>();
             if (methodFunc != null)
             {
                 methodResolverMock
-                    .Setup(r => r.ResolveMethod(It.IsAny<string>(), It.IsAny<Type[]>()))
-                    .Returns(methodFunc);
+                    .ResolveMethod(Arg.Any<string>(), Arg.Any<Type[]>())
+                    .Returns(ci => methodFunc(ci.Arg<string>(), ci.Arg<Type[]>()));
             }
 
-            var typeNameResolverMock = new Mock<ITypeNameResolver>();
+            var typeNameResolverMock = Substitute.For<ITypeNameResolver>();
             if (typeNameFunc != null)
             {
                 typeNameResolverMock
-                    .Setup(r => r.ResolveTypeName(It.IsAny<string>()))
-                    .Returns(typeNameFunc);
+                    .ResolveTypeName(Arg.Any<string>())
+                    .Returns(ci => typeNameFunc(ci.Arg<string>()));
             }
 
-            return new ExpressionParser(typeResolver, methodResolverMock.Object, typeNameResolverMock.Object);
+            return new ExpressionParser(typeResolver, methodResolverMock, typeNameResolverMock);
         }
 
         private static IParameterTypeResolver CreateParameterTypeResolver<T>()
         {
-            var typeResolverMock = new Mock<IParameterTypeResolver>();
+            var typeResolverMock = Substitute.For<IParameterTypeResolver>();
 
             typeResolverMock
-                .Setup(r => r.ResolveType(It.IsAny<string>()))
+                .ResolveType(Arg.Any<string>())
                 .Returns(typeof(T));
 
-            return typeResolverMock.Object;
+            return typeResolverMock;
         }
     }
 }
