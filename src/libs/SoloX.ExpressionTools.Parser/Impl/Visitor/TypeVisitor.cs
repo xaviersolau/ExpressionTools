@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="TypeVisitor.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -28,23 +28,28 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             { "string", typeof(string) },
         };
 
-        private readonly Func<string, Type> typeNameResolver;
+        private readonly Func<string, Type?> typeNameResolver;
 
-        public TypeVisitor(Func<string, Type> typeNameResolver)
+        public TypeVisitor(Func<string, Type?> typeNameResolver)
         {
             this.typeNameResolver = typeNameResolver;
         }
 
         /// <inheritdoc />
-        public override Type VisitPredefinedType(PredefinedTypeSyntax node)
+        public override Type? VisitPredefinedType(PredefinedTypeSyntax node)
         {
             return PredefinedTypeMap[node.Keyword.Text];
         }
 
         /// <inheritdoc />
-        public override Type VisitArrayType(ArrayTypeSyntax node)
+        public override Type? VisitArrayType(ArrayTypeSyntax node)
         {
             var type = this.Visit(node.ElementType);
+
+            if (type == null)
+            {
+                return null;
+            }
 
             var rank = node.RankSpecifiers.Count;
 
@@ -54,13 +59,13 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override Type VisitIdentifierName(IdentifierNameSyntax node)
+        public override Type? VisitIdentifierName(IdentifierNameSyntax node)
         {
             return this.typeNameResolver(node.Identifier.Text);
         }
 
         /// <inheritdoc />
-        public override Type VisitQualifiedName(QualifiedNameSyntax node)
+        public override Type? VisitQualifiedName(QualifiedNameSyntax node)
         {
             return this.typeNameResolver(node.ToString());
         }

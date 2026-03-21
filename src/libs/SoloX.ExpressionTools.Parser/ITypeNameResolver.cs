@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="ITypeNameResolver.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -20,6 +20,6 @@ namespace SoloX.ExpressionTools.Parser
         /// </summary>
         /// <param name="typeName">The type name to match.</param>
         /// <returns>The resolved type matching the given name or null otherwise.</returns>
-        Type ResolveTypeName(string typeName);
+        Type? ResolveTypeName(string typeName);
     }
 }

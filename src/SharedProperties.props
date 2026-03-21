@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Version>1.0.6</Version>
     <Authors>Xavier Solau</Authors>
-    <Copyright>Copyright © 2019 Xavier Solau</Copyright>
+    <Copyright>Copyright © 2019-2026 Xavier Solau</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/xaviersolau/ExpressionTools</PackageProjectUrl>
     <RepositoryUrl>https://github.com/xaviersolau/ExpressionTools.git</RepositoryUrl>
@@ -16,7 +16,7 @@
 
     <CodeQualityUpdateGitIgnore>true</CodeQualityUpdateGitIgnore>
 
-    <!--<Nullable>enable</Nullable>-->
+    <Nullable>enable</Nullable>
 
     <NoWarn>$(NoWarn),CA1515</NoWarn>
   </PropertyGroup>

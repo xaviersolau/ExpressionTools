@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="ExpressionSerializerTest.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,6 +10,7 @@ using Shouldly;
 using SoloX.ExpressionTools.Sample;
 using SoloX.ExpressionTools.Transform.Impl;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq.Expressions;
 using Xunit;
@@ -184,6 +185,18 @@ namespace SoloX.ExpressionTools.Transform.UTest
             var txt = serializer.Serialize(expression);
 
             txt.ShouldBe(@"i => new String[] { ""a"", ""b"" }.Contains<String>(i)");
+        }
+
+        [Fact]
+        public void ItShouldSerializeExpressionWithUseOfStringArrayAndExplicitConvertor()
+        {
+            Expression<Func<string, bool>> expression = i => ((ICollection<string>)(new string[] { "a", "b" })).Contains(i);
+
+            var serializer = new ExpressionSerializer();
+
+            var txt = serializer.Serialize(expression);
+
+            txt.ShouldBe(@"i => ((ICollection<String>)(new String[] { ""a"", ""b"" })).Contains(i)");
         }
     }
 }

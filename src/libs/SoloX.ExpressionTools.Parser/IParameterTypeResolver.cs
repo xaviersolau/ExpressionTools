@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="IParameterTypeResolver.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -20,6 +20,6 @@ namespace SoloX.ExpressionTools.Parser
         /// </summary>
         /// <param name="parameterName">The parameter name.</param>
         /// <returns>The Type of the parameter.</returns>
-        Type ResolveType(string parameterName);
+        Type? ResolveType(string parameterName);
     }
 }

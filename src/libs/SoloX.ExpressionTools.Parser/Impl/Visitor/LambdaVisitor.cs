@@ -1,6 +1,6 @@
 ﻿// ----------------------------------------------------------------------
 // <copyright file="LambdaVisitor.cs" company="Xavier Solau">
-// Copyright © 2019 Xavier Solau.
+// Copyright © 2019-2026 Xavier Solau.
 // Licensed under the MIT license.
 // See LICENSE file in the project root for full license information.
 // </copyright>
@@ -37,9 +37,9 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         /// <param name="methodResolver">Resolver that will identify methods.</param>
         /// <param name="typeNameResolver">Resolver that will identify types.</param>
         public LambdaVisitor(
-            IParameterTypeResolver parameterTypeResolver,
-            IMethodResolver methodResolver,
-            ITypeNameResolver typeNameResolver)
+            IParameterTypeResolver? parameterTypeResolver,
+            IMethodResolver? methodResolver,
+            ITypeNameResolver? typeNameResolver)
         {
             this.ParameterTypeResolver = parameterTypeResolver;
             this.MethodResolver = methodResolver;
@@ -48,27 +48,27 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             this.typeVisitor = new TypeVisitor(s => TryToResolveAsAType(s, out var type) ? type : null);
 
 
-            this.defaultSystemTypeNameResolver = new NameSpaceTypeNameResolver(new (string, string)[] { ("System", null), ("System.Linq", "System.Linq"), ("System.Globalization", null) });
+            this.defaultSystemTypeNameResolver = new NameSpaceTypeNameResolver(new (string, string?)[] { ("System", null), ("System.Linq", "System.Linq"), ("System.Globalization", null) });
         }
 
         /// <summary>
         /// Gets the parameter type resolver.
         /// </summary>
-        public IParameterTypeResolver ParameterTypeResolver { get; }
+        public IParameterTypeResolver? ParameterTypeResolver { get; }
 
         /// <summary>
         /// Gets the method resolver.
         /// </summary>
-        public IMethodResolver MethodResolver { get; }
+        public IMethodResolver? MethodResolver { get; }
 
         /// <summary>
         /// Gets the type name resolver.
         /// </summary>
-        public ITypeNameResolver TypeNameResolver { get; }
+        public ITypeNameResolver? TypeNameResolver { get; }
 
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
         {
             return this.VisitWithNewAttribute(
                 attribute =>
@@ -84,7 +84,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
         {
             return this.VisitWithNewAttribute(
                 attribute =>
@@ -100,7 +100,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitParameter(ParameterSyntax node)
+        public override LambdaVisitorAttribute? VisitParameter(ParameterSyntax node)
         {
             var attribute = this.attributes.Peek();
 
@@ -139,7 +139,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitParameterList(ParameterListSyntax node)
+        public override LambdaVisitorAttribute? VisitParameterList(ParameterListSyntax node)
         {
             foreach (var parameter in node.Parameters)
             {
@@ -150,7 +150,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitInvocationExpression(InvocationExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitInvocationExpression(InvocationExpressionSyntax node)
         {
             return this.VisitWithNewAttribute(
                 attribute =>
@@ -179,7 +179,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitArgument(ArgumentSyntax node)
+        public override LambdaVisitorAttribute? VisitArgument(ArgumentSyntax node)
         {
             return this.VisitWithNewAttribute(
                 attribute =>
@@ -190,7 +190,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitPredefinedType(PredefinedTypeSyntax node)
+        public override LambdaVisitorAttribute? VisitPredefinedType(PredefinedTypeSyntax node)
         {
             return this.VisitWithNewAttribute(
                 attribute =>
@@ -216,12 +216,12 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                 });
         }
 
-        public override LambdaVisitorAttribute VisitImplicitArrayCreationExpression(ImplicitArrayCreationExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitImplicitArrayCreationExpression(ImplicitArrayCreationExpressionSyntax node)
         {
             return BuildArrayCreationLambda(node.Initializer.Expressions, null);
         }
 
-        public override LambdaVisitorAttribute VisitArrayCreationExpression(ArrayCreationExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitArrayCreationExpression(ArrayCreationExpressionSyntax node)
         {
             var typeAttr = this.Visit(node.Type.ElementType);
             var itemType = typeAttr.ResultingType;
@@ -259,7 +259,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
             var attribute = this.attributes.Peek();
 
@@ -330,7 +330,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
             return attribute;
         }
 
-        private static MethodInfo TryLoadResultingMethod(Type[] argumentTypes, string memberName, Type[] genericParameters, Type type)
+        private static MethodInfo? TryLoadResultingMethod(Type[] argumentTypes, string memberName, Type[] genericParameters, Type type)
         {
             var resultingMethodInfo = type.GetMethod(memberName, argumentTypes);
 
@@ -392,7 +392,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitIdentifierName(IdentifierNameSyntax node)
+        public override LambdaVisitorAttribute? VisitIdentifierName(IdentifierNameSyntax node)
         {
             var attribute = this.attributes.Peek();
 
@@ -424,7 +424,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitQualifiedName(QualifiedNameSyntax node)
+        public override LambdaVisitorAttribute? VisitQualifiedName(QualifiedNameSyntax node)
         {
             var attribute = this.attributes.Peek();
 
@@ -436,7 +436,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitGenericName(GenericNameSyntax node)
+        public override LambdaVisitorAttribute? VisitGenericName(GenericNameSyntax node)
         {
             var attribute = this.attributes.Peek();
 
@@ -476,13 +476,13 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitParenthesizedExpression(ParenthesizedExpressionSyntax node)
         {
             return this.Visit(node.Expression);
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitCastExpression(CastExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitCastExpression(CastExpressionSyntax node)
         {
             var attr = this.VisitWithNewAttribute(
                 attribute =>
@@ -499,7 +499,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitElementAccessExpression(ElementAccessExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitElementAccessExpression(ElementAccessExpressionSyntax node)
         {
             return this.VisitWithNewAttribute(
                 attribute =>
@@ -518,7 +518,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
                 });
         }
 
-        public override LambdaVisitorAttribute VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
         {
             return this.VisitWithNewAttribute(
                 attribute =>
@@ -538,7 +538,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitBinaryExpression(BinaryExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitBinaryExpression(BinaryExpressionSyntax node)
         {
             var attribute = this.attributes.Peek();
 
@@ -554,7 +554,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
         {
             var attribute = this.attributes.Peek();
 
@@ -567,7 +567,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitLiteralExpression(LiteralExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitLiteralExpression(LiteralExpressionSyntax node)
         {
             var attribute = this.attributes.Peek();
             var kind = node.Kind();
@@ -593,7 +593,7 @@ namespace SoloX.ExpressionTools.Parser.Impl.Visitor
         }
 
         /// <inheritdoc />
-        public override LambdaVisitorAttribute VisitConditionalExpression(ConditionalExpressionSyntax node)
+        public override LambdaVisitorAttribute? VisitConditionalExpression(ConditionalExpressionSyntax node)
         {
             var attribute = this.attributes.Peek();
 
