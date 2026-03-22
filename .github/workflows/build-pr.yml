@@ -47,24 +47,49 @@ jobs:
       run: mv ${{ matrix.test_path }}/TestResults/**/coverage.cobertura.xml ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
     - name: Normalize coverage paths
       run: |
-        sed -i '/filename="/ s|filename="[^"]*/src/|filename="/src/|g' ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
+        sed -i '/filename="/ s|filename="${{ github.workspace }}/src/|filename="src/|g' ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
     - name: Debug coverage file
       run: cat ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml | head -n 50
-    - name: Send to coverals
-      uses: coverallsapp/github-action@v2.2.3
+    - name: Compute safe artifact name
+      id: sanitize
+      run: |
+        SAFE_NAME=$(echo "${{ matrix.test_path }}" | sed 's#[/:<>|*?"\\\r\n]#-#g')
+        echo "safe_name=$SAFE_NAME" >> $GITHUB_OUTPUT
+    - name: Upload coverage artifact
+      uses: actions/upload-artifact@v4
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
-        format: cobertura
-        flag-name: test-${{ matrix.test_path }}
-        parallel: true
+        name: coverage-${{ steps.sanitize.outputs.safe_name }}
+        path: ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
 
-  end-coverage-pr:
+  merge-coverage:
     needs: coverage-pr
     runs-on: ubuntu-latest
+
     steps:
-    - name: Finish coverals
+    - uses: actions/checkout@v4
+
+    - name: Download all coverage artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: coverage
+
+    - name: Install ReportGenerator
+      run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+    - name: Merge coverage reports
+      run: |
+        reportgenerator \
+          -reports:"coverage/**/coverage.cobertura.xml" \
+          -targetdir:"coverage-report" \
+          -reporttypes:"Cobertura"
+
+    - name: Debug merged file
+      run: cat coverage-report/Cobertura.xml | head -n 50
+
+    - name: Send to Coveralls
       uses: coverallsapp/github-action@v2.2.3
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel-finished: true
+        file: coverage-report/Cobertura.xml
+        format: cobertura
+        base-path: /
