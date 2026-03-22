@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.101
     - name: Install dependencies
@@ -32,9 +32,9 @@ jobs:
           - src/tests/SoloX.ExpressionTools.Transform.UTest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.101
     - name: Install dependencies ${{ matrix.test_path }}
@@ -45,6 +45,11 @@ jobs:
       run: dotnet test ${{ matrix.test_path }} --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
     - name: Moving test results
       run: mv ${{ matrix.test_path }}/TestResults/**/coverage.cobertura.xml ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
+    - name: Normalize coverage paths
+      run: |
+        sed -i '/filename="/ s|filename="[^"]*/src/|filename="/src/|g' ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
+    - name: Debug coverage file
+      run: cat ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml | head -n 50
     - name: Send to coverals
       uses: coverallsapp/github-action@v2.2.3
       with:
