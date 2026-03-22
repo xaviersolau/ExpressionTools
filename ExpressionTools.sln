@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11612.150 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Parser", "src\libs\SoloX.ExpressionTools.Parser\SoloX.ExpressionTools.Parser.csproj", "{0A0D6737-BEDE-4FE5-82BF-DEE90E2AC3BB}"
 EndProject
