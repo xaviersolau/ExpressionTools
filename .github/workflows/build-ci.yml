@@ -5,114 +5,13 @@ on:
     branches: [ master ]
 
 jobs:
-  build-ci:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 10.0.101
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --configuration Release --no-restore --no-build
-
-  coverage-ci:
-    needs: build-ci
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        test_path:
-          - src/tests/SoloX.ExpressionTools.Parser.UTest
-          - src/tests/SoloX.ExpressionTools.Transform.UTest
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 10.0.101
-    - name: Install dependencies ${{ matrix.test_path }}
-      run: dotnet restore ${{ matrix.test_path }}
-    - name: Build ${{ matrix.test_path }}
-      run: dotnet build ${{ matrix.test_path }} --configuration Release --no-restore
-    - name: Test Coverage ${{ matrix.test_path }}
-      run: dotnet test ${{ matrix.test_path }} --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
-    - name: Moving test results
-      run: mv ${{ matrix.test_path }}/TestResults/**/coverage.cobertura.xml ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
-    - name: Normalize coverage paths
-      run: |
-        sed -i '/filename="/ s|filename="${{ github.workspace }}/src/|filename="src/|g' ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
-    - name: Debug coverage file
-      run: cat ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml | head -n 50
-    - name: Compute safe artifact name
-      id: sanitize
-      run: |
-        SAFE_NAME=$(echo "${{ matrix.test_path }}" | sed 's#[/:<>|*?"\\\r\n]#-#g')
-        echo "safe_name=$SAFE_NAME" >> $GITHUB_OUTPUT
-    - name: Upload coverage artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-${{ steps.sanitize.outputs.safe_name }}
-        path: ${{ matrix.test_path }}/TestResults/coverage.cobertura.xml
-
-  merge-coverage:
-    needs: coverage-ci
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Download all coverage artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: coverage
-
-    - name: Install ReportGenerator
-      run: dotnet tool install -g dotnet-reportgenerator-globaltool
-
-    - name: Merge coverage reports
-      run: |
-        reportgenerator \
-          -reports:"coverage/**/coverage.cobertura.xml" \
-          -targetdir:"coverage-report" \
-          -reporttypes:"Cobertura"
-
-    - name: Debug merged file
-      run: cat coverage-report/Cobertura.xml | head -n 50
-
-    - name: Send to Coveralls
-      uses: coverallsapp/github-action@v2.2.3
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        file: coverage-report/Cobertura.xml
-        format: cobertura
-        base-path: /
-
-  pack-ci:
-    needs: build-ci
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 10.0.101
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Pack
-      run: dotnet pack --configuration Release --no-restore --no-build
-    - name: Upload Packages
-      uses: actions/upload-artifact@v3
-      with:
-        name: 'NugetPackages'
-        path: |
-          src/libs/**/*.nupkg
+  build:
+    uses: ./.github/workflows/build-dotnet.yml
+    with:
+      run-pack: true
+      test-projects: >
+        [
+          "src/tests/SoloX.ExpressionTools.Parser.UTest",
+          "src/tests/SoloX.ExpressionTools.Transform.UTest"
+        ]
+    secrets: inherit
