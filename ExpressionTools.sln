@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.4.11612.150 stable
+VisualStudioVersion = 18.4.11612.150
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoloX.ExpressionTools.Parser", "src\libs\SoloX.ExpressionTools.Parser\SoloX.ExpressionTools.Parser.csproj", "{0A0D6737-BEDE-4FE5-82BF-DEE90E2AC3BB}"
 EndProject
@@ -32,6 +32,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6A188F56-2508-4620-BF85-75CB55E8EBC4}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build-ci.yml = .github\workflows\build-ci.yml
+		.github\workflows\build-dotnet.yml = .github\workflows\build-dotnet.yml
 		.github\workflows\build-pr.yml = .github\workflows\build-pr.yml
 	EndProjectSection
 EndProject
