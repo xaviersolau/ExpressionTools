@@ -32,7 +32,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6A188F56-2508-4620-BF85-75CB55E8EBC4}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build-ci.yml = .github\workflows\build-ci.yml
-		.github\workflows\build-dotnet.yml = .github\workflows\build-dotnet.yml
 		.github\workflows\build-pr.yml = .github\workflows\build-pr.yml
 	EndProjectSection
 EndProject
