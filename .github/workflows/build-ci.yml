@@ -2,11 +2,11 @@ name: Build - CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
-    uses: ./.github/workflows/build-dotnet.yml
+    uses: xaviersolau/devops-workflows/.github/workflows/build-dotnet.yml@v1.1.0
     with:
       run-pack: true
       test-projects: >
@@ -14,4 +14,3 @@ jobs:
           "src/tests/SoloX.ExpressionTools.Parser.UTest",
           "src/tests/SoloX.ExpressionTools.Transform.UTest"
         ]
-    secrets: inherit

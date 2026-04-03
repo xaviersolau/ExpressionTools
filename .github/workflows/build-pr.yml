@@ -2,15 +2,14 @@ name: Build - PR
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
-    uses: ./.github/workflows/build-dotnet.yml
+    uses: xaviersolau/devops-workflows/.github/workflows/build-dotnet.yml@v1.1.0
     with:
       test-projects: >
         [
           "src/tests/SoloX.ExpressionTools.Parser.UTest",
           "src/tests/SoloX.ExpressionTools.Transform.UTest"
         ]
-    secrets: inherit
